@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.nekohasekai</groupId>
+    <artifactId>td-pm-bot</artifactId>
+    <version>1.0</version>
+
+    <properties>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <kotlin.version>1.3.72</kotlin.version>
+        <mainClass>io.github.nekohasekai.Launcher</mainClass>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>io.github.nekohasekai</groupId>
+            <artifactId>nekolib</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>proguard</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.wvengen</groupId>
+                        <artifactId>proguard-maven-plugin</artifactId>
+                        <version>2.2.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>proguard</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <proguardInclude>../proguard.pro</proguardInclude>
+                            <injar>${project.build.finalName}.jar</injar>
+                            <outjar>${project.build.finalName}.jar</outjar>
+                            <obfuscate>false</obfuscate>
+                            <options>
+                                <option>-dontwarn</option>
+                                <option>-dontnote</option>
+                                <option>-keep class ${mainClass} { *; }</option>
+                                <option>-keep class td.** { *; }</option>
+                            </options>
+                            <libs>
+                                <lib>${java.home}/jmods/java.base.jmod</lib>
+                                <lib>${java.home}/jmods/java.compiler.jmod</lib>
+                                <lib>${java.home}/jmods/java.datatransfer.jmod</lib>
+                                <lib>${java.home}/jmods/java.desktop.jmod</lib>
+                                <lib>${java.home}/jmods/java.instrument.jmod</lib>
+                                <lib>${java.home}/jmods/java.logging.jmod</lib>
+                                <lib>${java.home}/jmods/java.management.jmod</lib>
+                                <lib>${java.home}/jmods/java.management.rmi.jmod</lib>
+                                <lib>${java.home}/jmods/java.naming.jmod</lib>
+                                <lib>${java.home}/jmods/java.net.http.jmod</lib>
+                                <lib>${java.home}/jmods/java.prefs.jmod</lib>
+                                <lib>${java.home}/jmods/java.rmi.jmod</lib>
+                                <lib>${java.home}/jmods/java.scripting.jmod</lib>
+                                <lib>${java.home}/jmods/java.se.jmod</lib>
+                                <lib>${java.home}/jmods/java.security.jgss.jmod</lib>
+                                <lib>${java.home}/jmods/java.security.sasl.jmod</lib>
+                                <lib>${java.home}/jmods/java.smartcardio.jmod</lib>
+                                <lib>${java.home}/jmods/java.sql.jmod</lib>
+                                <lib>${java.home}/jmods/java.sql.rowset.jmod</lib>
+                                <lib>${java.home}/jmods/java.transaction.xa.jmod</lib>
+                                <lib>${java.home}/jmods/java.xml.crypto.jmod</lib>
+                                <lib>${java.home}/jmods/java.xml.jmod</lib>
+                            </libs>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.sf.proguard</groupId>
+                                <artifactId>proguard-base</artifactId>
+                                <version>6.2.2</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>11</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <manifestEntries>
+                                <Main-Class>${mainClass}</Main-Class>
+                            </manifestEntries>
+                        </transformer>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

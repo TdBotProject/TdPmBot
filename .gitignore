@@ -1,0 +1,9 @@
+.idea/
+target/
+/data/
+/cache/
+/libs/
+/pm.conf
+/*.iml
+dependency-reduced-pom.xml
+/*.jar
