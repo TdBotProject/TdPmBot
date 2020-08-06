@@ -32,12 +32,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nekolib" />
     <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.3.10" level="project" />
-    <orderEntry type="library" name="Maven: org.cache2k:cache2k-core:1.2.4.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.cache2k:cache2k-api:1.2.4.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-core:0.24.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-core:0.26.2" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-dao:0.24.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-jdbc:0.24.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-dao:0.26.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-jdbc:0.26.2" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.31.1" level="project" />
     <orderEntry type="library" name="Maven: org.tukaani:xz:1.8" level="project" />
@@ -50,5 +48,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.3.72" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8" level="project" />
+    <orderEntry type="module" module-name="nekolib-bot-http-api" />
+    <orderEntry type="library" name="Maven: com.github.pengrad:java-telegram-bot-api:4.9.0" level="project" />
   </component>
 </module>

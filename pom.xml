@@ -12,6 +12,7 @@
     <modules>
         <module>bot</module>
         <module>neko</module>
+        <module>neko/http-api</module>
     </modules>
 
 </project>

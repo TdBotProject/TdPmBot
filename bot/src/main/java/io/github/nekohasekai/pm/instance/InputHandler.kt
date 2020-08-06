@@ -1,4 +1,4 @@
-package io.github.nekohasekai.pm
+package io.github.nekohasekai.pm.instance
 
 import cn.hutool.core.date.SystemClock
 import io.github.nekohasekai.nekolib.core.client.TdHandler
@@ -30,9 +30,7 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
         database {
 
-            messages.new {
-
-                messageId = message.id
+            messages.new(message.id) {
 
                 type = MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE
 
@@ -46,13 +44,13 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
         if (userId != currentUser || times < 1) {
 
-            val inputNotice = sudo makeHtml "From: ${getUser(userId).asInlineMention}" syncTo admin
+            val user = getUser(userId)
+
+            val inputNotice = sudo makeHtml "From: ${user.asIdMention}\nName: ${user.displayNameHtml}" syncTo admin
 
             database {
 
-                messages.new {
-
-                    messageId = inputNotice.id
+                messages.new(inputNotice.id) {
 
                     type = MessageRecords.MESSAGE_TYPE_INPUT_NOTICE
 
@@ -77,9 +75,7 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
         database {
 
-            messages.new {
-
-                messageId = forwardedMessage.id
+            messages.new(forwardedMessage.id) {
 
                 type = MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED
 

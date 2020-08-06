@@ -1,49 +1,46 @@
 package io.github.nekohasekai
 
 import cn.hutool.core.util.NumberUtil
+import cn.hutool.log.level.Level
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.utils.GetIdCommand
-import io.github.nekohasekai.pm.DeleteHadler
-import io.github.nekohasekai.pm.InputHandler
-import io.github.nekohasekai.pm.OutputHandler
 import io.github.nekohasekai.pm.database.MessageRecordDao
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
+import io.github.nekohasekai.pm.database.UserBots
+import io.github.nekohasekai.pm.instance.DeleteHadler
+import io.github.nekohasekai.pm.instance.InputHandler
+import io.github.nekohasekai.pm.instance.JoinHandler
+import io.github.nekohasekai.pm.instance.OutputHandler
+import io.github.nekohasekai.pm.manage.BotCreate
+import io.github.nekohasekai.pm.manage.BotInstances
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.sqlite.jdbc3.JDBC3DatabaseMetaData
 
 object Launcher : TdCli() {
 
-    init {
+    private val public get() = booleanEnv("PUBLIC")
 
-        // https://github.com/JetBrains/Exposed/issues/1007
-
-        JDBC3DatabaseMetaData::class.java.getDeclaredField("driverName").apply {
-
-            isAccessible = true
-
-            set(null, "SQLite")
-
-        }
-
-    }
-
-    val public get() = booleanEnv("PUBLIC")
-    val admins
-        get() = (stringEnv("ADMINS") ?: "")
+    val admins by lazy {
+        (stringEnv("ADMINS") ?: "")
                 .split(" ")
                 .filter { NumberUtil.isInteger(it) }
                 .map { it.toInt() }
+    }
 
-    val database = Database.connect(openDatabase(options.databaseDirectory, "pm_data.db"))
+    init {
+
+        initDatabase("pm_data.db")
+
+    }
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking {
+
+        LOG_LEVEL = Level.ALL
 
         readSettings("pm.conf")?.insertProperties()
 
@@ -57,9 +54,6 @@ object Launcher : TdCli() {
 
         start()
 
-        if (waitForAuth()) {
-        }
-
     }
 
     override suspend fun onLogin() {
@@ -67,6 +61,18 @@ object Launcher : TdCli() {
         addHandler(GetIdCommand())
 
         if (public) {
+
+            initPersistWithDefaultDatabase()
+
+            database {
+
+                SchemaUtils.create(UserBots)
+
+                BotInstances.loadAll()
+
+            }
+
+            addHandler(BotCreate())
 
         } else if (admins.isNotEmpty()) {
 
@@ -84,7 +90,6 @@ object Launcher : TdCli() {
 
     class SingleInstance(botId: Int) : TdHandler(), PmInstance {
 
-        override val database = Launcher.database
         override val messageRecords = MessageRecords(botId)
         override val messages = MessageRecordDao(messageRecords)
 
@@ -99,6 +104,7 @@ object Launcher : TdCli() {
             addHandler(InputHandler(admins[0], this))
             addHandler(OutputHandler(admins[0], this))
             addHandler(DeleteHadler(admins[0], this))
+            addHandler(JoinHandler(admins[0], this))
 
         }
 

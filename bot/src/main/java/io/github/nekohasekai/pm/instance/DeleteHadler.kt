@@ -1,4 +1,4 @@
-package io.github.nekohasekai.pm
+package io.github.nekohasekai.pm.instance
 
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
@@ -76,6 +76,8 @@ class DeleteHadler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
                     }
 
                 }
+
+                records.forEach { it.delete() }
 
             }
 
