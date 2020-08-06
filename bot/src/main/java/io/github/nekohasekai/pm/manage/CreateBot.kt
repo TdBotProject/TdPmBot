@@ -10,7 +10,7 @@ import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.database.UserBot
 import td.TdApi
 
-class BotCreate : TdHandler() {
+class CreateBot : TdHandler() {
 
     private var persistId = PERSIST_BOT_CREATE
 
@@ -31,29 +31,37 @@ class BotCreate : TdHandler() {
 
         }
 
-        startCreate(userId, chatId)
+        if (param.isTokenInvalid) {
+
+            startCreate(userId, chatId)
+
+        } else {
+
+            createByToken(userId, chatId, param)
+
+        }
 
     }
 
     fun startCreate(userId: Int, chatId: Long) {
 
-        sudo make "Input bot token: " sendTo chatId
+        sudo make "Input bot token: " withMarkup TdApi.ReplyMarkupForceReply(true) sendTo chatId
 
-        writePersist(userId, persistId, 0)
+        writePersist(userId, persistId, 0L)
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Int) {
-
-        removePersist(userId)
+    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<ByteArray>) {
 
         createByToken(userId, chatId, message.text)
 
     }
 
+    val String?.isTokenInvalid get() = this == null || length < 40 || length > 50 || !contains(":") || !NumberUtil.isInteger(substringBefore(":"))
+
     suspend fun createByToken(userId: Int, chatId: Long, token: String?) {
 
-        if (token == null || token.length < 40 || token.length > 50 || !token.contains(":") || !NumberUtil.isInteger(token.substringBefore(":"))) {
+        if (token.isTokenInvalid) {
 
             sudo make "Invalid bot token." sendTo chatId
 
@@ -61,38 +69,61 @@ class BotCreate : TdHandler() {
 
         }
 
+        removePersist(userId)
+
+        val status = sudo make "Fetching info..." syncTo chatId
+
         val botMe = try {
 
-            httpSync(token, GetMe()).user()
+            httpSync(token!!, GetMe()).user()
 
         } catch (e: TdException) {
 
-            sudo make "Invalid bot token: ${e.message}." sendTo chatId
+            sudo make """
+Invalid bot token: ${e.message}.
+
+Type /cancel to cancel the operation.
+""" syncEditTo status
 
             return
 
         }
 
-        if (database { UserBot.findById(botMe.id()) } != null) {
+        val exists = database { UserBot.findById(botMe.id()) }
 
-            sudo make "Failed: alreay exists." sendTo chatId
+        if (exists != null) {
+
+            sudo make "Failed: bot alreay exists." syncEditTo status
 
             return
 
         }
+
+        sudo make "Creating bot..." syncEditTo status
 
         val userBot = database {
 
             UserBot.new(botMe.id()) {
 
                 botToken = token
+                username = botMe.username()
                 owner = userId
 
             }
 
         }
 
-        BotInstances.initBot(userBot)
+        if (BotInstances.initBot(userBot).waitForAuth()) {
+
+            sudo makeHtml """
+Click this link to complete the creation: https://t.me/${userBot.username}?start=finish_creation
+
+${"If you see the \"Start\" button, click it.".asBlod}
+""" syncEditTo status
+
+        }
+
+
     }
 
 }

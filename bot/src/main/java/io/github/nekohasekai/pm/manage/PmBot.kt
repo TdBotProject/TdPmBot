@@ -6,6 +6,7 @@ import io.github.nekohasekai.nekolib.core.raw.checkAuthenticationBotToken
 import io.github.nekohasekai.nekolib.core.utils.defaultLog
 import io.github.nekohasekai.nekolib.core.utils.displayName
 import io.github.nekohasekai.nekolib.core.utils.invoke
+import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.pm.database.MessageRecordDao
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
@@ -56,6 +57,22 @@ class PmBot(val botToken: String, val owner: Int) : TdClient(), PmInstance {
         addHandler(OutputHandler(owner, this))
         addHandler(DeleteHadler(owner, this))
         addHandler(JoinHandler(owner, this))
+
+        initStartPayload("finish_creation")
+
+    }
+
+    override suspend fun onStartPayload(userId: Int, chatId: Long, message: TdApi.Message, payload: String, params: Array<String>) {
+
+        if (payload == "finish_creation") {
+
+            if (userId != owner) rejectFunction()
+
+            sudo make """
+Done! Congratulations on your new bot. You can now add a description, about section and profile picture for your bot at @BotFather.
+            """ sendTo chatId
+
+        }
 
     }
 

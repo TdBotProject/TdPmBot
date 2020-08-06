@@ -6,6 +6,7 @@ object UserBots : IdTable<Int>("user_bots") {
 
     val botId = integer("bot_id").entityId()
     val botToken = varchar("bot_token", 64)
+    val username = varchar("username", 64).uniqueIndex()
     val owner = integer("owner").index()
 
     override val id = botId

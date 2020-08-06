@@ -8,6 +8,7 @@ class UserBot(id: EntityID<Int>) : Entity<Int>(id) {
 
     var _botId by UserBots.botId
     val botId get() = _botId.value
+    var username by UserBots.username
     var owner by UserBots.owner
     var botToken by UserBots.botToken
 
