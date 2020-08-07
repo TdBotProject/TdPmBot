@@ -13,6 +13,7 @@
 *.pro        text eol=lf
 *.properties  text eol=lf
 *.conf        text eol=lf
+*.yml        text eol=lf
 *.awk  text eol=lf
 *.sed  text eol=lf
 *.sh   text eol=lf

@@ -1,14 +1,12 @@
-package io.github.nekohasekai.pm.manage
+package io.github.nekohasekai.pm.instance
 
-import io.github.nekohasekai.Launcher
-import io.github.nekohasekai.nekolib.core.utils.invoke
 import io.github.nekohasekai.pm.database.UserBot
 
 object BotInstances {
 
     val instanceMap = HashMap<Int, PmBot>()
 
-    fun loadAll() = Launcher.database {
+    fun loadAll() {
 
         UserBot.all().forEach { initBot(it) }
 
@@ -18,7 +16,7 @@ object BotInstances {
 
         return instanceMap[userBot.botId] ?: synchronized(instanceMap) {
 
-            PmBot(userBot.botToken, userBot.owner).apply {
+            PmBot(userBot.botToken, userBot).apply {
 
                 instanceMap[botUserId] = this
 

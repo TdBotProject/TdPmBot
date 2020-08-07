@@ -1,129 +1,79 @@
 package io.github.nekohasekai.pm.manage
 
 import cn.hutool.core.io.FileUtil
-import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.LocaleController
+import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.database.UserBots
-import org.jetbrains.exposed.sql.and
+import io.github.nekohasekai.pm.instance.BotInstances
 import org.jetbrains.exposed.sql.deleteWhere
 import td.TdApi
 
-class DeleteBot : TdHandler() {
+class DeleteBot : UserBotSelector() {
 
-    val persistId = PERSIST_DEL_BOT
+    val command = "delete_bot"
+
+    val DEF = TdApi.BotCommand(
+            command,
+            LocaleController.DELETE_BOT_DEF
+    )
+
+    override val persistId = PERSIST_DEL_BOT
 
     override fun onLoad() {
 
-        initFunction("delete_bot")
+        super.onLoad()
 
-        initPersist(persistId)
+        initFunction(command)
 
     }
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        val bots = database { UserBot.find { UserBots.owner eq userId }.toList() }
+        val L = LocaleController.forChat(userId)
 
-        if (bots.isEmpty()) {
-
-            sudo make "You don't have any bots yet. Use the /new_bot command to create a new bot first." sendTo chatId
-
-            return
-
-        }
-
-        writePersist(userId, persistId, 0L)
-
-        sudo make "Choose a bot to delete." withMarkup keyboadButton {
-
-            var line: KeyboadButtonBuilder.Line? = null
-
-            bots.forEach {
-
-                line = if (line == null) {
-
-                    newLine {
-
-                        textLine("@${it.username}")
-
-                    }
-
-                } else {
-
-                    line!!.textButton("@${it.username}")
-
-                    null
-
-                }
-
-            }
-
-        } sendTo chatId
+        doSelect(userId, 0L , L.SELECT_TO_DELETE)
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<ByteArray>) {
+    override suspend fun onSelected(userId: Int, chatId: Long, subId: Long, userBot: UserBot?) {
 
-        fun invalidBot() {
+        userBot!!
 
-            sudo make "Invalid bot selected." withMarkup TdApi.ReplyMarkupShowKeyboard() sendTo chatId
+        writePersist(userId, persistId, 1L, userBot.botId.toByteArray())
 
-        }
+        val L = LocaleController.forChat(userId)
 
-        if (subId == 0L) {
+        sudo make L.DELETE_CONFIRM.input(userBot.username) removeKeyboard true sendTo chatId
 
-            var botUserName = message.text
+    }
 
-            if (botUserName == null || !botUserName.startsWith("@")) {
+    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>) {
 
-                invalidBot()
+        if (subId == 1L) {
 
-                return
+            val L = LocaleController.forChat(userId)
 
-            }
-
-            botUserName = botUserName.substring(1)
-
-            val userBot = database {
-
-                UserBot.find { (UserBots.username eq botUserName) and (UserBots.owner eq userId) }.firstOrNull()
-
-            }
-
-            if (userBot == null) {
-
-                invalidBot()
-
-                return
-
-            }
-
-            writePersist(userId, persistId, 1L, userBot.botId.toByteArray())
-
-            sudo make "OK, you selected @${userBot.username}. Are you sure?\n" +
-                    "\n" +
-                    "Send 'Yes, I am totally sure.' to confirm you really want to delete this bot." removeKeyboard true sendTo chatId
-
-        } else if (subId == 1L) {
-
-            val botUserId = data[0].toInt()
+            val botUserId = (data[0] as ByteArray).toInt()
 
             val userBot = database { UserBot.findById(botUserId) }
 
             if (userBot == null || userBot.owner != userId) {
 
-                invalidBot()
+                sudo make L.INVALID_SELECTED sendTo chatId
 
                 return
 
             }
 
-            if ("Yes, I am totally sure." == message.text) {
+            if (message.text?.matches(L.DELETE_CONFIRM_REGEX.toRegex()) == true) {
 
                 sudo removePersist userId
 
-                val status = sudo make "Stopping..." syncTo chatId
+                sudo make Typing sendTo chatId
+
+                val status = sudo make L.STOPPING syncTo chatId
 
                 val bot = BotInstances.initBot(userBot).apply {
 
@@ -131,7 +81,9 @@ class DeleteBot : TdHandler() {
 
                 }
 
-                sudo make "Clearing database..." editTo status
+                sudo make Typing sendTo chatId
+
+                sudo make L.DELETING editTo status
 
                 FileUtil.del(bot.options.databaseDirectory)
 
@@ -145,16 +97,19 @@ class DeleteBot : TdHandler() {
 
                 BotInstances.instanceMap.remove(botUserId)
 
-                sudo make "Done! The bot is gone." editTo status
+                sudo make CancelChatAction sendTo chatId
+
+                sudo make L.BOT_DELETED editTo status
 
             } else {
 
-                sudo make "Please enter the confirmation text exactly like this:\n" +
-                        "Yes, I am totally sure.\n" +
-                        "\n" +
-                        "Type /cancel to cancel the operation." sendTo chatId
+                sudo make L.CONFIRM_NOT_MATCH sendTo chatId
 
             }
+
+        } else {
+
+            super.onPersistMessage(userId, chatId, message, subId, data)
 
         }
 

@@ -1,0 +1,4 @@
+-keep class org.jetbrains.exposed.** { *; }
+-keep class org.sqlite.** { *; }
+-keep class td.** { *; }
+-keep class io.github.nekohasekai.** { *; }

@@ -6,12 +6,14 @@ import io.github.nekohasekai.nekolib.core.utils.deleteDelay
 import io.github.nekohasekai.nekolib.core.utils.invoke
 import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.core.utils.syncDelete
+import io.github.nekohasekai.pm.DELETED
+import io.github.nekohasekai.pm.MESSAGE_DELETED
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
 
-class DeleteHadler(private val admin: Int, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class DeleteHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
     override suspend fun onDeleteMessages(chatId: Long, messageIds: LongArray, isPermanent: Boolean, fromCache: Boolean) {
 
@@ -30,9 +32,22 @@ class DeleteHadler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
             var success = 0
             var failed = 0
 
-            records.forEach {
+            records.filter {
+
+                it.type in arrayOf(
+                        MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
+                        MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE
+                )
+
+            }.forEach {
 
                 try {
+
+                    database {
+
+                        it.delete()
+
+                    }
 
                     syncDelete(it.chatId, it.targetId!!)
 
@@ -46,42 +61,46 @@ class DeleteHadler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
             }
 
-            sudo make "$success deleted, $failed failed." to chatId send deleteDelay()
+            sudo make L.DELETED to chatId send deleteDelay()
 
         } else {
 
             // 用户删除消息, 追加提示.
 
-            database {
+            records.filter {
 
-                records.filter {
+                it.type in arrayOf(
+                        MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE,
+                        MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED
+                )
 
-                    it.type in arrayOf(
-                            MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE,
-                            MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED
-                    )
+            }.forEach { record ->
 
-                }.forEach {
+                database {
+
+                    record.delete()
 
                     messages.find {
 
                         ((messageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED) or
                                 (messageRecords.type eq MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
-                                (messageRecords.targetId eq it.messageId)
+                                (messageRecords.targetId eq record.messageId)
 
                     }.forEach {
 
-                        sudo make "This message has been deleted." replyTo it.messageId sendTo admin.toLong() onError null
+                        it.delete()
+
+                        sudo make L.MESSAGE_DELETED replyTo it.messageId sendTo admin.toLong() onError null
 
                     }
 
                 }
 
-                records.forEach { it.delete() }
-
             }
 
         }
+
+        finishEvent()
 
     }
 

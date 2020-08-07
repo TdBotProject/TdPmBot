@@ -7,6 +7,8 @@ import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.failed
+import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
 
@@ -15,12 +17,6 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
     override fun onLoad() {
 
         initFunction("join", "exit")
-
-    }
-
-    fun joinHelp(chatId: Long) {
-
-        sudo make "Use /join <reply/chatId/@username/mention> to join a chat" sendTo chatId
 
     }
 
@@ -42,7 +38,7 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
                 if (record == null) {
 
-                    sudo make "Record not found." to chatId send deleteDelay(message)
+                    sudo make L.failed { RECORD_NF } to chatId send deleteDelay(message)
 
                     return
 
@@ -58,15 +54,7 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
                         val username = message.text!!.substring(entity.offset, entity.length).substringAfter("@")
 
-                        val user = searchPublicChatOrNull(username)
-
-                        if (user == null) {
-
-                            sudo make "Failed: user not found or bot not activeted by target." to chatId send deleteDelay(message)
-
-                            return
-
-                        }
+                        val user = searchPublicChatOrNull(username) ?: continue
 
                         chatToJoin = user.id
 
@@ -92,7 +80,15 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
             if (chatToJoin == 0L) {
 
-                joinHelp(chatId)
+                sudo make L.PM_HELP sendTo chatId
+
+                return
+
+            }
+
+            if (!chatId.fromPrivate) {
+
+                sudo make L.failed { JOIN_NON_PM } to chatId send deleteDelay(message)
 
                 return
 
@@ -104,23 +100,23 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
             } catch (e: TdException) {
 
-                sudo make "Failed: banned by user." to chatId send deleteDelay(message)
+                sudo make L.failed { BANDED_BY } to chatId send deleteDelay(message)
 
                 return
 
             }
 
-            findHandler(OutputHandler::class).currentChat = targetChat.id
+            findHandler<OutputHandler>().currentChat = targetChat.id
 
             val user = getUser(targetChat.id.toInt())
 
-            sudo makeHtml "Joined chat: ${user.asIdMention}\nName: ${user.displayNameHtml}" sendTo chatId
+            sudo makeHtml L.JOINED_NOTICE.input(user.asIdMention, user.displayNameHtml.asCode) sendTo chatId
 
         } else {
 
-            findHandler(OutputHandler::class).currentChat = 0L
+            findHandler<OutputHandler>().currentChat = 0L
 
-            sudo make "Exited." sendTo chatId
+            sudo make L.EXITED sendTo chatId
 
         }
 

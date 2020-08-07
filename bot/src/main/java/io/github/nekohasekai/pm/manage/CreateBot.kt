@@ -2,21 +2,30 @@ package io.github.nekohasekai.pm.manage
 
 import cn.hutool.core.util.NumberUtil
 import com.pengrad.telegrambot.request.GetMe
+import io.github.nekohasekai.nekolib.core.client.TdClient
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
 import io.github.nekohasekai.nekolib.i18n.LocaleController
+import io.github.nekohasekai.nekolib.i18n.failed
+import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.UserBot
+import io.github.nekohasekai.pm.instance.BotInstances
 import td.TdApi
 
-class CreateBot : TdHandler() {
+class CreateBot(val command: String = "new_bot") : TdHandler() {
+
+    val DEF = TdApi.BotCommand(
+            command,
+            LocaleController.CREATE_BOT_DEF
+    )
 
     private var persistId = PERSIST_BOT_CREATE
 
     override fun onLoad() {
 
-        initFunction("new_bot")
+        initFunction(command)
         initPersist(persistId)
 
     }
@@ -45,13 +54,15 @@ class CreateBot : TdHandler() {
 
     fun startCreate(userId: Int, chatId: Long) {
 
-        sudo make "Input bot token: " withMarkup TdApi.ReplyMarkupForceReply(true) sendTo chatId
+        val L = LocaleController.forChat(userId)
+
+        sudo makeMd L.INPUT_BOT_TOKEN withMarkup TdApi.ReplyMarkupForceReply(true) sendTo chatId
 
         writePersist(userId, persistId, 0L)
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<ByteArray>) {
+    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>) {
 
         createByToken(userId, chatId, message.text)
 
@@ -61,9 +72,11 @@ class CreateBot : TdHandler() {
 
     suspend fun createByToken(userId: Int, chatId: Long, token: String?) {
 
+        val L = LocaleController.forChat(userId)
+
         if (token.isTokenInvalid) {
 
-            sudo make "Invalid bot token." sendTo chatId
+            sudo make L.INVALID_BOT_TOKEN.input("") sendTo chatId
 
             return
 
@@ -71,7 +84,9 @@ class CreateBot : TdHandler() {
 
         removePersist(userId)
 
-        val status = sudo make "Fetching info..." syncTo chatId
+        val status = sudo make L.FETCHING_INFO syncTo chatId
+
+        sudo make Typing sendTo chatId
 
         val botMe = try {
 
@@ -79,27 +94,27 @@ class CreateBot : TdHandler() {
 
         } catch (e: TdException) {
 
-            sudo make """
-Invalid bot token: ${e.message}.
-
-Type /cancel to cancel the operation.
-""" syncEditTo status
+            sudo make L.INVALID_BOT_TOKEN.input(" (${e.message})") editTo status
 
             return
 
         }
 
-        val exists = database { UserBot.findById(botMe.id()) }
+        val exists = TdClient.clients.any { botMe.id() == it.me.id } || database { UserBot.findById(botMe.id()) } != null
 
-        if (exists != null) {
+        if (exists) {
 
-            sudo make "Failed: bot alreay exists." syncEditTo status
+            sudo make L.failed { ALREADY_EXISTS } syncEditTo status
+
+            sudo make CancelChatAction syncTo chatId
 
             return
 
         }
 
-        sudo make "Creating bot..." syncEditTo status
+        sudo make Typing sendTo chatId
+
+        sudo make L.CREATING_BOT editTo status
 
         val userBot = database {
 
@@ -115,11 +130,13 @@ Type /cancel to cancel the operation.
 
         if (BotInstances.initBot(userBot).waitForAuth()) {
 
-            sudo makeHtml """
-Click this link to complete the creation: https://t.me/${userBot.username}?start=finish_creation
+            sudo makeHtml L.FINISH_CREATION.input(userBot.username) editTo status
 
-${"If you see the \"Start\" button, click it.".asBlod}
-""" syncEditTo status
+        } else {
+
+            defaultLog.warn("Pm bot failed when start")
+
+            // TODO: handle bot stop
 
         }
 

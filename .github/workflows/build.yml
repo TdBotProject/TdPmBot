@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+      - '!.github/workflows/**'
+    branches:
+      - master
+
+jobs:
+  mvnBuild:
+    name: Maven Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: m2-${{ hashFiles('**/pom.xml') }}
+      - uses: ayltai/setup-graalvm@v1
+        with:
+          java-version: 11
+          graalvm-version: 20.1.0
+      - name: Run Maven Build
+        run: |
+          ./bot.sh rebuild -P proguard
+          echo ::set-env name=JAR_FILE::$(find . -maxdepth 1 -name *.jar)
+      - name: Upload Jar
+        uses: actions/upload-artifact@master
+        with:
+          name: td-pm-bot
+          path: ${{ env.JAR_FILE }}

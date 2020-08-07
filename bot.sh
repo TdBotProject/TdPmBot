@@ -2,7 +2,7 @@
 
 # --------------------------- #
 serviceName="td-pm"
-artifact="td-pm"
+artifact="td-pm-bot"
 module="bot"
 # --------------------------- #
 
@@ -56,11 +56,23 @@ EOF
 
 elif [ "$1" == "run" ]; then
 
-  [ -f "$artifact.jar" ] || bash $0 rebuild
+  target="$artifact-$(git rev-parse --short HEAD).jar"
+
+#  if [ ! -x "$(find . -maxdepth 1 -name ${artifact}-*))" ]; then
+#    for oldTarget in ./${artifact}-*; do
+  if [ ! -x "$(find . -maxdepth 1 -name '*.jar'))" ]; then
+    for oldTarget in ./*.jar; do
+      if [ ! $oldTarget -ef $target ]; then
+        rm $oldTarget
+      fi
+    done
+  fi
+
+  [ -f "$target" ] || bash $0 rebuild || exit 1
 
   shift
 
-  java -server -jar $artifact.jar $@
+  java -jar $target $@
 
 elif [ "$1" == "start" ]; then
 
@@ -70,7 +82,7 @@ elif [ "$1" == "start" ]; then
 
 elif [ "$1" == "restart" ]; then
 
-  systemctl restart $serviceName
+  systemctl restart $serviceName &
 
   bash $0 log
 
@@ -88,12 +100,13 @@ elif [ "$1" == "rebuild" ]; then
 
   shift
 
-  bash mvnw -T 1C clean package $@ &&
-    rm -f $module/target/*shaded.jar $module/target/*proguard_base.jar
+  target="$artifact-$(git rev-parse --short HEAD).jar"
+
+  bash mvnw -T 1C package $@
 
   if [ $? -eq 0 ]; then
 
-    cp -f $module/target/$artifact-*.jar $artifact.jar
+    cp -f $module/target/$artifact.jar $target
 
   fi
 
@@ -114,9 +127,32 @@ elif [ "$1" == "update" ]; then
   git reset --hard FETCH_HEAD
   git submodule update --init --force --recursive
 
-  bash $0 rebuild
+  shift
+
+  bash $0 rebuild $@
 
   exit $?
+
+elif [ "$1" == "upgrade" ]; then
+
+  git fetch &>/dev/null
+
+  if [ "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" ]; then
+
+    echo "<< 没有更新"
+
+    exit 1
+
+  fi
+
+  echo ">> 检出更新 $(git rev-parse FETCH_HEAD)"
+
+  git reset --hard FETCH_HEAD
+  git submodule update --init --force --recursive
+
+  shift
+
+  bash $0 rebuild $@ && bash $0 restart
 
 elif [ "$1" == "log" ]; then
 
@@ -124,9 +160,7 @@ elif [ "$1" == "log" ]; then
 
 elif [ "$1" == "logs" ]; then
 
-  shift 1
-
-  journalctl -u $serviceName --no-tail $@
+  journalctl -u $serviceName --no-tail -e
 
 else
 

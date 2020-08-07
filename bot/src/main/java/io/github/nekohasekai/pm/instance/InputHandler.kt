@@ -5,12 +5,13 @@ import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.pm.INPUT_NOTICE
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
 import java.util.concurrent.atomic.AtomicBoolean
 
-class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class InputHandler(private val admins: IntArray, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
     private var currentUser = 0
     private var times = 0
@@ -18,11 +19,11 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
     override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (userId == me.id || userId == admin || !message.fromPrivate) return
+        if (userId == me.id || admins.contains(userId) || !message.fromPrivate) return
 
         if (!inited) {
 
-            getChat(admin.toLong())
+            getChat(admins[0].toLong())
 
             inited = true
 
@@ -46,7 +47,7 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
             val user = getUser(userId)
 
-            val inputNotice = sudo makeHtml "From: ${user.asIdMention}\nName: ${user.displayNameHtml}" syncTo admin
+            val inputNotice = sudo makeHtml L.INPUT_NOTICE.input(user.asIdMention, user.displayNameHtml) syncTo admins[0]
 
             database {
 
@@ -71,7 +72,7 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
 
         }
 
-        val forwardedMessage = sudo makeForward message syncTo admin
+        val forwardedMessage = sudo makeForward message syncTo admins[0]
 
         database {
 
@@ -88,6 +89,8 @@ class InputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler()
             }
 
         }
+
+        finishEvent()
 
     }
 

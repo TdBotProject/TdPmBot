@@ -6,6 +6,8 @@ import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getMessage
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.failed
+import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
@@ -18,7 +20,7 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
         if (chatId != userId.toLong() || userId != admin) return
 
-        fun saveSended(targetChat: Long, sendedMessageId: Long) {
+        fun saveSent(targetChat: Long, sentMessageId: Long) {
 
             database {
 
@@ -28,13 +30,13 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
                     this.chatId = targetChat
 
-                    targetId = sendedMessageId
+                    targetId = sentMessageId
 
                     createAt = (SystemClock.now() / 100L).toInt()
 
                 }
 
-                messages.new(sendedMessageId) {
+                messages.new(sentMessageId) {
 
                     type = MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED
 
@@ -54,27 +56,31 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
             if (currentChat == 0L) {
 
-                findHandler(JoinHandler::class).joinHelp(chatId)
+                if (sudo is PmBot) {
+
+                    sudo make L.PM_HELP sendTo chatId
+
+                }
 
                 return
 
             }
 
-            val sendedMessage = try {
+            val sentMessage = try {
 
-                sudo make message.content.asInput!! syncTo currentChat
+                sudo make message.asInputOrForward syncTo currentChat
 
             } catch (e: TdException) {
 
-                sudo make "Failed: ${e.message}" replyTo message send deleteDelay(message)
+                sudo make L.failed { e.message } replyTo message send deleteDelay(message)
 
                 return
 
             }
 
-            saveSended(currentChat, sendedMessage.id)
+            saveSent(currentChat, sentMessage.id)
 
-            sudo make "Sended." replyTo message send deleteDelay()
+            sudo make L.SENT replyTo message send deleteDelay()
 
             return
 
@@ -88,7 +94,7 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
         if (record == null) {
 
-            sudo make "Record not found." replyTo message send deleteDelay(message)
+            sudo make L.RECORD_NF replyTo message send deleteDelay(message)
 
             return
 
@@ -100,7 +106,7 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
         } catch (e: TdException) {
 
-            sudo make "Failed: banned by user." replyTo message send deleteDelay(message)
+            sudo make L.failed { BANDED_BY } replyTo message send deleteDelay(message)
 
             null
 
@@ -118,21 +124,21 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
                 val targetUser = getTargetChat() ?: return
 
-                val sendedMessage = try {
+                val sentMessage = try {
 
                     sudo make message.content.asInput!! syncTo targetUser.id
 
                 } catch (e: TdException) {
 
-                    sudo make "Failed: ${e.message}" replyTo message send deleteDelay(message)
+                    sudo make L.failed { e.message } replyTo message send deleteDelay(message)
 
                     return
 
                 }
 
-                saveSended(targetUser.id, sendedMessage.id)
+                saveSent(targetUser.id, sentMessage.id)
 
-                sudo make "Sended." replyTo message send deleteDelay()
+                sudo make L.SENT replyTo message send deleteDelay()
 
             }
 
@@ -147,7 +153,7 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
                 } catch (e: TdException) {
 
-                    sudo make "Replied message not found: ${e.message}" replyTo message send deleteDelay(message)
+                    sudo make L.failed { REPLIED_NF } replyTo message send deleteDelay(message)
 
                     return
 
@@ -159,15 +165,15 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
                 } catch (e: TdException) {
 
-                    sudo make "Failed: ${e.message}" replyTo message send deleteDelay(message)
+                    sudo make L.failed { e.message } replyTo message send deleteDelay(message)
 
                     return
 
                 }
 
-                saveSended(targetUser.id, sendedMessage.id)
+                saveSent(targetUser.id, sendedMessage.id)
 
-                sudo make "Replied." replyTo message send deleteDelay()
+                sudo make L.REPLIED replyTo message send deleteDelay()
 
             }
 

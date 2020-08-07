@@ -15,7 +15,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <kotlin.version>1.3.72</kotlin.version>
-        <mainClass>io.github.nekohasekai.Launcher</mainClass>
+        <mainClass>io.github.nekohasekai.pm.Launcher</mainClass>
 
     </properties>
 
@@ -61,7 +61,6 @@
                                 <option>-dontwarn</option>
                                 <option>-dontnote</option>
                                 <option>-keep class ${mainClass} { *; }</option>
-                                <option>-keep class td.** { *; }</option>
                             </options>
                             <libs>
                                 <lib>${java.home}/jmods/java.base.jmod</lib>
@@ -89,13 +88,6 @@
                             </libs>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>net.sf.proguard</groupId>
-                                <artifactId>proguard-base</artifactId>
-                                <version>6.2.2</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
@@ -103,9 +95,8 @@
     </profiles>
 
     <build>
-
+        <finalName>${project.artifactId}</finalName>
         <plugins>
-
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>

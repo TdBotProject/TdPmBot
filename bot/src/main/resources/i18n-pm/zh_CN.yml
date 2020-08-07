@@ -1,0 +1,119 @@
+HELP_MSG: |-
+  本机器人能帮助您创建和管理 Telegram 私聊机器人.
+
+  您可以控制我通过发送以下命令：
+
+  /new_bot - 创建新机器人
+  /delete_bot - 删除机器人
+
+  如需帮助，请检出 https://github.com/TdBotProject/TdPmBot , 或通过 @TdBotProject 的讨论群组与我们联系.
+
+CREATE_BOT_DEF: 创建新机器人
+INPUT_BOT_TOKEN: |-
+  输入从 @BotFather 获取的 [Bot Token](https://core.telegram.org/bots#creating-a-new-bot) :
+INVALID_BOT_TOKEN: |-
+  无效的 Bot Token{}.
+
+  使用 /cancel 取消创建.
+FETCHING_INFO: |-
+  检索必要的信息...
+CREATING_BOT: |-
+  创建机器人...
+ALREADY_EXISTS: |-
+  错误: 该机器人已在本实例中存在.
+FINISH_CREATION: |-
+  点击该链接完成创建: https://t.me/{}?start=finish_creation
+
+  <b>如果您看见 "开始" 按钮, 请点击它.</b>
+CREATE_FINISHED: |-
+  大功告成 !
+
+  现在您可以返回继续设置您的机器人, 或者到 @BotFather 为它设置简介, 关于行和头像.
+
+DELETE_BOT_DEF: |-
+  删除机器人
+NO_BOTS: |-
+  无事可做, 请首先使用 /new_bot 命令创建新机器人.
+SELECT_TO_DELETE: |-
+  选择您要删除的机器人.
+INVALID_SELECTED: |-
+  选择的机器人无效.
+
+  使用 /cancel 取消删除.
+DELETE_CONFIRM: |-
+  好的, 您选择了 @{}. 确定要删除吗 ?
+
+  发送 '是的, 我完全确定.' 以确认您真的想要删除这个机器人.
+CONFIRM_NOT_MATCH: |-
+  请发送确认文本 '是的, 我完全确定.' 以确认您真的想要删除这个机器人.
+
+  使用 /cancel 取消删除.
+DELETE_CONFIRM_REGEX: |-
+  (y|.*是.*|.*确定.*)
+STOPPING: |-
+  停止机器人...
+DELETING: |-
+  删除数据...
+BOT_DELETED: |-
+  机器人已删除.
+BOT_AUTH_FAILED: |-
+  您的机器人 @{} 无法认证 ( 已重置 Token / 被刪除 ), 已移除.
+BOT_LOGOUT: |-
+  您的机器人 @{} 被登出, ( 已重置 Token / 刪除 ), 已移除.
+
+SET_STARTS_DEF: |-
+  设置欢迎消息
+SELECT_TO_SET: |-
+  选择要设置的机器人.
+JUMP_TO_SET: |-
+  现在到转到您的机器人继续设置: @{}
+INPUT_MESSAGES: |-
+  现在向我发送任意消息:
+
+  使用 /submit 提交
+  使用 /cancel 取消
+MESSAGE_ADDED: |-
+  已添加.
+
+  使用 /submit 提交
+  使用 /cancel 取消
+MESSAGE_ADDED_FWD: |-
+  已添加 (转发).
+
+  使用 /submit 提交
+  使用 /cancel 取消
+
+INPUT_NOTICE: |-
+  来自: {}
+  名称: {}
+BANDED_BY: |-
+  找不到用户或者机器人被对方停用.
+JOINED_NOTICE: |-
+  已进入会话: {}
+  名称: {}
+JOIN_NON_PM: |-
+  进入非私聊暂不支持, 欢迎提交PR :)
+EXITED: |-
+  已退出.
+SENT: |-
+  已发送.
+REPLIED: |-
+  已回复.
+EDITED: |-
+  已编辑.
+DELETED: |-
+  已删除.
+RECORD_NF: |-
+  找不到对应记录.
+REPLIED_NF: |-
+  要回复的消息已被对方删除.
+MESSAGE_DELETED: |-
+  这条消息被对方删除了.
+MESSAGE_EDITED: |-
+  这条消息被对方更改了.
+
+PM_HELP: |-
+  无事可做.
+
+  使用 /join <回复消息/回复提示消息/消息ID/@用户名/引用> 以进入会话,
+  使用 /exit 退出会话.

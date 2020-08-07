@@ -1,0 +1,120 @@
+HELP_MSG: |-
+  I can help you create and manage Telegram PM bots.
+
+  You can control me by sending these commands:
+
+  /new_bot - create a new pm bot
+  /delete_bot - delete a pm bot
+
+  For help, please check out https://github.com/TdBotProject/TdPmBot, or contact us at @TdBotProject 's discuss group.
+PRIVATE_INSTANCE: |-
+  Sorry, this instance does not provide public services.
+
+CREATE_BOT_DEF: |-
+  create a new bot
+INPUT_BOT_TOKEN: |-
+  Enter the [Bot Token](https://core.telegram.org/bots#creating-a-new-bot) obtained from @BotFather :
+INVALID_BOT_TOKEN: |-
+  Invalid bot token.
+
+  Type /cancel to cancel the operation.
+FETCHING_INFO: |-
+  Fetching info...
+CREATING_BOT: |-
+  Creating bot...
+ALREADY_EXISTS: |-
+  Failed: bot alreay exists.
+FINISH_CREATION: |-
+  Click this link to complete the creation: https://t.me/{}?start=finish_creation
+
+  <b>If you see the "Start" button, click it.</b>
+CREATE_FINISHED: |-
+  Done! Congratulations on your new bot.
+
+  You can go back to continue setting up your bot or add a description, about section and profile picture for your it at @BotFather.
+
+DELETE_BOT_DEF: |-
+  delete a bot
+NO_BOTS: |-
+  You don't have any bots yet. Use the /new_bot command to create a new bot first.
+SELECT_TO_DELETE: |-
+  Choose a bot to delete.
+INVALID_SELECTED: |-
+  Invalid bot selected.
+
+  Type /cancel to cancel the operation.
+DELETE_CONFIRM: |-
+  OK, you selected @{}. Are you sure?
+
+  Send 'Yes, I am totally sure.' to confirm you really want to delete this bot.
+DELETE_CONFIRM_REGEX: |-
+  (y|.*yes.*|.*ok.*|.*sure.*)
+CONFIRM_NOT_MATCH: |-
+  Please enter the confirmation text 'Yes, I am totally sure.' to confirm you really want to delete this bot.
+
+  Type /cancel to cancel the operation.
+STOPPING: |-
+  Stopping...
+DELETING: |-
+  Deleting...
+BOT_DELETED: |-
+  Done! The bot is gone.
+BOT_AUTH_FAILED: |-
+  Your bot @() could not be authenticated ( token revoke / deleted ), has been removed.
+BOT_LOGOUT: |-
+  Your bot @() has been logged out ( token revoke / deleted ), has been removed.
+
+SET_STARTS_DEF: |-
+  set bot start messages
+SELECT_TO_SET: |-
+  Choose a bot to set.
+INPUT_MESSAGES: |-
+  Now send me messages:
+
+  Type /submit to submit
+  Type /cancel to exit
+MESSAGE_ADDED: |-
+  Added.
+
+  Type /submit to submit
+  Type /cancel to exit
+MESSAGE_ADDED_FWD: |-
+  Added (forward).
+
+  Type /submit to submit
+  Type /cancel to exit
+
+INPUT_NOTICE: |-
+  From: {}
+  Name: {}
+BANDED_BY: |-
+  user not found or bot not activeted by target.
+JOINED_NOTICE: |-
+  Joined Chat: {}
+  Name: {}
+JOIN_NON_PM: |-
+  Join non-private chat is temporarily not supported, pr is welcome.
+EXITED: |-
+  Exited.
+SENT: |-
+  Sent.
+REPLIED: |-
+  Replied.
+EDITED: |-
+  Edited.
+DELETED: |-
+  Deleted.
+RECORD_NF: |-
+  record not found.
+REPLIED_NF: |-
+  replied message deleted by target user.
+MESSAGE_DELETED: |-
+  This message has been deleted by target user.
+MESSAGE_EDITED: |-
+  This message has been edited by target user.
+
+PM_HELP: |-
+  Noting to do.
+
+  Use /join <reply/chatId/@username/mention> to join a chat,
+  Use /exit to exit a chat.
