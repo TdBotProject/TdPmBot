@@ -8,7 +8,6 @@ import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.NO_BOTS
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.database.UserBots
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import td.TdApi
 
@@ -22,7 +21,7 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
     }
 
-    fun doSelect(userId: Int, subId: Long,message: String) {
+    suspend fun doSelect(userId: Int, subId: Long,message: String) {
 
         val L = LocaleController.forChat(userId)
 
@@ -36,11 +35,15 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
         if (bots.isEmpty()) {
 
+            userCalled(userId, "no any bots yet")
+
             sudo make L.NO_BOTS sendTo userId
 
             return
 
         }
+
+        userCalled(userId, "bots: ${bots.joinToString(", ") { "@$it" }}")
 
         writePersist(userId, persistId, 0L, subId.toByteArray())
 
@@ -85,6 +88,8 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
             if (botUserName == null || !botUserName.startsWith("@")) {
 
+                userCalled(userId, "not a bot username")
+
                 invalidBot()
 
                 return
@@ -110,6 +115,8 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
             }
 
             if (userBot == null) {
+
+                userCalled(userId, "bot record not found or has diff owner")
 
                 invalidBot()
 

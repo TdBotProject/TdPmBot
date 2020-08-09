@@ -156,11 +156,12 @@ elif [ "$1" == "upgrade" ]; then
 
 elif [ "$1" == "log" ]; then
 
-  journalctl -u $serviceName -f
+  journalctl -u $serviceName -o short --no-hostname -f -n 40
+
 
 elif [ "$1" == "logs" ]; then
 
-  journalctl -u $serviceName --no-tail -e
+  journalctl -u $serviceName -o short --no-hostname --no-tail -e
 
 else
 

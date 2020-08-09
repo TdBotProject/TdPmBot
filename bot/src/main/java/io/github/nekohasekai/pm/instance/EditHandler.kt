@@ -23,10 +23,10 @@ class EditHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
         } ?: return
 
-        val targetChat = record.chatId
-        val targetMessage = record.targetId!!
-
         if (chatId == admin.toLong() && record.type == MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE) {
+
+            val targetChat = record.chatId
+            val targetMessage = record.targetId!!
 
             // 同步编辑消息
 
@@ -64,15 +64,20 @@ class EditHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
             }
 
+            finishEvent()
+
         } else if (record.type == MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE) {
+
+            val targetChat = record.chatId
+            val targetMessage = record.targetId!!
 
             sudo make L.MESSAGE_EDITED replyTo targetMessage syncTo targetChat
 
             forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.SendMessageOptions(), asAlbum = false, sendCopy = false, removeCaption = false)
 
-        }
+            finishEvent()
 
-        finishEvent()
+        }
 
     }
 

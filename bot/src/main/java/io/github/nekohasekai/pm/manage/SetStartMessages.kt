@@ -1,9 +1,6 @@
 package io.github.nekohasekai.pm.manage
 
-import io.github.nekohasekai.nekolib.core.utils.asInputOrForward
-import io.github.nekohasekai.nekolib.core.utils.input
-import io.github.nekohasekai.nekolib.core.utils.invoke
-import io.github.nekohasekai.nekolib.core.utils.make
+import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.nekolib.i18n.SETTING_SAVED
 import io.github.nekohasekai.pm.*
@@ -42,6 +39,8 @@ class SetStartMessages : UserBotSelector(true) {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
+        userCalled(userId, "start select bot to select")
+
         val L = LocaleController.forChat(userId)
 
         doSelect(userId, 0L, L.SELECT_TO_SET)
@@ -61,11 +60,15 @@ class SetStartMessages : UserBotSelector(true) {
 
         if (userBot == null) {
 
+            userCalled(userId, "set launcher`s start messages")
+
             startSet(L, userId, chatId)
 
             return
 
         }
+
+        userCalled(userId, "set @${userBot.username} start messages")
 
         BotInstances.initBot(userBot).findHandler<SetStartMessages>().startSet(L, userId, chatId)
 
@@ -88,6 +91,8 @@ class SetStartMessages : UserBotSelector(true) {
         super.onPersistMessage(userId, chatId, message, subId, data)
 
         if (subId == 1L) {
+
+            userCalled(userId, "added message ${message.content.javaClass.simpleName.substringAfter("Message")}")
 
             val L = LocaleController.forChat(userId)
 
@@ -113,34 +118,77 @@ class SetStartMessages : UserBotSelector(true) {
 
     override suspend fun onPersistFunction(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        if (function != "submit") rejectFunction()
+        if (function == "submit") {
 
-        sudo removePersist userId
+            sudo removePersist userId
 
-        val L = LocaleController.forChat(userId)
+            val L = LocaleController.forChat(userId)
 
-        val cache = data[0] as StartMessagesCache
+            val cache = data[0] as StartMessagesCache
 
-        val botUserId = cache.botId
+            val botUserId = cache.botId
 
-        if (!Launcher.admins.contains(userId) && database { UserBot.findById(botUserId)?.owner != userId }) {
+            if (!Launcher.admins.contains(userId) && database { UserBot.findById(botUserId)?.owner != userId }) {
 
-            // 权限检查
+                // 权限检查
 
-            sudo make L.INVALID_SELECTED sendTo chatId
+                userCalled(userId, "submit start messages to outdated bot")
 
-            return
+                sudo make L.INVALID_SELECTED sendTo chatId
+
+                return
+
+            }
+
+            userCalled(userId, "submitted start messages to $botUserId")
+
+            val column = StartMessages.Cache.fetch(botUserId)
+
+            column.value = cache.messages
+            column.changed = true
+
+            StartMessages.Cache.remove(botUserId)
+
+            sudo make L.SETTING_SAVED sendTo chatId
+
+        } else if (function == "reset") {
+
+            sudo removePersist userId
+
+            val L = LocaleController.forChat(userId)
+
+            val cache = data[0] as StartMessagesCache
+
+            val botUserId = cache.botId
+
+            if (!Launcher.admins.contains(userId) && database { UserBot.findById(botUserId)?.owner != userId }) {
+
+                // 权限检查
+
+                userCalled(userId, "submit start messages to outdated bot")
+
+                sudo make L.INVALID_SELECTED sendTo chatId
+
+                return
+
+            }
+
+            userCalled(userId, "reset start messages to $botUserId")
+
+            val column = StartMessages.Cache.fetch(botUserId)
+
+            column.value = null
+            column.changed = true
+
+            StartMessages.Cache.remove(botUserId)
+
+            sudo make L.MESSAGES_RESET sendTo chatId
+
+        } else {
+
+            rejectFunction()
 
         }
-
-        val column = StartMessages.Cache.fetch(botUserId)
-
-        column.value = cache.messages
-        column.changed = true
-
-        StartMessages.Cache.remove(botUserId)
-
-        sudo make L.SETTING_SAVED sendTo chatId
 
     }
 

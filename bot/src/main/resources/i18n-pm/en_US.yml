@@ -5,6 +5,7 @@ HELP_MSG: |-
 
   /new_bot - create a new pm bot
   /delete_bot - delete a pm bot
+  /set_start_messages - set bot start messages
 
   For help, please check out https://github.com/TdBotProject/TdPmBot, or contact us at @TdBotProject 's discuss group.
 PRIVATE_INSTANCE: |-
@@ -13,7 +14,7 @@ PRIVATE_INSTANCE: |-
 CREATE_BOT_DEF: |-
   create a new bot
 INPUT_BOT_TOKEN: |-
-  Enter the [Bot Token](https://core.telegram.org/bots#creating-a-new-bot) obtained from @BotFather :
+  Enter the <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> obtained from @BotFather :
 INVALID_BOT_TOKEN: |-
   Invalid bot token.
 
@@ -71,19 +72,29 @@ SELECT_TO_SET: |-
 INPUT_MESSAGES: |-
   Now send me messages:
 
+  Type /reset to reset
   Type /submit to submit
   Type /cancel to exit
 MESSAGE_ADDED: |-
   Added.
 
+  Type /reset to reset
   Type /submit to submit
   Type /cancel to exit
 MESSAGE_ADDED_FWD: |-
   Added (forward).
 
+  Type /reset to reset
   Type /submit to submit
   Type /cancel to exit
+MESSAGES_RESET: |-
+  Has been reset.
+DEFAULT_WELCOME: |-
+  Hello!
 
+  You can contact us by leaving a message here.
+POWERED_BY: |-
+  This bot is powered by @{}, {}
 INPUT_NOTICE: |-
   From: {}
   Name: {}
@@ -96,6 +107,9 @@ JOIN_NON_PM: |-
   Join non-private chat is temporarily not supported, pr is welcome.
 EXITED: |-
   Exited.
+NOTHING_TO_EXIT: |-
+  No joined chat to exit. I wasn't doing anything anyway. Zzzzz...
+
 SENT: |-
   Sent.
 REPLIED: |-

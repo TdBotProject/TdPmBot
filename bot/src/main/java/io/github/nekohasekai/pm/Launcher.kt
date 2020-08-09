@@ -41,11 +41,23 @@ object Launcher : TdCli() {
 
         unsafe.putObjectVolatile(loggerClass, unsafe.staticFieldOffset(loggerField), null)
 
-        LOG_LEVEL = Level.DEBUG
+        readSettings("pm.conf")?.insertProperties()
+
+        val logLevel = stringEnv("LOG_LEVEL").takeIf { !it.isNullOrBlank() }?.toUpperCase() ?: "INFO"
+
+        runCatching {
+
+            LOG_LEVEL = Level.valueOf(logLevel)
+
+        }.onFailure {
+
+            LOG_LEVEL = Level.INFO
+
+            defaultLog.error("Invalid log level $logLevel, fallback to INFO.")
+
+        }
 
         TdLoader.tryLoad()
-
-        readSettings("pm.conf")?.insertProperties()
 
         if (admins.isEmpty()) {
 
@@ -133,18 +145,6 @@ object Launcher : TdCli() {
 
     }
 
-    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
-
-        super.onNewMessage(userId, chatId, message)
-
-        if (public && message.fromPrivate && admins.contains(userId)) {
-
-            onLaunch(userId, chatId, message)
-
-        }
-
-    }
-
     const val repoName = "TdPmBot"
     const val repoUrl = "https://github.com/TdBotProject/TdPmBot"
     const val licenseUrl = "https://github.com/TdBotProject/TdPmBot/blob/master/LICENSE"
@@ -187,13 +187,13 @@ object Launcher : TdCli() {
 
         if (!admins.contains(userId)) {
 
-            sudo makeMd L.PUBLIC_WARN.input(repoUrl) syncTo chatId
+            sudo makeHtml L.PUBLIC_WARN.input(repoUrl) syncTo chatId
 
             delay(600L)
 
         }
 
-        sudo makeMd L.LICENSE.input(repoName, licenseUrl, "Github Repo", repoUrl) syncTo chatId
+        sudo makeHtml L.LICENSE.input(repoName, licenseUrl, "Github Repo".toLink(repoUrl)) syncTo chatId
 
         delay(600L)
 

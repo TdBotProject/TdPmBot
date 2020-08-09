@@ -25,7 +25,7 @@ jobs:
           graalvm-version: 20.1.0
       - name: Run Maven Build
         run: |
-          ./bot.sh rebuild -P proguard
+          ./bot.sh rebuild
           echo ::set-env name=JAR_FILE::$(find . -maxdepth 1 -name *.jar)
       - name: Upload Jar
         uses: actions/upload-artifact@master

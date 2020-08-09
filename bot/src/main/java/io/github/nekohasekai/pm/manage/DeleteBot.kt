@@ -31,6 +31,8 @@ class DeleteBot : UserBotSelector() {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
+        userCalled(userId, "start select bot to delete")
+
         val L = LocaleController.forChat(userId)
 
         doSelect(userId, 0L , L.SELECT_TO_DELETE)
@@ -40,6 +42,8 @@ class DeleteBot : UserBotSelector() {
     override suspend fun onSelected(userId: Int, chatId: Long, subId: Long, userBot: UserBot?) {
 
         userBot!!
+
+        userCalled(userId, "send delete confirm for bot @${userBot.username}")
 
         writePersist(userId, persistId, 1L, userBot.botId.toByteArray())
 
@@ -61,6 +65,8 @@ class DeleteBot : UserBotSelector() {
 
             if (userBot == null || userBot.owner != userId) {
 
+                userCalled(userId, "outdated bot in persist")
+
                 sudo make L.INVALID_SELECTED sendTo chatId
 
                 return
@@ -68,6 +74,8 @@ class DeleteBot : UserBotSelector() {
             }
 
             if (message.text?.matches(L.DELETE_CONFIRM_REGEX.toRegex()) == true) {
+
+                userCalled(userId, "confirmed delete bot @${userBot.username}")
 
                 sudo removePersist userId
 

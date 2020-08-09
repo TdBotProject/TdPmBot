@@ -28,8 +28,9 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 
 `BOT_LANG`: 工作语言, 暂仅支持 `zh_CN`, `en_US`.   
 `BOT_TOKEN`: 指定 BotToken.  
-`PUBLIC`: 是否以公开模式运行 (否则为单例)
-`ADMINS`: 管理员列表 空格分隔
+`PUBLIC`: 是否以公开模式运行 (否则为单例)  
+`ADMINS`: 管理员列表 空格分隔  
+`LOG_LEVEL`: 日志等级, 可为 `ALL TRACE DEBUG INFO WARN ERROR FATAL OFF`
 
 若您不知道账号ID, 可留空, 启动后发送 /id 到机器人获取.
 
@@ -41,6 +42,9 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 `./bot.sh init` 注册 systemd 服务  
 `./bot.sh <start/stop/restart>` 启动停止  
 `./bot.sh <enable/disable>` 启用禁用 (开机启动)  
+`./bot.sh rebuild` 重新编译  
+`./bot.sh update` 更新  
+`./bot.sh upgrade` 更新并重启服务  
 `./bot.sh log` 实时日志  
 `./bot.sh logs` 打印所有日志
 

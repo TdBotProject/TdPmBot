@@ -7,6 +7,7 @@ import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.NOTHING_TO_CANCEL
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.PmInstance
@@ -52,7 +53,7 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
                     if (entity.type is TdApi.TextEntityTypeMention) {
 
-                        val username = message.text!!.substring(entity.offset, entity.length).substringAfter("@")
+                        val username = message.text!!.substring(entity.offset, entity.offset + entity.length).substringAfter("@")
 
                         val user = searchPublicChatOrNull(username) ?: continue
 
@@ -86,14 +87,6 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
             }
 
-            if (!chatId.fromPrivate) {
-
-                sudo make L.failed { JOIN_NON_PM } to chatId send deleteDelay(message)
-
-                return
-
-            }
-
             val targetChat = try {
 
                 getChat(chatToJoin)
@@ -106,17 +99,47 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
             }
 
+            val chatType = targetChat.type
+
+            if (chatType !is TdApi.ChatTypePrivate) {
+
+                sudo make L.failed { JOIN_NON_PM } replyTo message
+
+                return
+
+            }
+
+            val targetUser = try {
+
+                getUser(chatType.userId)
+
+            } catch (e: TdException) {
+
+                sudo make L.failed { JOIN_NON_PM } replyTo message
+
+                return
+
+            }
+
             findHandler<OutputHandler>().currentChat = targetChat.id
 
-            val user = getUser(targetChat.id.toInt())
-
-            sudo makeHtml L.JOINED_NOTICE.input(user.asIdMention, user.displayNameHtml.asCode) sendTo chatId
+            sudo makeHtml L.JOINED_NOTICE.input(targetUser.asIdMention, targetUser.displayNameHtml.asCode) sendTo chatId
 
         } else {
 
-            findHandler<OutputHandler>().currentChat = 0L
+            val out = findHandler<OutputHandler>()
 
-            sudo make L.EXITED sendTo chatId
+            if (out.currentChat != 0L) {
+
+                out.currentChat = 0L
+
+                sudo make L.EXITED sendTo chatId
+
+            } else {
+
+                sudo make L.NOTHING_TO_EXIT sendTo chatId
+
+            }
 
         }
 

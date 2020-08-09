@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.core.client.TdBot
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.LICENSE
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.*
@@ -26,7 +27,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         if (auth && authorizationState is TdApi.AuthorizationStateClosed) {
 
-            defaultLog.debug("${me.displayName} (@${me.username}): PmBot Closed")
+            defaultLog.info("${me.displayName} (@${me.username}): PmBot Closed")
 
         }
 
@@ -36,7 +37,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     override suspend fun onLogin() {
 
-        defaultLog.debug("${me.displayName} (@${me.username}): PmBot Loaded")
+        defaultLog.info("${me.displayName} (@${me.username}): PmBot Loaded")
 
         upsertCommands()
 
@@ -111,9 +112,17 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
             val startMessages = StartMessages.Cache.fetch(botUserId).value
 
-            startMessages?.forEach {
+            if (startMessages == null) {
 
-                sudo make it syncTo chatId
+                sudo makeHtml L.DEFAULT_WELCOME + "\n\n" + L.POWERED_BY.input(Launcher.me.username,L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl))) sendTo chatId
+
+            } else {
+
+                startMessages.forEach {
+
+                    sudo make it syncTo chatId
+
+                }
 
             }
 

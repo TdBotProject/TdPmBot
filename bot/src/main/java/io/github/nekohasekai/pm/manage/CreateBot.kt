@@ -34,6 +34,8 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
         if (!message.fromPrivate) {
 
+            userCalled(userId, "create in non-private chat")
+
             sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
 
             return
@@ -42,9 +44,13 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
         if (param.isTokenInvalid) {
 
+            userCalled(userId, "start create with non-valid token param")
+
             startCreate(userId, chatId)
 
         } else {
+
+            userCalled(userId, "create with valid token: $param")
 
             createByToken(userId, chatId, param)
 
@@ -56,13 +62,15 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
         val L = LocaleController.forChat(userId)
 
-        sudo makeMd L.INPUT_BOT_TOKEN withMarkup TdApi.ReplyMarkupForceReply(true) sendTo chatId
+        sudo makeHtml L.INPUT_BOT_TOKEN withMarkup TdApi.ReplyMarkupForceReply(true) sendTo chatId
 
         writePersist(userId, persistId, 0L)
 
     }
 
     override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>) {
+
+        userCalled(userId, "inputted token: ${message.text}")
 
         createByToken(userId, chatId, message.text)
 
@@ -75,6 +83,8 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
         val L = LocaleController.forChat(userId)
 
         if (token.isTokenInvalid) {
+
+            userCalled(userId, "token invalid")
 
             sudo make L.INVALID_BOT_TOKEN.input("") sendTo chatId
 
@@ -94,6 +104,8 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
         } catch (e: TdException) {
 
+            userCalled(userId, "token invalid: ${e.message}")
+
             sudo make L.INVALID_BOT_TOKEN.input(" (${e.message})") editTo status
 
             return
@@ -103,6 +115,8 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
         val exists = TdClient.clients.any { botMe.id() == it.me.id } || database { UserBot.findById(botMe.id()) } != null
 
         if (exists) {
+
+            userCalled(userId, "created bot but exists: ${botMe.username()} (${botMe.id()})")
 
             sudo make L.failed { ALREADY_EXISTS } syncEditTo status
 
@@ -134,9 +148,7 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
         } else {
 
-            defaultLog.warn("Pm bot failed when start")
-
-            // TODO: handle bot stop
+            warnUserCalled(userId, "start failed when created")
 
         }
 

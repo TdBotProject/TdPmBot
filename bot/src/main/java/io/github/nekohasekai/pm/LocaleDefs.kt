@@ -44,6 +44,7 @@ internal val LocaleController.BANDED_BY by string
 internal val LocaleController.JOINED_NOTICE by string
 internal val LocaleController.JOIN_NON_PM by string
 internal val LocaleController.EXITED by string
+internal val LocaleController.NOTHING_TO_EXIT by string
 internal val LocaleController.SENT by string
 internal val LocaleController.REPLIED by string
 internal val LocaleController.EDITED by string
@@ -52,5 +53,8 @@ internal val LocaleController.RECORD_NF by string
 internal val LocaleController.REPLIED_NF by string
 internal val LocaleController.MESSAGE_DELETED by string
 internal val LocaleController.MESSAGE_EDITED by string
+internal val LocaleController.MESSAGES_RESET by string
+internal val LocaleController.DEFAULT_WELCOME by string
+internal val LocaleController.POWERED_BY by string
 
 internal val LocaleController.PM_HELP by string

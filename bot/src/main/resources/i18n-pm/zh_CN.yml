@@ -10,7 +10,7 @@ HELP_MSG: |-
 
 CREATE_BOT_DEF: 创建新机器人
 INPUT_BOT_TOKEN: |-
-  输入从 @BotFather 获取的 [Bot Token](https://core.telegram.org/bots#creating-a-new-bot) :
+  输入从 @BotFather 获取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
 INVALID_BOT_TOKEN: |-
   无效的 Bot Token{}.
 
@@ -70,18 +70,29 @@ JUMP_TO_SET: |-
 INPUT_MESSAGES: |-
   现在向我发送任意消息:
 
+  使用 /reset 重置
   使用 /submit 提交
   使用 /cancel 取消
 MESSAGE_ADDED: |-
   已添加.
 
+  使用 /reset 重置
   使用 /submit 提交
   使用 /cancel 取消
 MESSAGE_ADDED_FWD: |-
   已添加 (转发).
 
+  使用 /reset 重置
   使用 /submit 提交
   使用 /cancel 取消
+MESSAGES_RESET: |-
+  已重置.
+DEFAULT_WELCOME: |-
+  您好!
+
+  您可以在此留言联系我(们).
+POWERED_BY: |-
+  本机器人使用 @{} 创建, {}
 
 INPUT_NOTICE: |-
   来自: {}
@@ -95,6 +106,8 @@ JOIN_NON_PM: |-
   进入非私聊暂不支持, 欢迎提交PR :)
 EXITED: |-
   已退出.
+NOTHING_TO_EXIT: |-
+  无事可做.
 SENT: |-
   已发送.
 REPLIED: |-
