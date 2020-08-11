@@ -12,13 +12,15 @@ import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
 
-class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
     var currentChat = 0L
 
     override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (chatId != userId.toLong() || userId != admin) return
+        val integration = integration
+
+        if (chatId != admin && chatId != integration?.integration) return
 
         fun saveSent(targetChat: Long, sentMessageId: Long) {
 
@@ -56,13 +58,19 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
             if (currentChat == 0L) {
 
-                if (sudo is PmBot) {
+                if (sudo is PmBot && chatId == admin) {
 
-                    sudo make L.PM_HELP sendTo chatId
+                    sudo make L.PM_HELP syncReplyTo message
 
                 }
 
                 return
+
+            }
+
+            if (chatId == integration?.integration) {
+
+                if (integration.adminOnly && checkChatAdmin(message)) return
 
             }
 
@@ -83,6 +91,12 @@ class OutputHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
             sudo make L.SENT replyTo message send deleteDelay()
 
             return
+
+        }
+
+        if (chatId == integration?.integration) {
+
+            if (integration.adminOnly && checkChatAdmin(message)) return
 
         }
 

@@ -69,26 +69,40 @@ SET_STARTS_DEF: |-
   set bot start messages
 SELECT_TO_SET: |-
   Choose a bot to set.
+JUMP_TO_SET: |-
+  Now go to your bot to continue setting: @{}
+SET_MESSAGES_STATUS: |-
+  Current start messages: {}
+SETTING_UNDEF: |-
+  defualt
+EMPTY: |-
+  empty
+MESSAGES_STATUS_COUNT: |-
+  {} messages
 INPUT_MESSAGES: |-
   Now send me messages:
 
+  Or:
+
   Type /reset to reset
-  Type /submit to submit
   Type /cancel to exit
 MESSAGE_ADDED: |-
   Added.
 
-  Type /reset to reset
+  Type /preview to preview
   Type /submit to submit
   Type /cancel to exit
 MESSAGE_ADDED_FWD: |-
   Added (forward).
 
-  Type /reset to reset
+  Type /preview to preview
   Type /submit to submit
   Type /cancel to exit
 MESSAGES_RESET: |-
   Has been reset.
+ERROR_IN_PREVIEW: |-
+  Error: {}, please reset: Please do not delete the message containing file (including stickers, videos and other media) after the setting is completed.
+
 DEFAULT_WELCOME: |-
   Hello!
 

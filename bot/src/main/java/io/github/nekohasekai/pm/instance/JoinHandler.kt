@@ -13,7 +13,7 @@ import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
 
-class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
     override fun onLoad() {
 
@@ -23,7 +23,15 @@ class JoinHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(),
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        if (chatId != admin.toLong()) rejectFunction()
+        val integration = integration
+
+        if (chatId != admin && chatId != integration?.integration) rejectFunction()
+
+        if (chatId == integration?.integration) {
+
+            if (integration.adminOnly && checkChatAdmin(message)) return
+
+        }
 
         if (function == "join") {
 

@@ -3,7 +3,6 @@ package io.github.nekohasekai.pm.instance
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.deleteDelay
-import io.github.nekohasekai.nekolib.core.utils.invoke
 import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.core.utils.syncDelete
 import io.github.nekohasekai.pm.DELETED
@@ -13,7 +12,7 @@ import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
 
-class DeleteHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
     override suspend fun onDeleteMessages(chatId: Long, messageIds: LongArray, isPermanent: Boolean, fromCache: Boolean) {
 
@@ -25,7 +24,9 @@ class DeleteHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
         if (records.isEmpty()) return
 
-        if (chatId == admin.toLong()) {
+        val integration = integration
+
+        if (chatId == admin || chatId == integration?.integration) {
 
             // 主人删除消息 对等删除
 
@@ -43,7 +44,7 @@ class DeleteHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
                 try {
 
-                    database {
+                    database.write {
 
                         it.delete()
 
@@ -76,7 +77,7 @@ class DeleteHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
             }.forEach { record ->
 
-                database {
+                database.write {
 
                     record.delete()
 
@@ -90,7 +91,7 @@ class DeleteHandler(private val admin: Int, pmInstance: PmInstance) : TdHandler(
 
                         it.delete()
 
-                        sudo make L.MESSAGE_DELETED replyTo it.messageId sendTo admin.toLong() onError null
+                        sudo make L.MESSAGE_DELETED replyTo it.messageId sendTo admin
 
                     }
 

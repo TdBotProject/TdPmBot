@@ -1,9 +1,14 @@
 #!/bin/bash
 
 # --------------------------- #
-serviceName="td-pm"
-artifact="td-pm-bot"
-module="bot"
+ARTIFACT="td-pm-bot"
+MODULE="bot"
+SERVICE_NAME="td-pm"
+MVN_ARGS=""
+JAVA_ARGS=""
+ARGS=""
+
+[ -f "pm.conf" ] && source "pm.conf"
 # --------------------------- #
 
 info() { echo "I: $*"; }
@@ -27,9 +32,9 @@ if [ "$1" == "init" ]; then
 
   echo ">> 写入服务"
 
-  cat >/etc/systemd/system/$serviceName.service <<EOF
+  cat >/etc/systemd/system/$SERVICE_NAME.service <<EOF
 [Unit]
-Description=Telegram Bot ($serviceName)
+Description=Telegram Bot ($SERVICE_NAME)
 After=network.target
 Wants=network.target
 
@@ -48,7 +53,7 @@ EOF
 
   echo ">> 写入启动项"
 
-  systemctl enable $serviceName &>/dev/null
+  systemctl enable $SERVICE_NAME &>/dev/null
 
   echo "<< 完毕."
 
@@ -56,11 +61,11 @@ EOF
 
 elif [ "$1" == "run" ]; then
 
-  target="$artifact-$(git rev-parse --short HEAD).jar"
+  target="$ARTIFACT-$(git rev-parse --short HEAD).jar"
 
-#  if [ ! -x "$(find . -maxdepth 1 -name ${artifact}-*))" ]; then
-#    for oldTarget in ./${artifact}-*; do
-  if [ ! -x "$(find . -maxdepth 1 -name '*.jar'))" ]; then
+  #  if [ ! -x "$(find . -maxdepth 1 -name ${artifact}-*))" ]; then
+  #    for oldTarget in ./${artifact}-*; do
+  if [ ! -x "$(find . -maxdepth 1 -type f -name '*.jar'))" ]; then
     for oldTarget in ./*.jar; do
       if [ ! $oldTarget -ef $target ]; then
         rm $oldTarget
@@ -72,17 +77,25 @@ elif [ "$1" == "run" ]; then
 
   shift
 
-  java -jar $target $@
+  if [ ! -x "$@"]; then
+
+    java $JAVA_ARGS -jar $target $@
+
+  else
+
+    java $JAVA_ARGS -jar $target $ARGS
+
+  fi
 
 elif [ "$1" == "start" ]; then
 
-  systemctl start $serviceName
+  systemctl start $SERVICE_NAME
 
   bash $0 log
 
 elif [ "$1" == "restart" ]; then
 
-  systemctl restart $serviceName &
+  systemctl restart $SERVICE_NAME &
 
   bash $0 log
 
@@ -100,15 +113,9 @@ elif [ "$1" == "rebuild" ]; then
 
   shift
 
-  target="$artifact-$(git rev-parse --short HEAD).jar"
+  target="$ARTIFACT-$(git rev-parse --short HEAD).jar"
 
-  bash mvnw -T 1C package $@
-
-  if [ $? -eq 0 ]; then
-
-    cp -f $module/target/$artifact.jar $target
-
-  fi
+  bash mvnw -T 1C package $MVN_ARGS && cp -f $MODULE/target/$ARTIFACT.jar $target
 
 elif [ "$1" == "update" ]; then
 
@@ -156,15 +163,16 @@ elif [ "$1" == "upgrade" ]; then
 
 elif [ "$1" == "log" ]; then
 
-  journalctl -u $serviceName -o short --no-hostname -f -n 40
+  journalctl -u $SERVICE_NAME -o short --no-hostname -f -n 40
 
+elif
+  [ "$1" == "logs" ]
+then
 
-elif [ "$1" == "logs" ]; then
-
-  journalctl -u $serviceName -o short --no-hostname --no-tail -e
+  journalctl -u $SERVICE_NAME -o short --no-hostname --no-tail -e
 
 else
 
-  systemctl "$1" $serviceName
+  systemctl "$1" $SERVICE_NAME
 
 fi

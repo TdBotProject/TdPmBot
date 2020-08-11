@@ -1,9 +1,6 @@
 package io.github.nekohasekai.pm.database
 
-import io.github.nekohasekai.nekolib.core.utils.kryo
 import org.jetbrains.exposed.dao.id.IdTable
-import td.TdApi
-import java.util.*
 
 object UserBots : IdTable<Int>("user_bots") {
 

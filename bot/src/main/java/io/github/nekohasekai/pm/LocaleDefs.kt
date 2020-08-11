@@ -34,10 +34,15 @@ internal val LocaleController.BOT_LOGOUT by string
 internal val LocaleController.SET_STARTS_DEF by string
 internal val LocaleController.SELECT_TO_SET by string
 internal val LocaleController.JUMP_TO_SET by string
-
+internal val LocaleController.SET_MESSAGES_STATUS by string
+internal val LocaleController.SETTING_UNDEF by string
+internal val LocaleController.EMPTY by string
+internal val LocaleController.MESSAGES_STATUS_COUNT by string
 internal val LocaleController.INPUT_MESSAGES by string
 internal val LocaleController.MESSAGE_ADDED by string
 internal val LocaleController.MESSAGE_ADDED_FWD by string
+internal val LocaleController.MESSAGES_RESET by string
+internal val LocaleController.ERROR_IN_PREVIEW by string
 
 internal val LocaleController.INPUT_NOTICE by string
 internal val LocaleController.BANDED_BY by string
@@ -53,7 +58,6 @@ internal val LocaleController.RECORD_NF by string
 internal val LocaleController.REPLIED_NF by string
 internal val LocaleController.MESSAGE_DELETED by string
 internal val LocaleController.MESSAGE_EDITED by string
-internal val LocaleController.MESSAGES_RESET by string
 internal val LocaleController.DEFAULT_WELCOME by string
 internal val LocaleController.POWERED_BY by string
 

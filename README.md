@@ -8,7 +8,7 @@
 apt install -y openssl git zlib1g libc++-dev default-jdk
 ```
 
-注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJNI](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.  
+注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.  
 
 如遇到找不到 LIBC 库, 请更新系统或编译安装.
 
@@ -24,13 +24,23 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 
 ## 配置
 
-请创建 ( 您也可使用环境遍历指定 )
+复制 `_pm.conf` 到 `pm.conf`
 
+```
 `BOT_LANG`: 工作语言, 暂仅支持 `zh_CN`, `en_US`.   
 `BOT_TOKEN`: 指定 BotToken.  
 `PUBLIC`: 是否以公开模式运行 (否则为单例)  
-`ADMINS`: 管理员列表 空格分隔  
+`ADMIN`: 管理员ID  
 `LOG_LEVEL`: 日志等级, 可为 `ALL TRACE DEBUG INFO WARN ERROR FATAL OFF`
+```
+
+### 高级配置
+```
+SERVICE_NAME: systemd 服务名称, 默认 `td-pm`, 修改如果您需要多个实例.
+MVN_ARGS: Maven 编译参数.
+JAVA_ARGS: JVM 启动参数.
+ARGS="": 启动参数.
+```
 
 若您不知道账号ID, 可留空, 启动后发送 /id 到机器人获取.
 

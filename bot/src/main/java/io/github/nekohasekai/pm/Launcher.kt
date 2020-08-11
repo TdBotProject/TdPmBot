@@ -16,30 +16,16 @@ import io.github.nekohasekai.pm.manage.SetStartMessages
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.objenesis.instantiator.util.UnsafeUtils
 import td.TdApi
 
 object Launcher : TdCli() {
 
     private val public get() = booleanEnv("PUBLIC")
 
-    val admins by lazy {
-        (stringEnv("ADMINS") ?: "")
-                .split(" ")
-                .filter { NumberUtil.isInteger(it) }
-                .map { it.toInt() }
-                .toIntArray()
-    }
+    val admin by lazy { intEnv("ADMIN").toLong() }
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking {
-
-        val unsafe = UnsafeUtils.getUnsafe()
-
-        val loggerClass = Class.forName("jdk.internal.module.IllegalAccessLogger")
-        val loggerField = loggerClass.getDeclaredField("logger")
-
-        unsafe.putObjectVolatile(loggerClass, unsafe.staticFieldOffset(loggerField), null)
 
         readSettings("pm.conf")?.insertProperties()
 
@@ -59,7 +45,7 @@ object Launcher : TdCli() {
 
         TdLoader.tryLoad()
 
-        if (admins.isEmpty()) {
+        if (admin == 0L) {
 
             defaultLog.warn("Admin not specified, use /id to get your userid.")
 
@@ -83,11 +69,12 @@ object Launcher : TdCli() {
 
             initPersistDatabase()
 
-            database {
+            database.write {
 
                 SchemaUtils.createMissingTablesAndColumns(
                         UserBots,
-                        StartMessages
+                        StartMessages,
+                        BotIntegrations
                 )
 
             }
@@ -103,10 +90,6 @@ object Launcher : TdCli() {
             addHandler(CreateBot())
             addHandler(DeleteBot())
             addHandler(SetStartMessages())
-
-        } else if (admins.size > 1) {
-
-            defaultLog.warn("More than one id is specified in non-public mode, others will be ignored.")
 
         }
 
@@ -135,7 +118,7 @@ object Launcher : TdCli() {
 
         }
 
-        if (admins.isNotEmpty()) {
+        if (admin != 0L) {
 
             addHandler(SingleInstance(me.id))
 
@@ -149,15 +132,27 @@ object Launcher : TdCli() {
     const val repoUrl = "https://github.com/TdBotProject/TdPmBot"
     const val licenseUrl = "https://github.com/TdBotProject/TdPmBot/blob/master/LICENSE"
 
+    override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+
+        if (!public && chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+
+    }
+
+    override suspend fun onUndefinedPayload(userId: Int, chatId: Long, message: TdApi.Message, payload: String, params: Array<String>) {
+
+        if (!public && chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedPayload(userId, chatId, message, payload, params)
+
+    }
+
     override suspend fun onLaunch(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (!message.fromPrivateOrdelete) return
+        if (!message.fromPrivate) return
 
         val L = LocaleController.forChat(userId)
 
         val startMessages = StartMessages.Cache.fetch(me.id).value
 
-        if (!public && !admins.contains(userId)) {
+        if (!public && chatId != admin) {
 
             if (startMessages == null) {
 
@@ -185,7 +180,7 @@ object Launcher : TdCli() {
 
         }
 
-        if (!admins.contains(userId)) {
+        if (chatId != admin) {
 
             sudo makeHtml L.PUBLIC_WARN.input(repoUrl) syncTo chatId
 
@@ -221,12 +216,16 @@ object Launcher : TdCli() {
 
     }
 
-    class SingleInstance(botId: Int) : TdHandler(), PmInstance {
+    class SingleInstance(val botId: Int) : TdHandler(), PmInstance {
 
         override val messageRecords = MessageRecords(botId)
         override val messages = MessageRecordDao(messageRecords)
 
-        override val L get() = LocaleController.forChat(admins[0])
+        override val L get() = LocaleController.forChat(admin)
+
+        override val admin = Launcher.admin
+
+        override val integration get() = BotIntegration.Cache.fetch(botId).value
 
         override fun onLoad() {
 
@@ -236,10 +235,12 @@ object Launcher : TdCli() {
 
             }
 
-            addHandler(InputHandler(admins, this))
-            addHandler(OutputHandler(admins[0], this))
-            addHandler(DeleteHandler(admins[0], this))
-            addHandler(JoinHandler(admins[0], this))
+            addHandler(InputHandler(this))
+            addHandler(OutputHandler(this))
+            addHandler(DeleteHandler(this))
+            addHandler(JoinHandler(this))
+
+            removeHandler(this)
 
         }
 

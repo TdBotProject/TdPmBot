@@ -67,26 +67,54 @@ SELECT_TO_SET: |-
   选择要设置的机器人.
 JUMP_TO_SET: |-
   现在到转到您的机器人继续设置: @{}
+SET_MESSAGES_STATUS: |-
+  当前欢迎消息: {}
+SETTING_UNDEF: |-
+  暂未设置
+EMPTY: |-
+  空
+MESSAGES_STATUS_COUNT: |-
+  {} 条消息
 INPUT_MESSAGES: |-
   现在向我发送任意消息:
 
+  或:
+
   使用 /reset 重置
-  使用 /submit 提交
-  使用 /cancel 取消
+  使用 /submit 提交空消息
+  使用 /cancel 退出
 MESSAGE_ADDED: |-
   已添加.
 
-  使用 /reset 重置
+  使用 /preview 预览
   使用 /submit 提交
-  使用 /cancel 取消
+  使用 /cancel 退出
 MESSAGE_ADDED_FWD: |-
   已添加 (转发).
 
-  使用 /reset 重置
+  使用 /preview 预览
   使用 /submit 提交
-  使用 /cancel 取消
+  使用 /cancel 退出
 MESSAGES_RESET: |-
   已重置.
+ERROR_IN_PREVIEW: |-
+  出错: {}, 请重新设置: 注意设置完成后不要删除其中包含文件的消息 (包括 贴纸, 视频等媒体).
+
+SET_INTEGRATION_DEF: |-
+  设置接入群组
+SET_INTEGRATION_: |-
+  接入状态: {}
+  已暂停: {}
+INTEGRATION_UNDEF: |-
+  未接入
+INTEGRATION_OK: |-
+  已接入
+INTEGRATION_PAUSED: |-
+  已暂停
+
+SEND_TO_INTEGRATION_FAILED: |
+  出错: 发送消息到接入的群组失败, 请检查.
+
 DEFAULT_WELCOME: |-
   您好!
 

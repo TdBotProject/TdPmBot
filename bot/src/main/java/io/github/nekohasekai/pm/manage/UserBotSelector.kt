@@ -21,13 +21,11 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
     }
 
-    suspend fun doSelect(userId: Int, subId: Long,message: String) {
-
-        val L = LocaleController.forChat(userId)
+    suspend fun doSelect(L: LocaleController,userId: Int, subId: Long, message: String) {
 
         var bots = database { UserBot.find { UserBots.owner eq userId }.toList() }.map { it.username }
 
-        if (allowSelf && Launcher.admins.contains(userId)) {
+        if (allowSelf && userId == Launcher.admin.toInt()) {
 
             bots = listOf(Launcher.me.username, * bots.toTypedArray())
 
@@ -98,7 +96,7 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
             botUserName = botUserName.substring(1)
 
-            if (Launcher.admins.contains(userId) && botUserName == Launcher.me.username) {
+            if (chatId == Launcher.admin && botUserName == Launcher.me.username) {
 
                 sudo removePersist userId
 

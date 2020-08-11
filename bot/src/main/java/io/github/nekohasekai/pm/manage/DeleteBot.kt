@@ -35,7 +35,7 @@ class DeleteBot : UserBotSelector() {
 
         val L = LocaleController.forChat(userId)
 
-        doSelect(userId, 0L , L.SELECT_TO_DELETE)
+        doSelect(L, userId, 0L , L.SELECT_TO_DELETE)
 
     }
 

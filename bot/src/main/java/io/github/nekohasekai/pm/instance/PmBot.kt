@@ -15,13 +15,14 @@ import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
 
-    val owner = userBot.owner
-
     override val database = Launcher.database
     override val messageRecords = MessageRecords(botUserId)
     override val messages = MessageRecordDao(messageRecords)
 
-    override val L get() = LocaleController.forChat(owner)
+    override val admin get() = userBot.owner.toLong()
+    override val integration get() = BotIntegration.Cache.fetch(botUserId).value
+
+    override val L get() = LocaleController.forChat(userBot.owner)
 
     override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
 
@@ -49,7 +50,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         FileUtil.del(options.databaseDirectory)
 
-        database {
+        database.write {
 
             messageRecords.dropStatement()
             UserBot.removeFromCache(userBot)
@@ -67,7 +68,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         Launcher.apply {
 
-            sudo make L.BOT_AUTH_FAILED.input(userBot.username) sendTo owner
+            sudo make L.BOT_AUTH_FAILED.input(userBot.username) sendTo admin
 
         }
 
@@ -79,7 +80,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         Launcher.apply {
 
-            sudo make L.BOT_LOGOUT.input(userBot.username) sendTo owner
+            sudo make L.BOT_LOGOUT.input(userBot.username) sendTo admin
 
         }
 
@@ -95,26 +96,40 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         }
 
-        addHandler(InputHandler(intArrayOf(owner), this))
-        addHandler(OutputHandler(owner, this))
-        addHandler(EditHandler(owner, this))
-        addHandler(DeleteHandler(owner, this))
-        addHandler(JoinHandler(owner, this))
+        addHandler(InputHandler(this))
+        addHandler(OutputHandler(this))
+        addHandler(EditHandler(this))
+        addHandler(DeleteHandler(this))
+        addHandler(JoinHandler(this))
         addHandler(SetStartMessages())
 
         initStartPayload("finish_creation")
 
     }
 
+    override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+
+        if (chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+
+    }
+
+    override suspend fun onUndefinedPayload(userId: Int, chatId: Long, message: TdApi.Message, payload: String, params: Array<String>) {
+
+        if (chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedPayload(userId, chatId, message, payload, params)
+
+    }
+
     override suspend fun onLaunch(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (userId != owner) {
+        if (!message.fromPrivate) return
+
+        if (chatId != admin) {
 
             val startMessages = StartMessages.Cache.fetch(botUserId).value
 
             if (startMessages == null) {
 
-                sudo makeHtml L.DEFAULT_WELCOME + "\n\n" + L.POWERED_BY.input(Launcher.me.username,L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl))) sendTo chatId
+                sudo makeHtml L.DEFAULT_WELCOME + "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl))) sendTo chatId
 
             } else {
 
@@ -138,7 +153,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         if (payload == "finish_creation") {
 
-            if (userId != owner) rejectFunction()
+            if (chatId != admin) rejectFunction()
 
             sudo make L.CREATE_FINISHED sendTo chatId
 
