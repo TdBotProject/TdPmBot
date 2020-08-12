@@ -9,10 +9,6 @@ import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecord
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_FORWARDED
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_OUTPUT_FORWARDED
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_OUTPUT_MESSAGE
-import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
 
@@ -32,9 +28,9 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             database {
 
-                MessageRecord.new(message.id) {
+                messages.new(message.id) {
 
-                    type = MESSAGE_TYPE_OUTPUT_MESSAGE
+                    type = MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE
 
                     this.chatId = targetChat
 
@@ -42,21 +38,17 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                     createAt = (SystemClock.now() / 100L).toInt()
 
-                    botId = me.id
-
                 }
 
-                MessageRecord.new(sentMessageId) {
+                messages.new(sentMessageId) {
 
-                    type = MESSAGE_TYPE_OUTPUT_FORWARDED
+                    type = MessageRecord.MESSAGE_TYPE_OUTPUT_FORWARDED
 
                     this.chatId = targetChat
 
                     targetId = message.id
 
                     createAt = (SystemClock.now() / 100L).toInt()
-
-                    botId = me.id
 
                 }
 
@@ -104,7 +96,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val record = database {
 
-            MessageRecord.find { (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
+            messages.find { (messageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
 
         }
 
@@ -158,8 +150,8 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            MESSAGE_TYPE_INPUT_FORWARDED,
-            MESSAGE_TYPE_OUTPUT_FORWARDED -> {
+            MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED,
+            MessageRecord.MESSAGE_TYPE_OUTPUT_FORWARDED -> {
 
                 val targetUser = getTargetChat() ?: return
 

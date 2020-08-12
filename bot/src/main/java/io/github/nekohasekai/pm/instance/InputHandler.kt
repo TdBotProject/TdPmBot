@@ -10,9 +10,6 @@ import io.github.nekohasekai.pm.INPUT_NOTICE
 import io.github.nekohasekai.pm.INTEGRATION_PAUSED_NOTICE
 import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.database.MessageRecord
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_FORWARDED
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_MESSAGE
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_NOTICE
 import io.github.nekohasekai.pm.database.PmInstance
 import io.github.nekohasekai.pm.manage.SetIntegration
 import td.TdApi
@@ -31,13 +28,11 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         database {
 
-            MessageRecord.new(message.id) {
+            messages.new(message.id) {
 
-                type = MESSAGE_TYPE_INPUT_MESSAGE
+                type = MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE
 
                 this.chatId = chatId
-
-                botId = me.id
 
                 createAt = (SystemClock.now() / 100L).toInt()
 
@@ -99,13 +94,11 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             database {
 
-                MessageRecord.new(inputNotice.id) {
+                messages.new(inputNotice.id) {
 
-                    type = MESSAGE_TYPE_INPUT_NOTICE
+                    type = MessageRecord.MESSAGE_TYPE_INPUT_NOTICE
 
                     this.chatId = chatId
-
-                    botId = me.id
 
                     createAt = (SystemClock.now() / 100L).toInt()
 
@@ -126,15 +119,13 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         database {
 
-            MessageRecord.new(forwardedMessage.id) {
+            messages.new(forwardedMessage.id) {
 
-                type = MESSAGE_TYPE_INPUT_FORWARDED
+                type = MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED
 
                 this.chatId = chatId
 
                 targetId = message.id
-
-                botId = me.id
 
                 createAt = (SystemClock.now() / 100L).toInt()
 

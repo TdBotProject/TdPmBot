@@ -1,20 +1,18 @@
 package io.github.nekohasekai.pm.database
 
 import org.jetbrains.exposed.dao.Entity
-import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class MessageRecord(id: EntityID<Long>) : Entity<Long>(id) {
+class MessageRecord(table: MessageRecords, id: EntityID<Long>) : Entity<Long>(id) {
 
-    var _messageId by MessageRecords.messageId
+    var _messageId by table.messageId
     val messageId get() = _messageId.value
-    var type by MessageRecords.type
-    var chatId by MessageRecords.chatId
-    var targetId by MessageRecords.targetId
-    var botId by MessageRecords.botId
-    var createAt by MessageRecords.createAt
+    var type by table.type
+    var chatId by table.chatId
+    var targetId by table.targetId
+    var createAt by table.createAt
 
-    companion object : EntityClass<Long, MessageRecord>(MessageRecords) {
+    companion object {
 
         // 输入消息 (chatId: 用户, targetId: 0)
         const val MESSAGE_TYPE_INPUT_MESSAGE = 1

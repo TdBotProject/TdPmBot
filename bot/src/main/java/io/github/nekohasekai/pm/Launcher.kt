@@ -71,7 +71,6 @@ object Launcher : TdCli() {
 
             SchemaUtils.createMissingTablesAndColumns(
                     UserBots,
-                    MessageRecords,
                     StartMessages,
                     BotIntegrations
             )
@@ -217,6 +216,9 @@ object Launcher : TdCli() {
 
     class SingleInstance(val botId: Int) : TdHandler(), PmInstance {
 
+        override val messageRecords = MessageRecords(botId)
+        override val messages = MessageRecordDao(messageRecords)
+
         override val L get() = LocaleController.forChat(admin)
 
         override val admin = Launcher.admin
@@ -224,6 +226,12 @@ object Launcher : TdCli() {
         override val integration get() = BotIntegration.Cache.fetch(botId).value
 
         override fun onLoad() {
+
+            database {
+
+                SchemaUtils.createMissingTablesAndColumns(messageRecords)
+
+            }
 
             addHandler(InputHandler(this))
             addHandler(OutputHandler(this))

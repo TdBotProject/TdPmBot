@@ -10,12 +10,15 @@ import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.*
 import io.github.nekohasekai.pm.manage.SetIntegration
 import io.github.nekohasekai.pm.manage.SetStartMessages
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteWhere
 import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
 
     override val database = Launcher.database
+    override val messageRecords = MessageRecords(botUserId)
+    override val messages = MessageRecordDao(messageRecords)
 
     override val admin get() = userBot.owner.toLong()
     override val integration get() = BotIntegration.Cache.fetch(botUserId).value
@@ -50,7 +53,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         database.write {
 
-            MessageRecords.deleteWhere { MessageRecords.botId eq botUserId }
+            messageRecords.dropStatement()
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }
 
@@ -79,6 +82,12 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
     override fun onLoad() {
 
         options databaseDirectory "data/pm/$botUserId"
+
+        database {
+
+            SchemaUtils.createMissingTablesAndColumns(messageRecords)
+
+        }
 
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))

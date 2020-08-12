@@ -3,14 +3,13 @@ package io.github.nekohasekai.pm.instance
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.forwardMessages
-import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.core.utils.asInput
+import io.github.nekohasekai.nekolib.core.utils.deleteDelayIf
+import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.EDITED
 import io.github.nekohasekai.pm.MESSAGE_EDITED
 import io.github.nekohasekai.pm.database.MessageRecord
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_FORWARDED
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_OUTPUT_MESSAGE
-import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
 import td.TdApi
@@ -25,13 +24,11 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
         val record = database {
 
-            MessageRecord.findById(messageId)
+            messages.findById(messageId)
 
         } ?: return
 
-        if ((chatId == admin || useIntegration) && record.type == MESSAGE_TYPE_OUTPUT_MESSAGE) {
-
-            called("admin edited message")
+        if ((chatId == admin || useIntegration) && record.type == MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE) {
 
             val targetChat = record.chatId
             val targetMessage = record.targetId!!
@@ -76,16 +73,14 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
         } else if (record.type == MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE) {
 
-            userCalled(chatId.toInt(), "guest edited message")
-
             val targetChat = if (useIntegration) integration!!.integration else admin
 
             val targetMessage = database {
 
-                MessageRecord.find {
+                messages.find {
 
-                    (MessageRecords.targetId eq record.messageId
-                            ) and (MessageRecords.type eq MESSAGE_TYPE_INPUT_FORWARDED)
+                    (messageRecords.targetId eq record.messageId
+                            ) and (messageRecords.type eq MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED)
 
                 }.firstOrNull()?.messageId
 

@@ -9,9 +9,6 @@ import io.github.nekohasekai.nekolib.core.utils.syncDelete
 import io.github.nekohasekai.pm.DELETED
 import io.github.nekohasekai.pm.MESSAGE_DELETED
 import io.github.nekohasekai.pm.database.MessageRecord
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_FORWARDED
-import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_OUTPUT_MESSAGE
-import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
@@ -22,7 +19,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val records = database {
 
-            MessageRecord.find { MessageRecords.messageId inList messageIds.toList() }.toList()
+            messages.find { messageRecords.messageId inList messageIds.toList() }.toList()
 
         }
 
@@ -42,8 +39,8 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
             records.filter {
 
                 it.type in arrayOf(
-                        MESSAGE_TYPE_INPUT_FORWARDED,
-                        MESSAGE_TYPE_OUTPUT_MESSAGE
+                        MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED,
+                        MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE
                 )
 
             }.forEach {
@@ -91,11 +88,11 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                     record.delete()
 
-                    MessageRecord.find {
+                    messages.find {
 
-                        ((MessageRecords.type eq MESSAGE_TYPE_INPUT_FORWARDED) or
-                                (MessageRecords.type eq MESSAGE_TYPE_OUTPUT_MESSAGE)) and
-                                (MessageRecords.targetId eq record.messageId)
+                        ((messageRecords.type eq MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED) or
+                                (messageRecords.type eq MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
+                                (messageRecords.targetId eq record.messageId)
 
                     }.forEach {
 
