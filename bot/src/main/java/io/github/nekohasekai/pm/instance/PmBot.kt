@@ -64,11 +64,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         destroy()
 
-        Launcher.apply {
-
-            sudo make L.BOT_AUTH_FAILED.input(userBot.username) sendTo admin
-
-        }
+        Launcher make L.BOT_LOGOUT.input(userBot.username) sendTo userBot.owner
 
     }
 
@@ -76,11 +72,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         destroy()
 
-        Launcher.apply {
-
-            sudo make L.BOT_LOGOUT.input(userBot.username) sendTo admin
-
-        }
+        Launcher make L.BOT_LOGOUT.input(userBot.username) sendTo userBot.owner
 
     }
 

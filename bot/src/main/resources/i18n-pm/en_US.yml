@@ -64,9 +64,9 @@ DELETING: |-
 BOT_DELETED: |-
   Done! The bot is gone.
 BOT_AUTH_FAILED: |-
-  Your bot @() could not be authenticated ( token revoke / deleted ), has been removed.
+  Your bot @{} could not be authenticated ( token revoke / deleted ), has been removed.
 BOT_LOGOUT: |-
-  Your bot @() has been logged out ( token revoke / deleted ), has been removed.
+  Your bot @{} has been logged out ( token revoke / deleted ), has been removed.
 
 SET_STARTS_DEF: |-
   set bot start messages
@@ -109,7 +109,7 @@ ERROR_IN_PREVIEW: |-
 SET_INTEGRATION_DEF: |-
   set integration group
 SET_INTEGRATION: |-
-  You can integration your PM bot @() to a group, and all messages will be sent to the group instead of your private chat.
+  You can integration your PM bot @{} to a group, and all messages will be sent to the group instead of your private chat.
 
   Integration status: {}
 INTEGRATION_HAS_SET: |-
@@ -123,7 +123,7 @@ INTEGRATION_OK: |-
 INTEGRATION_PAUSED: |-
   paused
 INTEGRATION_PAUSED_NOTICE: |-
-  Bot @() cannot access the integrated group, so the integration is paused, please check it and request resume.
+  Bot @{} cannot access the integrated group, so the integration is paused, please check it and request resume.
 INTEGRATION_UNABLE_TO_RESUME: |-
   Bot cannot access the group, so the integration cannot be resumed, please check again.
 INTEGRATION_SET: |-
