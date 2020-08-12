@@ -112,7 +112,7 @@ class SetStartMessages : UserBotSelector(true) {
 
             try {
 
-                cache.messages.forEach {
+                startMessages.forEach {
 
                     sudo make it syncTo chatId
 

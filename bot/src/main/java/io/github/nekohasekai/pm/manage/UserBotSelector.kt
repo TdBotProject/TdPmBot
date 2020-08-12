@@ -44,7 +44,7 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
         userCalled(userId, "bots: ${bots.joinToString(", ") { "@$it" }}")
 
-        writePersist(userId, persistId, 0L, subId.toByteArray())
+        writePersist(userId, persistId, subId)
 
         sudo make message withMarkup keyboardButton {
 
@@ -105,7 +105,7 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
                         sudo makeHtml L.BOT_SELECTED.input(me.username) withMarkup removeKeyboard() syncTo chatId
                 )
 
-                onSelected(userId, chatId, (data[0] as ByteArray).toLong(), null)
+                onSelected(userId, chatId, subId, null)
 
                 return
 
@@ -133,7 +133,7 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
                     sudo makeHtml L.BOT_SELECTED.input(userBot.username) withMarkup removeKeyboard() syncTo chatId
             )
 
-            onSelected(userId, chatId, (data[0] as ByteArray).toLong(), userBot)
+            onSelected(userId, chatId, subId, userBot)
 
         }
 
