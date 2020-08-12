@@ -16,27 +16,18 @@ import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_IN
 import io.github.nekohasekai.pm.database.PmInstance
 import io.github.nekohasekai.pm.manage.SetIntegration
 import td.TdApi
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
-    private var currentUser = 0
-    private var times = 0
-    private var inited by AtomicBoolean()
+    private var currentUser by AtomicInteger()
+    private var times by AtomicInteger()
 
     override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
 
         val integration = integration
 
         if (admin == chatId || chatId == integration?.integration || !message.fromPrivate) return
-
-        if (!inited) {
-
-            getChat(admin)
-
-            inited = true
-
-        }
 
         database {
 
@@ -83,6 +74,8 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             try {
 
+                getChat(admin)
+
                 return this syncTo admin
 
             } catch (e: TdException) {
@@ -121,7 +114,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
             }
 
             currentUser = userId
-            times = 4
+            times = 5
 
         } else {
 
