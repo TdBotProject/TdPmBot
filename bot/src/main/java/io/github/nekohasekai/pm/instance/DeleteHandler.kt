@@ -68,7 +68,11 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            sudo make L.DELETED.input(success, success + failed) to chatId send deleteDelayIf(!useIntegration)
+            if (success + failed > 0) {
+
+                sudo make L.DELETED.input(success, success + failed) to chatId send deleteDelayIf(!useIntegration)
+
+            }
 
         } else {
 
