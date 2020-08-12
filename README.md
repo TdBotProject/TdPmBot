@@ -27,11 +27,11 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 复制 `_pm.conf` 到 `pm.conf`
 
 ```
-`BOT_LANG`: 工作语言, 暂仅支持 `zh_CN`, `en_US`.   
-`BOT_TOKEN`: 指定 BotToken.  
-`PUBLIC`: 是否以公开模式运行 (否则为单例)  
-`ADMIN`: 管理员ID  
-`LOG_LEVEL`: 日志等级, 可为 `ALL TRACE DEBUG INFO WARN ERROR FATAL OFF`
+BOT_LANG: 工作语言, 暂仅支持 `zh_CN`, `en_US`.
+BOT_TOKEN: 指定 BotToken.
+PUBLIC: 是否以公开模式运行.
+ADMIN: 管理员ID.
+LOG_LEVEL: 日志等级, 默认为 INFO.
 ```
 
 ### 高级配置
@@ -72,10 +72,10 @@ ARGS="": 启动参数.
 ■ 编辑消息双向同步  
 ■ 进入 / 退出对话  
 ■ 多语言  
-■ 设置开始消息 (任意, 多条)
+■ 设置开始消息 (任意, 多条)  
+■ 支持接入群組
 
 □ 清理对话所有消息  
-□ 多主人 / 群组支持  
 □ 屏蔽用户 / 防洪水
 
 ■ 自动设置命令提示  

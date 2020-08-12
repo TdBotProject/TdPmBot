@@ -7,9 +7,10 @@ import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
-import io.github.nekohasekai.nekolib.i18n.NOTHING_TO_CANCEL
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
+import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import td.TdApi
 
@@ -41,7 +42,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 val record = database {
 
-                    messages.find { messageRecords.messageId eq message.replyToMessageId }.firstOrNull()
+                    MessageRecord.find { MessageRecords.messageId eq message.replyToMessageId }.firstOrNull()
 
                 }
 

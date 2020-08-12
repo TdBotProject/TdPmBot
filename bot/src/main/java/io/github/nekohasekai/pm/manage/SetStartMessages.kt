@@ -2,7 +2,7 @@ package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.utils.*
-import io.github.nekohasekai.nekolib.i18n.LICENSE
+import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.nekolib.i18n.SETTING_SAVED
 import io.github.nekohasekai.pm.*
@@ -13,8 +13,6 @@ import td.TdApi
 import java.util.*
 
 class SetStartMessages : UserBotSelector(true) {
-
-    val dataId = DATA_SET_START_MESSAGES
 
     override val persistId = PERSIST_SET_START_MESSAGES
 
@@ -33,13 +31,23 @@ class SetStartMessages : UserBotSelector(true) {
 
             initFunction(function)
 
-            initData(dataId)
-
         }
 
     }
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+
+        if (!Launcher.public && chatId != Launcher.admin) rejectFunction()
+
+        if (!message.fromPrivate) {
+
+            userCalled(userId, "set start messages in non-private chat")
+
+            sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
+
+            return
+
+        }
 
         userCalled(userId, "start select bot to select")
 
@@ -56,7 +64,7 @@ class SetStartMessages : UserBotSelector(true) {
 
     ) {
 
-        constructor(): this(0)
+        constructor() : this(0)
 
     }
 
@@ -74,11 +82,11 @@ class SetStartMessages : UserBotSelector(true) {
 
         }
 
-        userCalled(userId, "set @${userBot.username} start messages")
+        userCalled(userId, "set @${userBot.username}`s start messages")
 
         BotInstances.initBot(userBot).findHandler<SetStartMessages>().startSet(L, userId, chatId)
 
-        sudo make L.JUMP_TO_SET.input(userBot.username) removeKeyboard true sendTo chatId
+        sudo make L.JUMP_TO_SET.input(userBot.username) sendTo chatId
 
     }
 
@@ -118,7 +126,7 @@ class SetStartMessages : UserBotSelector(true) {
 
         }
 
-        sudo make L.INPUT_MESSAGES removeKeyboard true syncTo chatId
+        sudo make L.INPUT_MESSAGES withMarkup removeKeyboard() syncTo chatId
 
     }
 

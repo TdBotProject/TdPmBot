@@ -3,6 +3,7 @@ package io.github.nekohasekai.pm.manage
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.LocaleController
+import io.github.nekohasekai.pm.BOT_SELECTED
 import io.github.nekohasekai.pm.INVALID_SELECTED
 import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.NO_BOTS
@@ -21,7 +22,7 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
     }
 
-    suspend fun doSelect(L: LocaleController,userId: Int, subId: Long, message: String) {
+    suspend fun doSelect(L: LocaleController, userId: Int, subId: Long, message: String) {
 
         var bots = database { UserBot.find { UserBots.owner eq userId }.toList() }.map { it.username }
 
@@ -45,9 +46,9 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
         writePersist(userId, persistId, 0L, subId.toByteArray())
 
-        sudo make message withMarkup keyboadButton {
+        sudo make message withMarkup keyboardButton {
 
-            var line: KeyboadButtonBuilder.Line? = null
+            var line: KeyboardButtonBuilder.Line? = null
 
             bots.forEach {
 
@@ -96,9 +97,13 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
 
             botUserName = botUserName.substring(1)
 
-            if (chatId == Launcher.admin && botUserName == Launcher.me.username) {
+            if (chatId == Launcher.admin && botUserName == me.username) {
 
                 sudo removePersist userId
+
+                delayDelete(
+                        sudo makeHtml L.BOT_SELECTED.input(me.username) withMarkup removeKeyboard() syncTo chatId
+                )
 
                 onSelected(userId, chatId, (data[0] as ByteArray).toLong(), null)
 
@@ -123,6 +128,10 @@ abstract class UserBotSelector(val allowSelf: Boolean = false) : TdHandler() {
             }
 
             sudo removePersist userId
+
+            delayDelete(
+                    sudo makeHtml L.BOT_SELECTED.input(userBot.username) withMarkup removeKeyboard() syncTo chatId
+            )
 
             onSelected(userId, chatId, (data[0] as ByteArray).toLong(), userBot)
 

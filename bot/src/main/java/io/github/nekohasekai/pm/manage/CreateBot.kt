@@ -32,6 +32,8 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
+        if (!Launcher.public && chatId != Launcher.admin) rejectFunction()
+
         if (!message.fromPrivate) {
 
             userCalled(userId, "create in non-private chat")

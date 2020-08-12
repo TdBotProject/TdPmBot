@@ -1,13 +1,11 @@
 package io.github.nekohasekai.pm.manage
 
-import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.UserBot
-import io.github.nekohasekai.pm.database.UserBots
 import io.github.nekohasekai.pm.instance.BotInstances
-import org.jetbrains.exposed.sql.deleteWhere
 import td.TdApi
 
 class DeleteBot : UserBotSelector() {
@@ -31,11 +29,31 @@ class DeleteBot : UserBotSelector() {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        userCalled(userId, "start select bot to delete")
+        if (!Launcher.public && chatId != Launcher.admin) rejectFunction()
+
+        if (!message.fromPrivate) {
+
+            userCalled(userId, "delete in non-private chat")
+
+            sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
+
+            return
+
+        }
 
         val L = LocaleController.forChat(userId)
 
-        doSelect(L, userId, 0L , L.SELECT_TO_DELETE)
+        if (!Launcher.public && chatId != Launcher.admin) {
+
+            Launcher.sudo make L.PRIVATE_INSTANCE sendTo chatId
+
+            return
+
+        }
+
+        userCalled(userId, "start select bot to delete")
+
+        doSelect(L, userId, 0L, L.SELECT_TO_DELETE)
 
     }
 
@@ -49,7 +67,7 @@ class DeleteBot : UserBotSelector() {
 
         val L = LocaleController.forChat(userId)
 
-        sudo make L.DELETE_CONFIRM.input(userBot.username) removeKeyboard true sendTo chatId
+        sudo make L.DELETE_CONFIRM.input(userBot.username) sendTo chatId
 
     }
 
@@ -83,29 +101,15 @@ class DeleteBot : UserBotSelector() {
 
                 val status = sudo make L.STOPPING syncTo chatId
 
-                val bot = BotInstances.initBot(userBot).apply {
+                val bot = BotInstances.initBot(userBot)
 
-                    waitForClose()
-
-                }
+                bot.waitForClose()
 
                 sudo make Typing sendTo chatId
 
                 sudo make L.DELETING editTo status
 
-                FileUtil.del(bot.options.databaseDirectory)
-
-                database {
-
-                    bot.messageRecords.dropStatement()
-                    UserBot.removeFromCache(userBot)
-                    UserBots.deleteWhere { UserBots.botId eq botUserId }
-
-                }
-
-                BotInstances.instanceMap.remove(botUserId)
-
-                sudo make CancelChatAction sendTo chatId
+                bot.destroy()
 
                 sudo make L.BOT_DELETED editTo status
 

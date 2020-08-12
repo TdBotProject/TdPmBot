@@ -2,11 +2,15 @@ package io.github.nekohasekai.pm.instance
 
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.utils.deleteDelay
+import io.github.nekohasekai.nekolib.core.utils.deleteDelayIf
+import io.github.nekohasekai.nekolib.core.utils.input
 import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.core.utils.syncDelete
 import io.github.nekohasekai.pm.DELETED
 import io.github.nekohasekai.pm.MESSAGE_DELETED
+import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_FORWARDED
+import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_OUTPUT_MESSAGE
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
@@ -18,7 +22,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val records = database {
 
-            messages.find { messageRecords.messageId inList messageIds.toList() }.toList()
+            MessageRecord.find { MessageRecords.messageId inList messageIds.toList() }.toList()
 
         }
 
@@ -26,7 +30,9 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val integration = integration
 
-        if (chatId == admin || chatId == integration?.integration) {
+        val useIntegration = chatId == integration?.integration
+
+        if (chatId == admin || useIntegration) {
 
             // 主人删除消息 对等删除
 
@@ -36,8 +42,8 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
             records.filter {
 
                 it.type in arrayOf(
-                        MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
-                        MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE
+                        MESSAGE_TYPE_INPUT_FORWARDED,
+                        MESSAGE_TYPE_OUTPUT_MESSAGE
                 )
 
             }.forEach {
@@ -62,7 +68,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            sudo make L.DELETED to chatId send deleteDelay()
+            sudo make L.DELETED.input(success, success + failed) to chatId send deleteDelayIf(!useIntegration)
 
         } else {
 
@@ -71,8 +77,8 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
             records.filter {
 
                 it.type in arrayOf(
-                        MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE,
-                        MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED
+                        MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE,
+                        MessageRecord.MESSAGE_TYPE_OUTPUT_FORWARDED
                 )
 
             }.forEach { record ->
@@ -81,11 +87,11 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                     record.delete()
 
-                    messages.find {
+                    MessageRecord.find {
 
-                        ((messageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED) or
-                                (messageRecords.type eq MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
-                                (messageRecords.targetId eq record.messageId)
+                        ((MessageRecords.type eq MESSAGE_TYPE_INPUT_FORWARDED) or
+                                (MessageRecords.type eq MESSAGE_TYPE_OUTPUT_MESSAGE)) and
+                                (MessageRecords.targetId eq record.messageId)
 
                     }.forEach {
 

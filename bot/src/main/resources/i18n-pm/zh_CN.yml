@@ -5,6 +5,8 @@ HELP_MSG: |-
 
   /new_bot - 创建新机器人
   /delete_bot - 删除机器人
+  /set_start_messages - 设置欢迎消息
+  /set_integration - 设置接入群组
 
   如需帮助，请检出 https://github.com/TdBotProject/TdPmBot , 或通过 @TdBotProject 的讨论群组与我们联系.
 
@@ -36,6 +38,8 @@ NO_BOTS: |-
   无事可做, 请首先使用 /new_bot 命令创建新机器人.
 SELECT_TO_DELETE: |-
   选择您要删除的机器人.
+BOT_SELECTED: |-
+  您选择了 @{}
 INVALID_SELECTED: |-
   选择的机器人无效.
 
@@ -102,18 +106,36 @@ ERROR_IN_PREVIEW: |-
 
 SET_INTEGRATION_DEF: |-
   设置接入群组
-SET_INTEGRATION_: |-
+SET_INTEGRATION: |-
+  您可以将 PM 机器人 @{} 接入到群组, 所有消息将被发往目标群组而不是您的私聊.
+
   接入状态: {}
-  已暂停: {}
+INTEGRATION_HAS_SET: |-
+  成功, 所有消息将被发往本群.
+INTEGRATION_ADMIN_ONLY: |-
+  仅群组管理员可操作机器人: {}
 INTEGRATION_UNDEF: |-
   未接入
 INTEGRATION_OK: |-
   已接入
 INTEGRATION_PAUSED: |-
   已暂停
-
-SEND_TO_INTEGRATION_FAILED: |
-  出错: 发送消息到接入的群组失败, 请检查.
+INTEGRATION_PAUSED_NOTICE: |-
+  机器人 @{} 无法访问接入的群组, 故接入被暂停, 请检查并执行恢复.
+INTEGRATION_UNABLE_TO_RESUME: |-
+  机器人无法访问接入的群组, 故接入无法恢复, 请检查.
+INTEGRATION_SET: |-
+  接入群组
+INTEGRATION_PAUSE: |-
+  暂停接入
+INTEGRATION_RESUME: |-
+  恢复接入
+INTEGRATION_DEL: |-
+  取消接入
+INTEGRATION_ADMIN_ONLY_ENABLED: |-
+  设为所有成员都可操作
+INTEGRATION_ADMIN_ONLY_DISABLED: |-
+  设为仅管理员可操作
 
 DEFAULT_WELCOME: |-
   您好!
@@ -143,7 +165,7 @@ REPLIED: |-
 EDITED: |-
   已编辑.
 DELETED: |-
-  已删除.
+  已删除 ({} / {}).
 RECORD_NF: |-
   找不到对应记录.
 REPLIED_NF: |-

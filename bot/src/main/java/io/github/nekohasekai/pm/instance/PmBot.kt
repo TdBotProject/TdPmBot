@@ -8,16 +8,14 @@ import io.github.nekohasekai.nekolib.i18n.LICENSE
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.*
+import io.github.nekohasekai.pm.manage.SetIntegration
 import io.github.nekohasekai.pm.manage.SetStartMessages
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteWhere
 import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
 
     override val database = Launcher.database
-    override val messageRecords = MessageRecords(botUserId)
-    override val messages = MessageRecordDao(messageRecords)
 
     override val admin get() = userBot.owner.toLong()
     override val integration get() = BotIntegration.Cache.fetch(botUserId).value
@@ -52,7 +50,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         database.write {
 
-            messageRecords.dropStatement()
+            MessageRecords.deleteWhere { MessageRecords.botId eq botUserId }
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }
 
@@ -90,18 +88,13 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         options databaseDirectory "data/pm/$botUserId"
 
-        database {
-
-            SchemaUtils.create(messageRecords)
-
-        }
-
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))
         addHandler(EditHandler(this))
         addHandler(DeleteHandler(this))
         addHandler(JoinHandler(this))
         addHandler(SetStartMessages())
+        addHandler(SetIntegration())
 
         initStartPayload("finish_creation")
 

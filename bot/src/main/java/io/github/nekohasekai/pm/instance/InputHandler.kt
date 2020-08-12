@@ -7,9 +7,14 @@ import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.pm.INPUT_NOTICE
-import io.github.nekohasekai.pm.database.BotIntegration
-import io.github.nekohasekai.pm.database.MessageRecords
+import io.github.nekohasekai.pm.INTEGRATION_PAUSED_NOTICE
+import io.github.nekohasekai.pm.Launcher
+import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_FORWARDED
+import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_MESSAGE
+import io.github.nekohasekai.pm.database.MessageRecord.Companion.MESSAGE_TYPE_INPUT_NOTICE
 import io.github.nekohasekai.pm.database.PmInstance
+import io.github.nekohasekai.pm.manage.SetIntegration
 import td.TdApi
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -35,11 +40,13 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         database {
 
-            messages.new(message.id) {
+            MessageRecord.new(message.id) {
 
-                type = MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE
+                type = MESSAGE_TYPE_INPUT_MESSAGE
 
                 this.chatId = chatId
+
+                botId = me.id
 
                 createAt = (SystemClock.now() / 100L).toInt()
 
@@ -57,14 +64,18 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 } catch (e: TdException) {
 
-                    // failed
+                    defaultLog.warn(e)
 
-                    integration.paused = true
+                    database.write {
 
-                    BotIntegration.Cache.fetch(me.id).changed = true
-                    BotIntegration.Cache.remove(me.id)
+                        integration.paused = true
+                        integration.flush()
 
-                    // TODO: SEND PAUSED MESSAGE
+                    }
+
+                    Launcher make L.INTEGRATION_PAUSED_NOTICE syncTo admin
+
+                    Launcher.findHandler<SetIntegration>().startSet(L, me.id, me.username, admin.toInt(), admin, 0L, true)
 
                 }
 
@@ -95,11 +106,13 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             database {
 
-                messages.new(inputNotice.id) {
+                MessageRecord.new(inputNotice.id) {
 
-                    type = MessageRecords.MESSAGE_TYPE_INPUT_NOTICE
+                    type = MESSAGE_TYPE_INPUT_NOTICE
 
                     this.chatId = chatId
+
+                    botId = me.id
 
                     createAt = (SystemClock.now() / 100L).toInt()
 
@@ -120,13 +133,15 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         database {
 
-            messages.new(forwardedMessage.id) {
+            MessageRecord.new(forwardedMessage.id) {
 
-                type = MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED
+                type = MESSAGE_TYPE_INPUT_FORWARDED
 
                 this.chatId = chatId
 
                 targetId = message.id
+
+                botId = me.id
 
                 createAt = (SystemClock.now() / 100L).toInt()
 

@@ -1,6 +1,5 @@
 package io.github.nekohasekai.pm
 
-import cn.hutool.core.util.NumberUtil
 import cn.hutool.log.level.Level
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
@@ -12,6 +11,7 @@ import io.github.nekohasekai.pm.database.*
 import io.github.nekohasekai.pm.instance.*
 import io.github.nekohasekai.pm.manage.CreateBot
 import io.github.nekohasekai.pm.manage.DeleteBot
+import io.github.nekohasekai.pm.manage.SetIntegration
 import io.github.nekohasekai.pm.manage.SetStartMessages
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -20,7 +20,7 @@ import td.TdApi
 
 object Launcher : TdCli() {
 
-    private val public get() = booleanEnv("PUBLIC")
+    val public get() = booleanEnv("PUBLIC")
 
     val admin by lazy { intEnv("ADMIN").toLong() }
 
@@ -65,33 +65,31 @@ object Launcher : TdCli() {
 
         LocaleController.initWithDatabase(database)
 
-        if (public) {
+        initPersistDatabase()
 
-            initPersistDatabase()
+        database.write {
 
-            database.write {
-
-                SchemaUtils.createMissingTablesAndColumns(
-                        UserBots,
-                        StartMessages,
-                        BotIntegrations
-                )
-
-            }
-
-            initFunction("help")
-
-            addHandler(LocaleSwitcher(DATA_SWITCH_LOCALE) { userId, chatId, message ->
-
-                onLaunch(userId, chatId, message)
-
-            })
-
-            addHandler(CreateBot())
-            addHandler(DeleteBot())
-            addHandler(SetStartMessages())
+            SchemaUtils.createMissingTablesAndColumns(
+                    UserBots,
+                    MessageRecords,
+                    StartMessages,
+                    BotIntegrations
+            )
 
         }
+
+        initFunction("help")
+
+        addHandler(LocaleSwitcher(DATA_SWITCH_LOCALE) { userId, chatId, message ->
+
+            onLaunch(userId, chatId, message)
+
+        })
+
+        addHandler(CreateBot())
+        addHandler(DeleteBot())
+        addHandler(SetStartMessages())
+        addHandler(SetIntegration())
 
         addHandler(GetIdCommand())
 
@@ -105,6 +103,7 @@ object Launcher : TdCli() {
                     findHandler<CreateBot>().DEF,
                     findHandler<DeleteBot>().DEF,
                     findHandler<SetStartMessages>().DEF,
+                    findHandler<SetIntegration>().DEF,
                     findHandler<LocaleSwitcher>().DEF,
                     HELP_COMMAND,
                     CANCEL_COMMAND
@@ -218,9 +217,6 @@ object Launcher : TdCli() {
 
     class SingleInstance(val botId: Int) : TdHandler(), PmInstance {
 
-        override val messageRecords = MessageRecords(botId)
-        override val messages = MessageRecordDao(messageRecords)
-
         override val L get() = LocaleController.forChat(admin)
 
         override val admin = Launcher.admin
@@ -229,14 +225,9 @@ object Launcher : TdCli() {
 
         override fun onLoad() {
 
-            database {
-
-                SchemaUtils.create(messageRecords)
-
-            }
-
             addHandler(InputHandler(this))
             addHandler(OutputHandler(this))
+            addHandler(EditHandler(this))
             addHandler(DeleteHandler(this))
             addHandler(JoinHandler(this))
 

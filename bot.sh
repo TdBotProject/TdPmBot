@@ -115,7 +115,7 @@ elif [ "$1" == "rebuild" ]; then
 
   target="$ARTIFACT-$(git rev-parse --short HEAD).jar"
 
-  bash mvnw -T 1C package $MVN_ARGS && cp -f $MODULE/target/$ARTIFACT.jar $target
+  bash mvnw $MVN_ARGS -T 1C clean package && cp -f $MODULE/target/$ARTIFACT.jar $target
 
 elif [ "$1" == "update" ]; then
 
