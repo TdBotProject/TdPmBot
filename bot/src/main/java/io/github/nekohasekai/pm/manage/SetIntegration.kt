@@ -1,14 +1,13 @@
 package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.raw.getChat
-import io.github.nekohasekai.nekolib.core.raw.getChatMemberOrNull
+import io.github.nekohasekai.nekolib.core.raw.getMessageWith
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.*
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.BotIntegration
 import io.github.nekohasekai.pm.database.UserBot
-import io.github.nekohasekai.pm.instance.BotInstances
 import td.TdApi
 
 class SetIntegration : UserBotSelector(true) {
@@ -84,7 +83,9 @@ class SetIntegration : UserBotSelector(true) {
 
         if (integrationActionMessages.containsKey(userId)) {
 
-            delete(chatId, integrationActionMessages.remove(userId)!!)
+            val messageIdToDelete = integrationActionMessages[userId]!!
+
+            if (messageIdToDelete != messageId) delete(chatId, integrationActionMessages.remove(userId)!!)
 
         }
 
@@ -140,7 +141,25 @@ class SetIntegration : UserBotSelector(true) {
 
         }
 
-        action.sendOrEditTo(send, chatId, messageId)
+        if (send) action to chatId send {
+
+            integrationActionMessages[userId] = it.id
+
+        } else {
+
+            getMessageWith(chatId, messageId) {
+
+                onSuccess {
+
+                    // TDLib Issue #859
+
+                    action.editTo(chatId, messageId)
+
+                }
+
+            }
+
+        }
 
     }
 
@@ -170,7 +189,9 @@ class SetIntegration : UserBotSelector(true) {
 
         }
 
-        if (userId.toLong() != Launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
+        val userBot = database { UserBot.findById(me.id) }
+
+        if (userId.toLong() != Launcher.admin && userBot?.owner != userId) {
 
             // 权限检查
 
@@ -240,32 +261,6 @@ class SetIntegration : UserBotSelector(true) {
 
         } else if (action == 3) {
 
-            // 检查是否能访问
-
-            val botClient = if (botUserId == me.id) sudo else BotInstances.instanceMap[botUserId]
-
-            if (botClient == null) {
-
-                defaultLog.warn("Bot to resume integration not found")
-
-                sudo makeAlert "ERR: Bot Not Running" answerTo queryId
-
-                return
-
-            }
-
-            val member = getChatMemberOrNull(integration.integration, botUserId)
-
-            if (member == null || !member.status.canSendMessages) {
-
-                sudo makeAlert L.INTEGRATION_UNABLE_TO_RESUME answerTo queryId
-
-                return
-
-            }
-
-            // 检查完成
-
             database.write {
 
                 integration.paused = false
@@ -281,7 +276,9 @@ class SetIntegration : UserBotSelector(true) {
 
         }
 
-        startSet(L, me.id, me.username, userId, chatId, messageId, false)
+        BotIntegration.Cache.fetch(botUserId).value = integration
+
+        startSet(L, botUserId, userBot?.username ?: me.username, userId, chatId, messageId, false)
 
     }
 
