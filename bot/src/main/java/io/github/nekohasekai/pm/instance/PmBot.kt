@@ -123,7 +123,15 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
             if (startMessages == null) {
 
-                sudo makeHtml L.DEFAULT_WELCOME + "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl))) sendTo chatId
+                var content = L.DEFAULT_WELCOME
+
+                if (Launcher.public) {
+
+                    content += "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl)))
+
+                }
+
+                sudo makeHtml content sendTo chatId
 
             } else {
 
