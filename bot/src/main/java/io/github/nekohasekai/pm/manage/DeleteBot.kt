@@ -63,7 +63,7 @@ class DeleteBot : UserBotSelector() {
 
         userCalled(userId, "send delete confirm for bot @${userBot.username}")
 
-        writePersist(userId, persistId, 1L, userBot.botId.toByteArray())
+        writePersist(userId, persistId, 1L, userBot.botId)
 
         val L = LocaleController.forChat(userId)
 
@@ -77,7 +77,7 @@ class DeleteBot : UserBotSelector() {
 
             val L = LocaleController.forChat(userId)
 
-            val botUserId = (data[0] as ByteArray).toInt()
+            val botUserId = data[0] as Int
 
             val userBot = database { UserBot.findById(botUserId) }
 
