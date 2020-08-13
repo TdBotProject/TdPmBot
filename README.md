@@ -24,18 +24,18 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 
 ```
 BOT_LANG: 工作语言, 暂仅支持 `zh_CN`, `en_US`.
-BOT_TOKEN: 指定 BotToken.
+BOT_TOKEN: 机器人令牌.
 PUBLIC: 是否以公开模式运行.
 ADMIN: 管理员ID.
 LOG_LEVEL: 日志等级, 默认为 INFO.
 ```
 
-### 高级配置
+### 其他
 ```
 SERVICE_NAME: systemd 服务名称, 默认 `td-pm`, 修改如果您需要多个实例.
 MVN_ARGS: Maven 编译参数.
 JAVA_ARGS: JVM 启动参数.
-ARGS="": 启动参数.
+ARGS=: 启动参数.
 ```
 
 若您不知道账号ID, 可留空, 启动后发送 /id 到机器人获取.
@@ -53,6 +53,24 @@ ARGS="": 启动参数.
 `./bot.sh upgrade` 更新并重启服务  
 `./bot.sh log` 实时日志  
 `./bot.sh logs` 打印所有日志
+
+## Docker
+
+```
+docker run -d --name td-pm \
+  -v <数据目录>:/root/data \
+  -e BOT_LANG=zh_CN \
+  -e BOT_TOKEN=<机器人令牌> \
+  -e ADMIN=<管理员ID> \
+  -e PUBLIC=true \
+  docker.pkg.github.com/tdbotproject/tdpmbot/td-pm
+
+docker logs td-pm -f -t
+```
+
+注: 需要使用 Github 账号登录 
+
+`docker login docker.pkg.github.com -u <您的 Github 用户名> -p <您的 Github AccessToken>`
 
 ## 使用
 

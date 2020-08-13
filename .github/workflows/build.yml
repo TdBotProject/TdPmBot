@@ -2,12 +2,11 @@ name: Build
 
 on:
   push:
-    paths-ignore:
-      - '**.md'
-      - '.github/**'
-      - '!.github/workflows/**'
     branches:
-      - master
+      - dev
+  pull_request:
+    branches:
+      - dev
 
 jobs:
   mvnBuild:
@@ -20,10 +19,9 @@ jobs:
         with:
           path: ~/.m2
           key: m2-${{ hashFiles('**/pom.xml') }}
-      - uses: ayltai/setup-graalvm@v1
+      - uses: actions/setup-java@v1
         with:
           java-version: 11
-          graalvm-version: 20.1.0
       - name: Run Maven Build
         run: |
           ./bot.sh rebuild

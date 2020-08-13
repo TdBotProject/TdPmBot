@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
 import td.TdApi
+import kotlin.system.exitProcess
 
 object Launcher : TdCli() {
 
@@ -44,6 +45,8 @@ object Launcher : TdCli() {
         }
 
         TdLoader.tryLoad()
+
+        if (args.any { it == "--download-library" }) exitProcess(0)
 
         if (admin == 0L) {
 
