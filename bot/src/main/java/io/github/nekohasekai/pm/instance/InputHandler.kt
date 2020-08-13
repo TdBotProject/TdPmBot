@@ -26,7 +26,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         if (admin == chatId || chatId == integration?.integration || !message.fromPrivate) return
 
-        database {
+        database.write {
 
             messages.new(message.id) {
 
@@ -92,7 +92,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
             val inputNotice = (sudo makeHtml L.INPUT_NOTICE.input(user.asIdMention, user.displayNameHtml)).syncToTarget()
                     ?: return
 
-            database {
+            database.write {
 
                 messages.new(inputNotice.id) {
 
@@ -117,7 +117,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         val forwardedMessage = (sudo makeForward message).syncToTarget() ?: return
 
-        database {
+        database.write {
 
             messages.new(forwardedMessage.id) {
 

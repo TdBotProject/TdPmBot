@@ -132,7 +132,7 @@ class CreateBot(val command: String = "new_bot") : TdHandler() {
 
         sudo make L.CREATING_BOT editTo status
 
-        val userBot = database {
+        val userBot = database.write {
 
             UserBot.new(botMe.id()) {
 

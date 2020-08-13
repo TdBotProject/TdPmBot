@@ -227,7 +227,7 @@ object Launcher : TdCli() {
 
         override fun onLoad() {
 
-            database {
+            database.write {
 
                 SchemaUtils.createMissingTablesAndColumns(messageRecords)
 

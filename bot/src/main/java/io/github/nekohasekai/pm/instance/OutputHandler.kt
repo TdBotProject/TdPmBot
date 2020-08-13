@@ -26,7 +26,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         fun saveSent(targetChat: Long, sentMessageId: Long) {
 
-            database {
+            database.write {
 
                 messages.new(message.id) {
 

@@ -83,7 +83,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         options databaseDirectory "data/pm/$botUserId"
 
-        database {
+        database.write {
 
             SchemaUtils.createMissingTablesAndColumns(messageRecords)
 
