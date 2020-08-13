@@ -17,6 +17,8 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
     override suspend fun onDeleteMessages(chatId: Long, messageIds: LongArray, isPermanent: Boolean, fromCache: Boolean) {
 
+        if (!isPermanent || fromCache) return
+
         val records = database {
 
             messages.find { messageRecords.messageId inList messageIds.toList() }.toList()
