@@ -4,7 +4,9 @@ import cn.hutool.core.date.SystemClock
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
+import io.github.nekohasekai.nekolib.core.raw.getChatMember
 import io.github.nekohasekai.nekolib.core.raw.getMessage
+import io.github.nekohasekai.nekolib.core.raw.getMessageOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
@@ -102,7 +104,25 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         if (record == null) {
 
-            sudo make L.RECORD_NF replyTo message send deleteDelayIf(!useIntegration, message)
+            if (useIntegration) {
+
+                val repliedMessage = getMessageOrNull(chatId, message.replyToMessageId)
+
+                if (repliedMessage != null) {
+
+                    if (getChatMember(chatId, repliedMessage.senderUserId).status.isMember) {
+
+                        // 如果回复的用户在群组里即跳过找不到记录提示
+
+                        return
+
+                    }
+
+                }
+
+            }
+
+            sudo make L.RECORD_NF replyTo message send deleteDelay(message)
 
             return
 
