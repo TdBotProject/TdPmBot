@@ -1,5 +1,6 @@
 package io.github.nekohasekai.pm.instance
 
+import io.github.nekohasekai.nekolib.core.utils.defaultLog
 import io.github.nekohasekai.pm.database.UserBot
 
 object BotInstances {
@@ -8,7 +9,15 @@ object BotInstances {
 
     fun loadAll() {
 
-        UserBot.all().forEach { initBot(it) }
+        defaultLog.trace("Loading PM Bots")
+
+        for (userBot in UserBot.all()) {
+
+            defaultLog.trace("Loading @${userBot.username}")
+
+            initBot(userBot)
+
+        }
 
     }
 

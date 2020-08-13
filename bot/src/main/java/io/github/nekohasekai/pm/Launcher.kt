@@ -108,11 +108,11 @@ object Launcher : TdCli() {
                     CANCEL_COMMAND
             )
 
-            database {
+        }
 
-                BotInstances.loadAll()
+        database {
 
-            }
+            BotInstances.loadAll()
 
         }
 
