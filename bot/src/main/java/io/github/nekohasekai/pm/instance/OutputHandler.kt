@@ -10,8 +10,11 @@ import io.github.nekohasekai.nekolib.core.raw.getMessageOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
-import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
@@ -30,27 +33,35 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             database.write {
 
-                messages.new(message.id) {
+                MessageRecords.insert {
 
-                    type = MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE
+                    it[messageId] = message.id
 
-                    this.chatId = targetChat
+                    it[type] = MESSAGE_TYPE_OUTPUT_MESSAGE
 
-                    targetId = sentMessageId
+                    it[this.chatId] = targetChat
 
-                    createAt = (SystemClock.now() / 100L).toInt()
+                    it[targetId] = sentMessageId
+
+                    it[createAt] = (SystemClock.now() / 100L).toInt()
+
+                    it[botId] = me.id
 
                 }
 
-                messages.new(sentMessageId) {
+                MessageRecords.insert {
 
-                    type = MessageRecord.MESSAGE_TYPE_OUTPUT_FORWARDED
+                    it[messageId] = sentMessageId
 
-                    this.chatId = targetChat
+                    it[type] = MESSAGE_TYPE_OUTPUT_FORWARDED
 
-                    targetId = message.id
+                    it[this.chatId] = targetChat
 
-                    createAt = (SystemClock.now() / 100L).toInt()
+                    it[targetId] = message.id
+
+                    it[createAt] = (SystemClock.now() / 100L).toInt()
+
+                    it[botId] = me.id
 
                 }
 
@@ -98,7 +109,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val record = database {
 
-            messages.find { (messageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
+            MessageRecords.select { currentBot and (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
 
         }
 
@@ -120,25 +131,25 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         suspend fun getTargetChat() = try {
 
-            getChat(record.chatId)
+            getChat(record[MessageRecords.chatId])
 
         } catch (e: TdException) {
 
-            sudo make L.failed { BANDED_BY } replyTo message send deleteDelayIf(!useIntegration, message)
+            sudo make L.failed { USER_NOT_FOUND } replyTo message send deleteDelayIf(!useIntegration, message)
 
             null
 
         }
 
-        when (record.type) {
+        when (record[MessageRecords.type]) {
 
-            MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE -> {
+            MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE -> {
 
                 defaultLog.warn("Please delete the data after changing the bot admin.")
 
             }
 
-            MessageRecord.MESSAGE_TYPE_INPUT_NOTICE -> {
+            MessageRecords.MESSAGE_TYPE_INPUT_NOTICE -> {
 
                 val targetUser = getTargetChat() ?: return
 
@@ -160,14 +171,14 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED,
-            MessageRecord.MESSAGE_TYPE_OUTPUT_FORWARDED -> {
+            MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
+            MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED -> {
 
                 val targetUser = getTargetChat() ?: return
 
                 val targetMessage = try {
 
-                    getMessage(targetUser.id, record.targetId!!)
+                    getMessage(targetUser.id, record[MessageRecords.targetId]!!)
 
                 } catch (e: TdException) {
 

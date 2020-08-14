@@ -9,9 +9,10 @@ import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.EDITED
 import io.github.nekohasekai.pm.MESSAGE_EDITED
-import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
@@ -24,14 +25,14 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
         val record = database {
 
-            messages.findById(messageId)
+            MessageRecords.select { currentBot and (MessageRecords.messageId eq messageId) }.firstOrNull()
 
         } ?: return
 
-        if ((chatId == admin || useIntegration) && record.type == MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE) {
+        if ((chatId == admin || useIntegration) && record[MessageRecords.type] == MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE) {
 
-            val targetChat = record.chatId
-            val targetMessage = record.targetId!!
+            val targetChat = record[MessageRecords.chatId]
+            val targetMessage = record[MessageRecords.targetId]!!
 
             // 同步编辑消息
 
@@ -71,18 +72,19 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             finishEvent()
 
-        } else if (record.type == MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE) {
+        } else if (record[MessageRecords.type] == MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE) {
 
             val targetChat = if (useIntegration) integration!!.integration else admin
 
             val targetMessage = database {
 
-                messages.find {
+                MessageRecords.select {
 
-                    (messageRecords.targetId eq record.messageId
-                            ) and (messageRecords.type eq MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED)
+                    currentBot and (
+                            MessageRecords.targetId eq record[MessageRecords.messageId]
+                            ) and (MessageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED)
 
-                }.firstOrNull()?.messageId
+                }.firstOrNull()?.let { it[MessageRecords.messageId] }
 
             } ?: 0
 

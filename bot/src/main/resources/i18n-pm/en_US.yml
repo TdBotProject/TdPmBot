@@ -148,13 +148,11 @@ POWERED_BY: |-
 INPUT_NOTICE: |-
   From: {}
   Name: {}
-BANDED_BY: |-
-  user not found or bot not activeted by target.
+USER_NOT_FOUND: |-
+  user not found.
 JOINED_NOTICE: |-
   Joined Chat: {}
   Name: {}
-JOIN_NON_PM: |-
-  Join non-private chat is temporarily not supported, pr is welcome.
 EXITED: |-
   Exited.
 NOTHING_TO_EXIT: |-
@@ -177,8 +175,23 @@ MESSAGE_DELETED: |-
 MESSAGE_EDITED: |-
   This message has been edited by target user.
 
+BLOCKED: |-
+  {} has been blocked.
+BLOCK_EXISTS: |-
+  {} already been blocked.
+BLOCK_NOT_EXISTS: |-
+  {} has not been blocked.
+UNBLOCKED: |-
+  {} has been unblocked.
+CANNOT_BLOCK_SELF: |-
+  Can't block yourself.
+
 PM_HELP: |-
   Noting to do.
 
-  Use /join <reply/chatId/@username/mention> to join a chat,
+  target: reply to message / chatId / @username / mention
+
+  Use /join <target> to join a chat,
+  Use /block <target> to block a chat,
+  Use /unblock <target> to unblock a chat,
   Use /exit to exit a chat.

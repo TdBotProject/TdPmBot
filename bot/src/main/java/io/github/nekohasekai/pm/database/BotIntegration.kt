@@ -15,6 +15,6 @@ class BotIntegration(id: EntityID<Int>) : Entity<Int>(id) {
 
     companion object : EntityClass<Int, BotIntegration>(BotIntegrations)
 
-    object Cache : IdTableCacheMap<Int, BotIntegration>(Launcher.database, this, -1)
+    object Cache : IdTableCacheMap<Int, BotIntegration>(Launcher.database, this)
 
 }

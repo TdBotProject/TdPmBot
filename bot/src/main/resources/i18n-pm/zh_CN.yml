@@ -147,13 +147,11 @@ POWERED_BY: |-
 INPUT_NOTICE: |-
   来自: {}
   名称: {}
-BANDED_BY: |-
-  找不到用户或者机器人被对方停用.
+USER_NOT_FOUND: |-
+  找不到用户.
 JOINED_NOTICE: |-
   已进入会话: {}
   名称: {}
-JOIN_NON_PM: |-
-  进入非私聊暂不支持, 欢迎提交PR :)
 EXITED: |-
   已退出.
 NOTHING_TO_EXIT: |-
@@ -175,8 +173,23 @@ MESSAGE_DELETED: |-
 MESSAGE_EDITED: |-
   这条消息被对方更改了.
 
+BLOCKED: |-
+  已屏蔽 {}.
+BLOCK_EXISTS: |-
+  曾经屏蔽过 {}.
+BLOCK_NOT_EXISTS: |-
+  未屏蔽过 {}.
+UNBLOCKED: |-
+  已取消屏蔽.
+CANNOT_BLOCK_SELF: |-
+  不能屏蔽自己.
+
 PM_HELP: |-
   无事可做.
 
-  使用 /join <回复消息/回复提示消息/消息ID/@用户名/引用> 以进入会话,
+  目标可为: 对消息回复 / 对话ID / @用户名 / 引用
+
+  使用 /join <目标> 以进入会话,
+  使用 /block <目标> 以屏蔽会话,
+  使用 /unblock <目标> 以解除屏蔽,
   使用 /exit 退出会话.

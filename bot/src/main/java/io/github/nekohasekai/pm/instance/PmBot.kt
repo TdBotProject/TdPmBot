@@ -10,20 +10,18 @@ import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.*
 import io.github.nekohasekai.pm.manage.SetIntegration
 import io.github.nekohasekai.pm.manage.SetStartMessages
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteWhere
 import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
 
     override val database = Launcher.database
-    override val messageRecords = MessageRecords(botUserId)
-    override val messages = MessageRecordDao(messageRecords)
 
     override val admin get() = userBot.owner.toLong()
-    override val integration get() = BotIntegration.Cache.fetch(botUserId).value
-
     override val L get() = LocaleController.forChat(userBot.owner)
+
+    override val integration get() = BotIntegration.Cache.fetch(botUserId).value
+    override val blocks = UserBlocks.Cache(botUserId)
 
     override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
 
@@ -53,7 +51,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         database.write {
 
-            messageRecords.dropStatement()
+            MessageRecords.deleteWhere { currentBot }
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }
 
@@ -83,21 +81,24 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         options databaseDirectory "data/pm/$botUserId"
 
-        database.write {
-
-            SchemaUtils.createMissingTablesAndColumns(messageRecords)
-
-        }
-
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))
         addHandler(EditHandler(this))
         addHandler(DeleteHandler(this))
         addHandler(JoinHandler(this))
+        addHandler(BlockHandler(this))
         addHandler(SetStartMessages())
         addHandler(SetIntegration())
 
         initStartPayload("finish_creation")
+
+    }
+
+    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
+
+        if (blocks.containsKey(userId)) finishEvent()
+
+        super.onNewMessage(userId, chatId, message)
 
     }
 

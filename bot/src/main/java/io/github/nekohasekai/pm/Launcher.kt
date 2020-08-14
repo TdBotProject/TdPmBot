@@ -3,7 +3,6 @@ package io.github.nekohasekai.pm
 import cn.hutool.log.level.Level
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
-import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.*
 import io.github.nekohasekai.nekolib.utils.GetIdCommand
@@ -19,11 +18,15 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import td.TdApi
 import kotlin.system.exitProcess
 
-object Launcher : TdCli() {
+object Launcher : TdCli(), PmInstance {
 
     val public get() = booleanEnv("PUBLIC")
 
-    val admin by lazy { intEnv("ADMIN").toLong() }
+    override val admin by lazy { intEnv("ADMIN").toLong() }
+    override val L get() = LocaleController.forChat(admin)
+
+    override val integration get() = BotIntegration.Cache.fetch(me.id).value
+    override val blocks by lazy { UserBlocks.Cache(me.id) }
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking {
@@ -75,7 +78,9 @@ object Launcher : TdCli() {
             SchemaUtils.createMissingTablesAndColumns(
                     UserBots,
                     StartMessages,
-                    BotIntegrations
+                    BotIntegrations,
+                    MessageRecords,
+                    UserBlocks
             )
 
         }
@@ -92,6 +97,12 @@ object Launcher : TdCli() {
         addHandler(DeleteBot())
         addHandler(SetStartMessages())
         addHandler(SetIntegration())
+
+        addHandler(InputHandler(this))
+        addHandler(OutputHandler(this))
+        addHandler(EditHandler(this))
+        addHandler(DeleteHandler(this))
+        addHandler(JoinHandler(this))
 
         addHandler(GetIdCommand())
 
@@ -111,6 +122,10 @@ object Launcher : TdCli() {
                     CANCEL_COMMAND
             )
 
+        } else {
+
+            upsertCommands()
+
         }
 
         database {
@@ -119,19 +134,19 @@ object Launcher : TdCli() {
 
         }
 
-        if (admin != 0L) {
-
-            addHandler(SingleInstance(me.id))
-
-            if (!public) upsertCommands()
-
-        }
-
     }
 
     const val repoName = "TdPmBot"
     const val repoUrl = "https://github.com/TdBotProject/TdPmBot"
     const val licenseUrl = "https://github.com/TdBotProject/TdPmBot/blob/master/LICENSE"
+
+    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
+
+        if (blocks.containsKey(userId)) finishEvent()
+
+        super.onNewMessage(userId, chatId, message)
+
+    }
 
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
@@ -214,37 +229,6 @@ object Launcher : TdCli() {
         val L = LocaleController.forChat(userId)
 
         sudo make L.HELP_MSG sendTo chatId
-
-    }
-
-    class SingleInstance(val botId: Int) : TdHandler(), PmInstance {
-
-        override val messageRecords = MessageRecords(botId)
-        override val messages = MessageRecordDao(messageRecords)
-
-        override val L get() = LocaleController.forChat(admin)
-
-        override val admin = Launcher.admin
-
-        override val integration get() = BotIntegration.Cache.fetch(botId).value
-
-        override fun onLoad() {
-
-            database.write {
-
-                SchemaUtils.createMissingTablesAndColumns(messageRecords)
-
-            }
-
-            addHandler(InputHandler(this))
-            addHandler(OutputHandler(this))
-            addHandler(EditHandler(this))
-            addHandler(DeleteHandler(this))
-            addHandler(JoinHandler(this))
-
-            removeHandler(this)
-
-        }
 
     }
 

@@ -9,9 +9,10 @@ import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.pm.INPUT_NOTICE
 import io.github.nekohasekai.pm.INTEGRATION_PAUSED_NOTICE
 import io.github.nekohasekai.pm.Launcher
-import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import io.github.nekohasekai.pm.manage.SetIntegration
+import org.jetbrains.exposed.sql.insert
 import td.TdApi
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -28,13 +29,17 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         database.write {
 
-            messages.new(message.id) {
+            MessageRecords.insert {
 
-                type = MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE
+                it[messageId] = message.id
 
-                this.chatId = chatId
+                it[type] = MESSAGE_TYPE_INPUT_MESSAGE
 
-                createAt = (SystemClock.now() / 100L).toInt()
+                it[this.chatId] = chatId
+
+                it[createAt] = (SystemClock.now() / 100L).toInt()
+
+                it[botId] = me.id
 
             }
 
@@ -94,13 +99,17 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             database.write {
 
-                messages.new(inputNotice.id) {
+                MessageRecords.insert {
 
-                    type = MessageRecord.MESSAGE_TYPE_INPUT_NOTICE
+                    it[messageId] = inputNotice.id
 
-                    this.chatId = chatId
+                    it[type] = MESSAGE_TYPE_INPUT_NOTICE
 
-                    createAt = (SystemClock.now() / 100L).toInt()
+                    it[this.chatId] = chatId
+
+                    it[createAt] = (SystemClock.now() / 100L).toInt()
+
+                    it[botId] = me.id
 
                 }
 
@@ -119,15 +128,19 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         database.write {
 
-            messages.new(forwardedMessage.id) {
+            MessageRecords.insert {
 
-                type = MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED
+                it[messageId] = forwardedMessage.id
 
-                this.chatId = chatId
+                it[type] = MESSAGE_TYPE_INPUT_FORWARDED
 
-                targetId = message.id
+                it[this.chatId] = chatId
 
-                createAt = (SystemClock.now() / 100L).toInt()
+                it[targetId] = message.id
+
+                it[createAt] = (SystemClock.now() / 100L).toInt()
+
+                it[botId] = me.id
 
             }
 

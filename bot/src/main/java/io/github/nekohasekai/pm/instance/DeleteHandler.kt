@@ -8,12 +8,17 @@ import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.core.utils.syncDelete
 import io.github.nekohasekai.pm.DELETED
 import io.github.nekohasekai.pm.MESSAGE_DELETED
-import io.github.nekohasekai.pm.database.MessageRecord
+import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.select
 
 class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+
+    val currentBot get() = (MessageRecords.botId eq me.id)
 
     override suspend fun onDeleteMessages(chatId: Long, messageIds: LongArray, isPermanent: Boolean, fromCache: Boolean) {
 
@@ -21,7 +26,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val records = database {
 
-            messages.find { messageRecords.messageId inList messageIds.toList() }.toList()
+            MessageRecords.select { currentBot and (MessageRecords.messageId inList messageIds.toList()) }.toList()
 
         }
 
@@ -40,9 +45,9 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             records.filter {
 
-                it.type in arrayOf(
-                        MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED,
-                        MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE
+                it[MessageRecords.type] in arrayOf(
+                        MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
+                        MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE
                 )
 
             }.forEach {
@@ -51,11 +56,11 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                     database.write {
 
-                        it.delete()
+                        MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
 
                     }
 
-                    syncDelete(it.chatId, it.targetId!!)
+                    syncDelete(it[MessageRecords.chatId], it[MessageRecords.targetId]!!)
 
                     success++
 
@@ -79,28 +84,29 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             records.filter {
 
-                it.type in arrayOf(
-                        MessageRecord.MESSAGE_TYPE_INPUT_MESSAGE,
-                        MessageRecord.MESSAGE_TYPE_OUTPUT_FORWARDED
+                it[MessageRecords.type] in arrayOf(
+                        MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE,
+                        MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED
                 )
 
             }.forEach { record ->
 
                 database.write {
 
-                    record.delete()
+                    MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq record[MessageRecords.messageId]) }
 
-                    messages.find {
+                    MessageRecords.select {
 
-                        ((messageRecords.type eq MessageRecord.MESSAGE_TYPE_INPUT_FORWARDED) or
-                                (messageRecords.type eq MessageRecord.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
-                                (messageRecords.targetId eq record.messageId)
+                        currentBot and (
+                                ((MessageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED) or
+                                        (MessageRecords.type eq MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
+                                        (MessageRecords.targetId eq record[MessageRecords.messageId]))
 
                     }.forEach {
 
-                        it.delete()
+                        MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
 
-                        sudo make L.MESSAGE_DELETED replyTo it.messageId sendTo admin
+                        sudo make L.MESSAGE_DELETED replyTo it[MessageRecords.messageId] sendTo admin
 
                     }
 

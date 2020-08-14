@@ -9,7 +9,10 @@ import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
+import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
@@ -40,7 +43,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 val record = database {
 
-                    messages.find { messageRecords.messageId eq message.replyToMessageId }.firstOrNull()
+                    MessageRecords.select { currentBot and (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
 
                 }
 
@@ -52,7 +55,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 }
 
-                chatToJoin = record.chatId
+                chatToJoin = record[MessageRecords.chatId]
 
             } else {
 
@@ -100,7 +103,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             } catch (e: TdException) {
 
-                sudo make L.failed { BANDED_BY } to chatId send deleteDelay(message)
+                sudo make L.failed { USER_NOT_FOUND } to chatId send deleteDelay(message)
 
                 return
 
@@ -110,7 +113,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             if (chatType !is TdApi.ChatTypePrivate) {
 
-                sudo make L.failed { JOIN_NON_PM } replyTo message
+                sudo make L.failed { USER_NOT_FOUND } replyTo message
 
                 return
 
@@ -122,7 +125,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             } catch (e: TdException) {
 
-                sudo make L.failed { JOIN_NON_PM } replyTo message
+                sudo make L.failed { USER_NOT_FOUND } replyTo message
 
                 return
 
