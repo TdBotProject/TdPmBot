@@ -189,7 +189,7 @@ class SetIntegration : UserBotSelector(true) {
 
         }
 
-        val userBot = database { UserBot.findById(me.id) }
+        val userBot = database { UserBot.findById(botUserId) }
 
         if (userId.toLong() != Launcher.admin && userBot?.owner != userId) {
 

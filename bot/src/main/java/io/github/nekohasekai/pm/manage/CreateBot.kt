@@ -14,7 +14,9 @@ import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.instance.BotInstances
 import td.TdApi
 
-class CreateBot(val command: String = "new_bot") : TdHandler() {
+class CreateBot : TdHandler() {
+
+    val command = "new_bot"
 
     val DEF = TdApi.BotCommand(
             command,
