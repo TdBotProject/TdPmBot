@@ -64,7 +64,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     }
 
-                    Launcher make L.INTEGRATION_PAUSED_NOTICE syncTo admin
+                    Launcher make L.INTEGRATION_PAUSED_NOTICE.input(me.username) syncTo admin
 
                     Launcher.findHandler<SetIntegration>().startSet(L, me.id, me.username, admin.toInt(), admin, 0L, true)
 

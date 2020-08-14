@@ -91,7 +91,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             } catch (e: TdException) {
 
-                sudo make L.failed { e.message } replyTo message send deleteDelay(message)
+                sudo make L.failed { e.message } onSuccess deleteDelay(message) replyTo message
 
                 return
 
@@ -99,7 +99,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             saveSent(currentChat, sentMessage.id)
 
-            sudo make L.SENT replyTo message send deleteDelayIf(!useIntegration)
+            sudo make L.SENT onSuccess deleteDelayIf(!useIntegration) replyTo message
 
             return
 
@@ -123,7 +123,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            sudo make L.RECORD_NF replyTo message send deleteDelay(message)
+            sudo make L.RECORD_NF onSuccess deleteDelay(message) replyTo message
 
             return
 
@@ -135,7 +135,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         } catch (e: TdException) {
 
-            sudo make L.failed { USER_NOT_FOUND } replyTo message send deleteDelayIf(!useIntegration, message)
+            sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
 
             null
 
@@ -159,7 +159,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { e.message } replyTo message send deleteDelayIf(!useIntegration, message)
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
 
                     return
 
@@ -167,7 +167,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 saveSent(targetUser.id, sentMessage.id)
 
-                sudo make L.SENT replyTo message send deleteDelayIf(!useIntegration)
+                sudo make L.SENT onSuccess deleteDelayIf(!useIntegration) replyTo message
 
             }
 
@@ -182,7 +182,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { REPLIED_NF } replyTo message send deleteDelayIf(!useIntegration, message)
+                    sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
 
                     return
 
@@ -194,7 +194,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { e.message } replyTo message send deleteDelayIf(!useIntegration, message)
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
 
                     return
 
@@ -202,7 +202,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 saveSent(targetUser.id, sentMessage.id)
 
-                sudo make L.REPLIED replyTo message send deleteDelayIf(!useIntegration)
+                sudo make L.REPLIED onSuccess deleteDelayIf(!useIntegration) replyTo message
 
             }
 

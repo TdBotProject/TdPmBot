@@ -62,11 +62,11 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 syncUnit(edit)
 
-                sudo make L.EDITED replyTo messageId to chatId send deleteDelayIf(!useIntegration)
+                sudo make L.EDITED replyAt messageId onSuccess deleteDelayIf(!useIntegration) sendTo chatId
 
             } catch (e: TdException) {
 
-                sudo make L.failed { e.message } replyTo messageId sendTo chatId
+                sudo make L.failed { e.message } replyAt messageId sendTo chatId
 
             }
 
@@ -88,7 +88,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             } ?: 0
 
-            sudo make L.MESSAGE_EDITED replyTo targetMessage syncTo targetChat
+            sudo make L.MESSAGE_EDITED replyAt targetMessage syncTo targetChat
 
             forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.SendMessageOptions(), asAlbum = false, sendCopy = false, removeCaption = false)
 

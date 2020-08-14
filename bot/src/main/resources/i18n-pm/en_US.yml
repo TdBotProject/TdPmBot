@@ -35,6 +35,11 @@ CREATE_FINISHED: |-
 
   You can go back to continue setting up your bot or add a description, about section and profile picture for your it at @BotFather.
 
+EDIT_BOTS_DEF: |-
+  edit your bots
+SELECT_TO_MANAGE: |-
+  Choose a bot from the list below:
+
 DELETE_BOT_DEF: |-
   delete a bot
 NO_BOTS: |-
@@ -114,8 +119,8 @@ SET_INTEGRATION: |-
   Integration status: {}
 INTEGRATION_HAS_SET: |-
   Done, all messages will be sent to here.
-INTEGRATION_ADMIN_ONLY: |-
-  Only group admins can operate PM: {}
+INTEGRATION_STATUS: |-
+  Only group admins can operate: {}
 INTEGRATION_UNDEF: |-
   none
 INTEGRATION_OK: |-
@@ -127,17 +132,21 @@ INTEGRATION_PAUSED_NOTICE: |-
 INTEGRATION_UNABLE_TO_RESUME: |-
   Bot cannot access the group, so the integration cannot be resumed, please check again.
 INTEGRATION_SET: |-
-  Integration to group
+  Integrate to group
 INTEGRATION_PAUSE: |-
   Pause Integration
 INTEGRATION_RESUME: |-
   Resume Integration
 INTEGRATION_DEL: |-
   Remove Integration
-INTEGRATION_ADMIN_ONLY_ENABLED: |-
-  Make all members operable
-INTEGRATION_ADMIN_ONLY_DISABLED: |-
+INTEGRATION_ENABLE_ADMIN_ONLY: |-
   Set as admin only
+INTEGRATION_DISABLE_ADMIN_ONLY: |-
+  Make all members operable
+INTEGRATION_ENABLE_CLEAN_MODE: |-
+  Enable clean mode
+INTEGRATION_DISABLE_CLEAN_MODE: |-
+  Disable clean mode
 
 DEFAULT_WELCOME: |-
   Hello!

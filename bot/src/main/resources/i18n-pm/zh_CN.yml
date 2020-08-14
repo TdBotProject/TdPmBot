@@ -32,6 +32,11 @@ CREATE_FINISHED: |-
 
   现在您可以返回继续设置您的机器人, 或者到 @BotFather 为它设置简介, 关于行和头像.
 
+EDIT_BOTS_DEF: |-
+  编辑您的机器人
+SELECT_TO_EDIT: |-
+  请在下方列表中选择您要编辑的机器人.
+
 DELETE_BOT_DEF: |-
   删除机器人
 NO_BOTS: |-
@@ -63,7 +68,7 @@ BOT_DELETED: |-
 BOT_AUTH_FAILED: |-
   您的机器人 @{} 无法认证 ( 已重置 Token / 被刪除 ), 已移除.
 BOT_LOGOUT: |-
-  您的机器人 @{} 被登出, ( 已重置 Token / 刪除 ), 已移除.
+  您的机器人 @{} 被登出, ( 已重置 Token / 被刪除 ), 已移除.
 
 SET_STARTS_DEF: |-
   设置欢迎消息
@@ -112,7 +117,7 @@ SET_INTEGRATION: |-
   接入状态: {}
 INTEGRATION_HAS_SET: |-
   成功, 所有消息将被发往本群.
-INTEGRATION_ADMIN_ONLY: |-
+INTEGRATION_STATUS: |-
   仅群组管理员可操作机器人: {}
 INTEGRATION_UNDEF: |-
   未接入
@@ -132,10 +137,14 @@ INTEGRATION_RESUME: |-
   恢复接入
 INTEGRATION_DEL: |-
   取消接入
-INTEGRATION_ADMIN_ONLY_ENABLED: |-
-  设为所有成员都可操作
-INTEGRATION_ADMIN_ONLY_DISABLED: |-
+INTEGRATION_ENABLE_ADMIN_ONLY: |-
   设为仅管理员可操作
+INTEGRATION_DISABLE_ADMIN_ONLY: |-
+  设为所有成员都可操作
+INTEGRATION_ENABLE_CLEAN_MODE: |-
+  启用简介模式
+INTEGRATION_DISABLE_CLEAN_MODE: |-
+  禁用简介模式
 
 DEFAULT_WELCOME: |-
   您好!

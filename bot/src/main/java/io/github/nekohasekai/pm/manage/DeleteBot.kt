@@ -10,12 +10,16 @@ import td.TdApi
 
 class DeleteBot : UserBotSelector() {
 
-    val command = "delete_bot"
+    companion object {
 
-    val DEF = TdApi.BotCommand(
-            command,
-            LocaleController.DELETE_BOT_DEF
-    )
+        const val command = "delete_bot"
+
+        val DEF = TdApi.BotCommand(
+                command,
+                LocaleController.DELETE_BOT_DEF
+        )
+
+    }
 
     override val persistId = PERSIST_DEL_BOT
 
@@ -35,7 +39,7 @@ class DeleteBot : UserBotSelector() {
 
             userCalled(userId, "delete in non-private chat")
 
-            sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
+            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return
 

@@ -16,14 +16,18 @@ import td.TdApi
 
 class CreateBot : TdHandler() {
 
-    val command = "new_bot"
+    companion object {
 
-    val DEF = TdApi.BotCommand(
-            command,
-            LocaleController.CREATE_BOT_DEF
-    )
+        const val command = "new_bot"
 
-    private var persistId = PERSIST_BOT_CREATE
+        const val persistId = PERSIST_BOT_CREATE
+
+        val DEF = TdApi.BotCommand(
+                command,
+                LocaleController.CREATE_BOT_DEF
+        )
+
+    }
 
     override fun onLoad() {
 
@@ -40,7 +44,7 @@ class CreateBot : TdHandler() {
 
             userCalled(userId, "create in non-private chat")
 
-            sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
+            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return
 

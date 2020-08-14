@@ -1,7 +1,6 @@
 package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.raw.getChat
-import io.github.nekohasekai.nekolib.core.raw.getMessageWith
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.*
@@ -12,11 +11,21 @@ import td.TdApi
 
 class SetIntegration : UserBotSelector(true) {
 
+    companion object {
+
+        const val function = "set_integration"
+
+        const val dataId = DATA_SET_START_INTEGRATION
+
+        val DEF = TdApi.BotCommand(
+                function,
+                LocaleController.SET_INTEGRATION_DEF
+        )
+
+    }
+
     override val persistId = PERSIST_SET_START_INTEGRATION
 
-    val dataId = DATA_SET_START_INTEGRATION
-
-    val function = "set_integration"
 
     override fun onLoad() {
 
@@ -34,11 +43,6 @@ class SetIntegration : UserBotSelector(true) {
 
     }
 
-    val DEF = TdApi.BotCommand(
-            function,
-            LocaleController.SET_INTEGRATION_DEF
-    )
-
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
         if (!Launcher.public && chatId != Launcher.admin) rejectFunction()
@@ -47,7 +51,7 @@ class SetIntegration : UserBotSelector(true) {
 
             userCalled(userId, "set integration in non-private chat")
 
-            sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
+            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return
 
@@ -101,11 +105,11 @@ class SetIntegration : UserBotSelector(true) {
 
         if (integration != null) {
 
-            content += "\n\n" + L.INTEGRATION_ADMIN_ONLY.input(if (integration.adminOnly) L.ENABLED else L.DISABLED)
+            content += "\n\n" + L.INTEGRATION_STATUS.input(if (integration.adminOnly) L.ENABLED else L.DISABLED)
 
         }
 
-        val action = sudo make content withMarkup inlineButton {
+        sudo make content withMarkup inlineButton {
 
             urlLine(L.INTEGRATION_SET, mkStartGroupPayloadUrl(botUserName, "set_integration"))
 
@@ -113,13 +117,23 @@ class SetIntegration : UserBotSelector(true) {
 
                 if (integration.adminOnly) {
 
-                    dataLine(L.INTEGRATION_ADMIN_ONLY_ENABLED, dataId, botUserId.toByteArray(), 0.toByteArray())
+                    dataLine(L.INTEGRATION_DISABLE_ADMIN_ONLY, dataId, botUserId.toByteArray(), 0.toByteArray())
 
                 } else {
 
-                    dataLine(L.INTEGRATION_ADMIN_ONLY_DISABLED, dataId, botUserId.toByteArray(), 1.toByteArray())
+                    dataLine(L.INTEGRATION_ENABLE_ADMIN_ONLY, dataId, botUserId.toByteArray(), 1.toByteArray())
 
                 }
+
+                /*   if (integration.cleanMode) {
+
+                       dataLine(L.INTEGRATION_DISABLE_CLEAN_MODE, dataId, botUserId.toByteArray(), 4.toByteArray())
+
+                   } else {
+
+                       dataLine(L.INTEGRATION_ENABLE_CLEAN_MODE, dataId, botUserId.toByteArray(), 5.toByteArray())
+
+                   }*/
 
                 newLine {
 
@@ -133,33 +147,17 @@ class SetIntegration : UserBotSelector(true) {
 
                     }
 
-                    // dataButton(L.INTEGRATION_DEL, dataId, botUserId.toByteArray(), 4.toByteArray())
+                    // dataButton(L.INTEGRATION_DEL, dataId, botUserId.toByteArray(), 6.toByteArray())
 
                 }
 
             }
 
-        }
-
-        if (send) action to chatId send {
+        } onSuccess {
 
             integrationActionMessages[userId] = it.id
 
-        } else {
-
-            getMessageWith(chatId, messageId) {
-
-                onSuccess {
-
-                    // TDLib Issue #859
-
-                    action.editTo(chatId, messageId)
-
-                }
-
-            }
-
-        }
+        } at messageId edit !send sendOrEditTo chatId
 
     }
 
@@ -270,9 +268,27 @@ class SetIntegration : UserBotSelector(true) {
 
             sudo makeAnswer L.ENABLED answerTo queryId
 
-        } else {
+            /*} else if (action == 4) {
 
-            // TODO: IMPL DELETE WITH BUTTON
+                database.write {
+
+                    integration.cleanMode = false
+                    integration.flush()
+
+                }
+
+                sudo makeAnswer L.DISABLED answerTo queryId
+
+            } else if (action == 5) {
+
+                database.write {
+
+                    integration.cleanMode = true
+                    integration.flush()
+
+                }
+
+                sudo makeAnswer L.ENABLED answerTo queryId*/
 
         }
 

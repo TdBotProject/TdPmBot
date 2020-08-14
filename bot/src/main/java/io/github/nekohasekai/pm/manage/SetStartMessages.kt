@@ -14,14 +14,19 @@ import java.util.*
 
 class SetStartMessages : UserBotSelector(true) {
 
+    companion object {
+
+        const val function = "set_start_messages"
+
+        val DEF = TdApi.BotCommand(
+                function,
+                LocaleController.SET_STARTS_DEF
+        )
+
+    }
+
     override val persistId = PERSIST_SET_START_MESSAGES
 
-    val function = "set_start_messages"
-
-    val DEF = TdApi.BotCommand(
-            function,
-            LocaleController.SET_STARTS_DEF
-    )
 
     override fun onLoad() {
 
@@ -43,7 +48,7 @@ class SetStartMessages : UserBotSelector(true) {
 
             userCalled(userId, "set start messages in non-private chat")
 
-            sudo make LocaleController.FN_PRIVATE_ONLY replyTo message send deleteDelay(message)
+            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return
 
@@ -214,12 +219,14 @@ class SetStartMessages : UserBotSelector(true) {
 
             userCalled(userId, "submitted start messages to $botUserId")
 
-            val column = StartMessages.Cache.fetch(botUserId)
+            StartMessages.Cache.fetch(botUserId).apply {
 
-            column.value = cache.messages
-            column.changed = true
+                value = cache.messages
+                changed = true
 
-            StartMessages.Cache.remove(botUserId)
+                flush()
+
+            }
 
             sudo make L.SETTING_SAVED sendTo chatId
 
@@ -247,12 +254,14 @@ class SetStartMessages : UserBotSelector(true) {
 
             userCalled(userId, "reset start messages to $botUserId")
 
-            val column = StartMessages.Cache.fetch(botUserId)
+            StartMessages.Cache.fetch(botUserId).apply {
 
-            column.value = null
-            column.changed = true
+                value = null
+                changed = true
 
-            StartMessages.Cache.remove(botUserId)
+                flush()
+
+            }
 
             sudo make L.MESSAGES_RESET sendTo chatId
 

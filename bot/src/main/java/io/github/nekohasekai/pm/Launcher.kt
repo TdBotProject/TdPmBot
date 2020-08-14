@@ -113,11 +113,11 @@ object Launcher : TdCli(), PmInstance {
         if (public) {
 
             upsertCommands(
-                    findHandler<CreateBot>().DEF,
-                    findHandler<DeleteBot>().DEF,
-                    findHandler<SetStartMessages>().DEF,
-                    findHandler<SetIntegration>().DEF,
-                    findHandler<LocaleSwitcher>().DEF,
+                    CreateBot.DEF,
+                    DeleteBot.DEF,
+                    SetStartMessages.DEF,
+                    SetIntegration.DEF,
+                    LocaleSwitcher.DEF,
                     HELP_COMMAND,
                     CANCEL_COMMAND
             )

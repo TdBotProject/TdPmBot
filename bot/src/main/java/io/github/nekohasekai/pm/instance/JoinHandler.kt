@@ -49,7 +49,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 if (record == null) {
 
-                    sudo make L.failed { RECORD_NF } to chatId send deleteDelay(message)
+                    sudo make L.failed { RECORD_NF } onSuccess deleteDelay(message) sendTo chatId
 
                     return
 
@@ -103,7 +103,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             } catch (e: TdException) {
 
-                sudo make L.failed { USER_NOT_FOUND } to chatId send deleteDelay(message)
+                sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelay(message) sendTo chatId
 
                 return
 

@@ -5,7 +5,7 @@ import cn.hutool.core.util.NumberUtil
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
-import io.github.nekohasekai.nekolib.core.raw.getChatMemberOrNull
+import io.github.nekohasekai.nekolib.core.raw.getChatMember
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
@@ -23,7 +23,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
     override fun onLoad() {
 
-        initFunction("block", "unblock")
+        initFunction("block", "unblock", "ban", "unban")
 
     }
 
@@ -51,7 +51,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             if (record == null) {
 
-                sudo make L.failed { RECORD_NF } to chatId send deleteDelay(message)
+                sudo make L.failed { RECORD_NF } onSuccess deleteDelay(message) sendTo chatId
 
                 return
 
@@ -115,7 +115,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         } catch (e: TdException) {
 
-            if (function == "block") {
+            if (function in arrayOf("block", "ban")) {
 
                 sudo make L.failed { USER_NOT_FOUND } replyTo message
 
@@ -151,7 +151,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         }
 
-        if (function == "block") {
+        if (function in arrayOf("block", "ban")) {
 
             if (record) {
 
@@ -177,10 +177,9 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             } else if (chatId == integration?.integration && userIdLong != admin) {
 
-                val chatMember = getChatMemberOrNull(chatId, userToBlock)
+                val chatMember = getChatMember(chatId, userToBlock)
 
-                if ((chatMember?.status?.isMember == true && !integration.adminOnly) ||
-                        chatMember?.status?.isAdmin == true && integration.adminOnly) {
+                if (chatMember.isAdmin || (chatMember.isMember && !integration.adminOnly)) {
 
                     // 阻止 接入群组成员屏蔽其他成员
 
@@ -198,9 +197,9 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 changed = true
 
-            }
+                flush()
 
-            blocks.remove(userToBlock)
+            }
 
             val notice = sudo makeHtml L.BLOCKED.input(userHtml) syncReplyTo message
 
@@ -222,9 +221,9 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 changed = true
 
-            }
+                flush()
 
-            blocks.remove(userToBlock)
+            }
 
             val notice = sudo makeHtml L.UNBLOCKED.input(userHtml) syncReplyTo message
 

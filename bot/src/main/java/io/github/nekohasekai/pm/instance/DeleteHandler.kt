@@ -2,7 +2,7 @@ package io.github.nekohasekai.pm.instance
 
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.utils.deleteDelayIf
+import io.github.nekohasekai.nekolib.core.utils.deleteDelay
 import io.github.nekohasekai.nekolib.core.utils.input
 import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.core.utils.syncDelete
@@ -34,9 +34,11 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val integration = integration
 
-        val useIntegration = chatId == integration?.integration
+        /*if (chatId == integration?.integration && integration.cleanMode) {
 
-        if (chatId == admin || useIntegration) {
+            return
+
+        } else */if (chatId == admin || chatId == integration?.integration) {
 
             // 主人删除消息 对等删除
 
@@ -74,7 +76,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             if (success + failed > 0) {
 
-                sudo make L.DELETED.input(success, success + failed) to chatId send deleteDelayIf(!useIntegration)
+                sudo make L.DELETED.input(success, success + failed) onSuccess deleteDelay() sendTo chatId
 
             }
 
@@ -106,7 +108,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                         MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
 
-                        sudo make L.MESSAGE_DELETED replyTo it[MessageRecords.messageId] sendTo admin
+                        sudo make L.MESSAGE_DELETED replyAt it[MessageRecords.messageId] sendTo admin
 
                     }
 
@@ -115,8 +117,6 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
             }
 
         }
-
-        finishEvent()
 
     }
 
