@@ -7,7 +7,7 @@ import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.StartMessages
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.instance.BotInstances
-import io.github.nekohasekai.pm.manage.abs.BotHandler
+import io.github.nekohasekai.pm.manage.BotHandler
 import td.TdApi
 import java.util.*
 

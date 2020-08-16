@@ -11,7 +11,6 @@ import io.github.nekohasekai.pm.instance.*
 import io.github.nekohasekai.pm.manage.CreateBot
 import io.github.nekohasekai.pm.manage.DeleteBot
 import io.github.nekohasekai.pm.manage.MyBots
-import io.github.nekohasekai.pm.manage.SetIntegration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -78,6 +77,7 @@ object Launcher : TdCli(), PmInstance {
             SchemaUtils.createMissingTablesAndColumns(
                     UserBots,
                     StartMessages,
+                    ActionMessages,
                     BotIntegrations,
                     MessageRecords,
                     UserBlocks
@@ -96,7 +96,6 @@ object Launcher : TdCli(), PmInstance {
         addHandler(CreateBot())
         addHandler(MyBots())
         addHandler(DeleteBot())
-        addHandler(SetIntegration())
 
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))
@@ -114,8 +113,8 @@ object Launcher : TdCli(), PmInstance {
 
             upsertCommands(
                     CreateBot.DEF,
+                    MyBots.DEF,
                     DeleteBot.DEF,
-                    SetIntegration.DEF,
                     LocaleSwitcher.DEF,
                     HELP_COMMAND,
                     CANCEL_COMMAND

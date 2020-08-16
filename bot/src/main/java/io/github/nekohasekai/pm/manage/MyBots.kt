@@ -6,6 +6,7 @@ import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
 import io.github.nekohasekai.nekolib.i18n.L
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
+import io.github.nekohasekai.pm.database.ActionMessages
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.database.UserBots
 import io.github.nekohasekai.pm.manage.menu.BotEdits
@@ -36,7 +37,7 @@ class MyBots : TdHandler() {
 
     }
 
-    val actionMessages = hashMapOf<Int, Long>()
+    val actionMessages by lazy { KeyValueCacheMap(database, ActionMessages) }
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
@@ -54,11 +55,13 @@ class MyBots : TdHandler() {
 
     fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
-        val currentActionMessage = actionMessages[userId]
+        val currentActionMessage = actionMessages.fetch(userId)
 
-        if (currentActionMessage != null && currentActionMessage != messageId) {
+        val currentActionMessageId = currentActionMessage.value
 
-            delete(chatId, currentActionMessage)
+        if (currentActionMessageId != null && currentActionMessageId != messageId) {
+
+            delete(chatId, currentActionMessageId)
 
         }
 
@@ -108,12 +111,12 @@ class MyBots : TdHandler() {
 
                 }
 
-
             }
 
         } onSuccess {
 
-            actionMessages[userId] = it.id
+            currentActionMessage.value = it.id
+            currentActionMessage.changed = true
 
         } at messageId edit isEdit sendOrEditTo chatId
 

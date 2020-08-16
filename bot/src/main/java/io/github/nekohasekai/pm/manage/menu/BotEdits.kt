@@ -2,13 +2,10 @@ package io.github.nekohasekai.pm.manage.menu
 
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.L
-import io.github.nekohasekai.pm.BOT_EDITS
-import io.github.nekohasekai.pm.DATA_EDIT_BOT
-import io.github.nekohasekai.pm.MENU_BACK_TO_BOT_LIST
-import io.github.nekohasekai.pm.MENU_START_MESSAGES
+import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.UserBot
+import io.github.nekohasekai.pm.manage.BotHandler
 import io.github.nekohasekai.pm.manage.MyBots
-import io.github.nekohasekai.pm.manage.abs.BotHandler
 
 class BotEdits : BotHandler() {
 
@@ -23,6 +20,7 @@ class BotEdits : BotHandler() {
         initData(dataId)
 
         sudo addHandler StartMessageEdits()
+        sudo addHandler IntegrationEdits()
 
     }
 
@@ -33,6 +31,7 @@ class BotEdits : BotHandler() {
         sudo make L.BOT_EDITS.input(userBot?.username ?: me.username) withMarkup inlineButton {
 
             dataLine(L.MENU_START_MESSAGES, StartMessageEdits.dataId, botUserId.toByteArray())
+            dataLine(L.MENU_INTEGRATION, IntegrationEdits.dataId, botUserId.toByteArray())
 
             dataLine(L.MENU_BACK_TO_BOT_LIST, MyBots.dataId)
 

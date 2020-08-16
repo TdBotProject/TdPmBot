@@ -46,7 +46,9 @@ MENU_BACK_TO_BOT_LIST: |-
   <<   Back to Bots List
 MENU_START_MESSAGES: |-
   Edit Start Messages   >>
-
+MENU_INTEGRATION: |-
+  Edit Group Integration >>
+  
 DELETE_BOT_DEF: |-
   delete a bot
 NO_BOTS: |-
@@ -99,7 +101,7 @@ INPUT_MESSAGES: |-
 
   Or:
 
-  Type /reset to reset
+  Type /submit to submit empty messages
   Type /cancel to exit
 MESSAGE_ADDED: |-
   Added.

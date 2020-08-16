@@ -43,6 +43,8 @@ MENU_BACK_TO_BOT_LIST: |-
   <<   返回机器人列表
 MENU_START_MESSAGES: |-
   编辑欢迎消息   >>
+MENU_INTEGRATION: |-
+  编辑接入群组   >>
 START_MESSAGES_STATUS: |-
   这里是您的机器人: @{}.
   当前欢迎消息: {}

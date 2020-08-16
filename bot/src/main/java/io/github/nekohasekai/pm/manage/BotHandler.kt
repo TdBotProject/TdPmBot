@@ -1,4 +1,4 @@
-package io.github.nekohasekai.pm.manage.abs
+package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.makeAlert

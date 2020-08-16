@@ -11,7 +11,7 @@ import io.github.nekohasekai.pm.INTEGRATION_PAUSED_NOTICE
 import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
-import io.github.nekohasekai.pm.manage.SetIntegration
+import io.github.nekohasekai.pm.manage.menu.IntegrationEdits
 import org.jetbrains.exposed.sql.insert
 import td.TdApi
 import java.util.concurrent.atomic.AtomicInteger
@@ -66,7 +66,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     Launcher make L.INTEGRATION_PAUSED_NOTICE.input(me.username) syncTo admin
 
-                    Launcher.findHandler<SetIntegration>().startSet(L, me.id, me.username, admin.toInt(), admin, 0L, true)
+                    Launcher.findHandler<IntegrationEdits>().integrationMenu(L, me.id, me.username, admin, 0L, false)
 
                 }
 

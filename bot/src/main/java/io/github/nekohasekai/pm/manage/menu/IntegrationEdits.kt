@@ -1,4 +1,4 @@
-package io.github.nekohasekai.pm.manage
+package io.github.nekohasekai.pm.manage.menu
 
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
@@ -7,91 +7,33 @@ import io.github.nekohasekai.nekolib.i18n.*
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.BotIntegration
 import io.github.nekohasekai.pm.database.UserBot
+import io.github.nekohasekai.pm.manage.BotHandler
+import io.github.nekohasekai.pm.manage.MyBots
 import td.TdApi
 
-class SetIntegration : UserBotSelector(true) {
+class IntegrationEdits : BotHandler() {
 
     companion object {
 
-        const val function = "set_integration"
+        const val payload = "set_integration"
 
         const val dataId = DATA_SET_START_INTEGRATION
 
-        val DEF = TdApi.BotCommand(
-                function,
-                LocaleController.SET_INTEGRATION_DEF
-        )
-
     }
-
-    override val persistId = PERSIST_SET_START_INTEGRATION
-
 
     override fun onLoad() {
 
         if (sudo is Launcher) {
 
-            super.onLoad()
-
-            initFunction(function)
-
             initData(dataId)
 
         }
 
-        initStartPayload(function)
+        initStartPayload(payload)
 
     }
 
-    override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
-
-        if (!Launcher.public && chatId != Launcher.admin) rejectFunction()
-
-        if (!message.fromPrivate) {
-
-            userCalled(userId, "set integration in non-private chat")
-
-            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
-
-            return
-
-        }
-
-        val L = LocaleController.forChat(userId)
-
-        doSelect(L, userId, 0L, L.SELECT_TO_SET)
-
-    }
-
-    val integrationActionMessages = hashMapOf<Int, Long>()
-
-    override suspend fun onSelected(userId: Int, chatId: Long, subId: Long, userBot: UserBot?) {
-
-        val L = LocaleController.forChat(userId)
-
-        if (userBot == null) {
-
-            userCalled(userId, "set launcher`s integration")
-
-        } else {
-
-            userCalled(userId, "set @${userBot.username}`s integration")
-
-        }
-
-        startSet(L, userBot?.botId ?: me.id, userBot?.username ?: me.username, userId, chatId, 0L, true)
-
-    }
-
-    fun startSet(L: LocaleController, botUserId: Int, botUserName: String, userId: Int, chatId: Long, messageId: Long, send: Boolean) {
-
-        if (integrationActionMessages.containsKey(userId)) {
-
-            val messageIdToDelete = integrationActionMessages[userId]!!
-
-            if (messageIdToDelete != messageId) delete(chatId, integrationActionMessages.remove(userId)!!)
-
-        }
+    fun integrationMenu(L: LocaleController, botUserId: Int, botUserName: String, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val integration = BotIntegration.Cache.fetch(botUserId).value
 
@@ -125,16 +67,6 @@ class SetIntegration : UserBotSelector(true) {
 
                 }
 
-                /*   if (integration.cleanMode) {
-
-                       dataLine(L.INTEGRATION_DISABLE_CLEAN_MODE, dataId, botUserId.toByteArray(), 4.toByteArray())
-
-                   } else {
-
-                       dataLine(L.INTEGRATION_ENABLE_CLEAN_MODE, dataId, botUserId.toByteArray(), 5.toByteArray())
-
-                   }*/
-
                 newLine {
 
                     if (!integration.paused) {
@@ -147,48 +79,33 @@ class SetIntegration : UserBotSelector(true) {
 
                     }
 
-                    // dataButton(L.INTEGRATION_DEL, dataId, botUserId.toByteArray(), 6.toByteArray())
+                    dataButton(L.INTEGRATION_DEL, dataId, botUserId.toByteArray(), 4.toByteArray())
 
                 }
 
             }
 
-        } onSuccess {
+            dataLine(L.BACK_ARROW, BotEdits.dataId, botUserId.toByteArray())
 
-            integrationActionMessages[userId] = it.id
-
-        } at messageId edit !send sendOrEditTo chatId
+        } at messageId edit isEdit sendOrEditTo chatId
 
     }
 
-    override suspend fun onNewCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>) {
+    override suspend fun onNewBotCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>, botUserId: Int, userBot: UserBot?) {
 
-        val L = LocaleController.forChat(userId)
+        sudo confirmTo queryId
 
-        val botUserId = data[0].toInt()
+        val L = L.forChat(userId)
 
-        val action = data[1].toInt()
+        if (data.isEmpty()) {
 
-        val userBot = database { UserBot.findById(botUserId) }
-
-        if (userId.toLong() != Launcher.admin && userBot?.owner != userId) {
-
-            // 权限检查
-
-            warnUserCalled(userId, """
-                Illegal access to set_integration callback
-
-                User: ${getUser(userId).displayName}
-                UserId: $userId
-                TargetBotId: $botUserId
-                Action: $action
-            """.trimIndent())
-
-            sudo makeAnswer { cacheTime = 114 } answerTo queryId
+            integrationMenu(L, userBot?.botId ?: me.id, userBot?.username ?: me.username, chatId, messageId, true)
 
             return
 
         }
+
+        val action = data[0].toInt()
 
         val integration = BotIntegration.Cache.fetch(botUserId).value
 
@@ -198,7 +115,7 @@ class SetIntegration : UserBotSelector(true) {
 
             delete(chatId, messageId)
 
-            startSet(L, me.id, me.username, userId, chatId, 0L, true)
+            findHandler<MyBots>().rootMenu(userId, chatId, 0L, false)
 
             return
 
@@ -258,35 +175,25 @@ class SetIntegration : UserBotSelector(true) {
 
                 sudo makeAnswer L.ENABLED answerTo queryId
 
-                /*} else if (action == 4) {
+            }
+
+            4 -> {
 
                 database.write {
 
-                    integration.cleanMode = false
-                    integration.flush()
+                    integration.delete()
 
                 }
 
-                sudo makeAnswer L.DISABLED answerTo queryId
-
-            } else if (action == 5) {
-
-                database.write {
-
-                    integration.cleanMode = true
-                    integration.flush()
-
-                }
-
-                sudo makeAnswer L.ENABLED answerTo queryId*/
+                sudo makeAnswer L.DELETED answerTo queryId
 
             }
 
         }
 
-        BotIntegration.Cache.fetch(botUserId).value = integration
+        BotIntegration.Cache.fetch(botUserId).value = if (action < 4) integration else null
 
-        startSet(L, botUserId, userBot?.username ?: me.username, userId, chatId, messageId, false)
+        integrationMenu(L, botUserId, userBot?.username ?: me.username, chatId, messageId, true)
 
     }
 
@@ -317,8 +224,6 @@ class SetIntegration : UserBotSelector(true) {
 
         val integration = integrationEntry.value
 
-        var changed = false
-
         if (integration == null) {
 
             BotIntegration.Cache.remove(me.id)
@@ -335,8 +240,6 @@ class SetIntegration : UserBotSelector(true) {
 
             }
 
-            changed = true
-
         } else if (integration.integration != chatId) {
 
             database.write {
@@ -345,8 +248,6 @@ class SetIntegration : UserBotSelector(true) {
                 integration.flush()
 
             }
-
-            changed = true
 
         } else if (integration.paused) {
 
@@ -357,17 +258,17 @@ class SetIntegration : UserBotSelector(true) {
 
             }
 
-            changed = true
-
         }
 
         sudo make L.INTEGRATION_HAS_SET syncReplyTo message
 
-        if (changed) {
+        Launcher.apply {
 
-            if (integrationActionMessages.containsKey(userId)) {
+            val actionMessage = findHandler<MyBots>().actionMessages.fetch(userId)
 
-                startSet(L, me.id, me.username, userId, userId.toLong(), integrationActionMessages[userId]!!, false)
+            if (actionMessage.value != null) {
+
+                findHandler<IntegrationEdits>().integrationMenu(L, me.id, me.username, userId.toLong(), actionMessage.value!!, true)
 
             }
 
