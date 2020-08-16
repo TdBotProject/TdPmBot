@@ -4,9 +4,8 @@ HELP_MSG: |-
   您可以控制我通过发送以下命令：
 
   /new_bot - 创建新机器人
+  /my_bots - 编辑机器人
   /delete_bot - 删除机器人
-  /set_start_messages - 设置欢迎消息
-  /set_integration - 设置接入群组
 
   如需帮助，请通过 @TdBotProject 的讨论群组与我们联系.
 

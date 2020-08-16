@@ -119,33 +119,31 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         if (!message.fromPrivate) return
 
-        if (chatId != admin) {
+        val startMessages = StartMessages.Cache.fetch(botUserId).value
 
-            val startMessages = StartMessages.Cache.fetch(botUserId).value
+        if (startMessages == null) {
 
-            if (startMessages == null) {
+            var content = L.DEFAULT_WELCOME
 
-                var content = L.DEFAULT_WELCOME
+            if (Launcher.public) {
 
-                if (Launcher.public) {
-
-                    content += "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl)))
-
-                }
-
-                sudo makeHtml content sendTo chatId
-
-            } else {
-
-                startMessages.forEach {
-
-                    sudo make it syncTo chatId
-
-                }
+                content += "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl)))
 
             }
 
+            sudo makeHtml content sendTo chatId
+
         } else {
+
+            startMessages.forEach {
+
+                sudo make it syncTo chatId
+
+            }
+
+        }
+
+        if (chatId == admin) {
 
             sudo make L.PM_HELP sendTo chatId
 

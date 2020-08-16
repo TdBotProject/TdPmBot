@@ -4,9 +4,8 @@ HELP_MSG: |-
   You can control me by sending these commands:
 
   /new_bot - create a new pm bot
+  /my_bots - edit bots
   /delete_bot - delete a pm bot
-  /set_start_messages - set bot start messages
-  /set_integration - integrate to group
 
   For help, please contact us at @TdBotProject 's discuss group.
 PRIVATE_INSTANCE: |-

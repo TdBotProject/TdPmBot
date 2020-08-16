@@ -43,11 +43,15 @@ class StartMessageEdits : BotHandler() {
 
         }) withMarkup inlineButton {
 
-            dataLine(L.EDIT, dataId, botUserId.toByteArray(), 1.toByteArray())
+            newLine {
 
-            if (startMessages != null) {
+                dataButton(L.EDIT, dataId, botUserId.toByteArray(), 1.toByteArray())
 
-                dataLine(L.RESET, dataId, botUserId.toByteArray(), 2.toByteArray())
+                if (startMessages != null) {
+
+                    dataButton(L.RESET, dataId, botUserId.toByteArray(), 2.toByteArray())
+
+                }
 
             }
 

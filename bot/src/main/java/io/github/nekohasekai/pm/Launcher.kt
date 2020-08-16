@@ -144,6 +144,14 @@ object Launcher : TdCli(), PmInstance {
 
         super.onNewMessage(userId, chatId, message)
 
+        if (public) {
+
+            onLaunch(userId, chatId, message)
+
+            finishEvent()
+
+        }
+
     }
 
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
