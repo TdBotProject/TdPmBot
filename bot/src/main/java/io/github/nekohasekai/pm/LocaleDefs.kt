@@ -19,6 +19,11 @@ internal val L.CREATE_FINISHED by string
 
 internal val L.EDIT_BOTS_DEF by string
 internal val L.SELECT_TO_EDIT by string
+internal val L.BOT_EDITS by string
+internal val L.MENU_BACK_TO_BOT_LIST by string
+
+internal val L.MENU_START_MESSAGES by string
+internal val L.START_MESSAGES_STATUS by string
 
 internal val L.DELETE_BOT_DEF by string
 internal val L.NO_BOTS by string

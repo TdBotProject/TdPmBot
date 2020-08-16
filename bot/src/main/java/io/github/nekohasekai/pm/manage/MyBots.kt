@@ -2,10 +2,13 @@ package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
 import io.github.nekohasekai.nekolib.i18n.L
+import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.database.UserBots
+import io.github.nekohasekai.pm.manage.menu.BotEdits
 import td.TdApi
 
 class MyBots : TdHandler() {
@@ -29,17 +32,27 @@ class MyBots : TdHandler() {
 
         initData(dataId)
 
+        sudo addHandler BotEdits()
+
     }
 
     val actionMessages = hashMapOf<Int, Long>()
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
+        if (!message.fromPrivate) {
+
+            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
+
+            return
+
+        }
+
         rootMenu(userId, chatId, 0L, false)
 
     }
 
-    fun rootMenu(userId: Int, chatId: Long, messageId: Long, edit: Boolean) {
+    fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val currentActionMessage = actionMessages[userId]
 
@@ -71,7 +84,7 @@ class MyBots : TdHandler() {
 
         if (bots.isEmpty()) {
 
-            sudo make L.NO_BOTS sendTo chatId
+            sudo make L.NO_BOTS at messageId edit isEdit sendOrEditTo chatId
 
             return
 
@@ -86,11 +99,11 @@ class MyBots : TdHandler() {
                 if (line == null) {
 
                     line = newLine()
-                    line!!.dataButton("@$it", dataId, it.value.toByteArray())
+                    line!!.dataButton("@${it.key}", BotEdits.dataId, it.value.toByteArray())
 
                 } else {
 
-                    line!!.dataButton("@$it", dataId, it.value.toByteArray())
+                    line!!.dataButton("@${it.key}", BotEdits.dataId, it.value.toByteArray())
                     line = null
 
                 }
@@ -102,12 +115,15 @@ class MyBots : TdHandler() {
 
             actionMessages[userId] = it.id
 
-        } at messageId edit edit sendOrEditTo chatId
+        } at messageId edit isEdit sendOrEditTo chatId
 
     }
 
     override suspend fun onNewCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>) {
 
+        sudo confirmTo queryId
+
+        rootMenu(userId, chatId, messageId, true)
 
     }
 

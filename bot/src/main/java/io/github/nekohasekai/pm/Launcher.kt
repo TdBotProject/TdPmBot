@@ -10,8 +10,8 @@ import io.github.nekohasekai.pm.database.*
 import io.github.nekohasekai.pm.instance.*
 import io.github.nekohasekai.pm.manage.CreateBot
 import io.github.nekohasekai.pm.manage.DeleteBot
+import io.github.nekohasekai.pm.manage.MyBots
 import io.github.nekohasekai.pm.manage.SetIntegration
-import io.github.nekohasekai.pm.manage.SetStartMessages
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -94,8 +94,8 @@ object Launcher : TdCli(), PmInstance {
         })
 
         addHandler(CreateBot())
+        addHandler(MyBots())
         addHandler(DeleteBot())
-        addHandler(SetStartMessages())
         addHandler(SetIntegration())
 
         addHandler(InputHandler(this))
@@ -115,7 +115,6 @@ object Launcher : TdCli(), PmInstance {
             upsertCommands(
                     CreateBot.DEF,
                     DeleteBot.DEF,
-                    SetStartMessages.DEF,
                     SetIntegration.DEF,
                     LocaleSwitcher.DEF,
                     HELP_COMMAND,

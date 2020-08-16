@@ -37,8 +37,6 @@ class DeleteBot : UserBotSelector() {
 
         if (!message.fromPrivate) {
 
-            userCalled(userId, "delete in non-private chat")
-
             sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return

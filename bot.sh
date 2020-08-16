@@ -79,11 +79,11 @@ elif [ "$1" == "run" ]; then
 
   if [ ! -x "$@"]; then
 
-    java $JAVA_ARGS -jar $target $@
+    exec java $JAVA_ARGS -jar $target $@
 
   else
 
-    java $JAVA_ARGS -jar $target $ARGS
+    exec java $JAVA_ARGS -jar $target $ARGS
 
   fi
 

@@ -8,7 +8,7 @@ HELP_MSG: |-
   /set_start_messages - 设置欢迎消息
   /set_integration - 设置接入群组
 
-  如需帮助，请检出 https://github.com/TdBotProject/TdPmBot , 或通过 @TdBotProject 的讨论群组与我们联系.
+  如需帮助，请通过 @TdBotProject 的讨论群组与我们联系.
 
 CREATE_BOT_DEF: 创建新机器人
 INPUT_BOT_TOKEN: |-
@@ -36,6 +36,16 @@ EDIT_BOTS_DEF: |-
   编辑您的机器人
 SELECT_TO_EDIT: |-
   请在下方列表中选择您要编辑的机器人.
+BOT_EDITS: |-
+  这里是您的机器人: @{}.
+  现在您想做什么 ?
+MENU_BACK_TO_BOT_LIST: |-
+  <<   返回机器人列表
+MENU_START_MESSAGES: |-
+  编辑欢迎消息   >>
+START_MESSAGES_STATUS: |-
+  这里是您的机器人: @{}.
+  当前欢迎消息: {}
 
 DELETE_BOT_DEF: |-
   删除机器人
@@ -48,7 +58,7 @@ BOT_SELECTED: |-
 INVALID_SELECTED: |-
   选择的机器人无效.
 
-  使用 /cancel 取消删除.
+  使用 /cancel 取消当前操作.
 DELETE_CONFIRM: |-
   好的, 您选择了 @{}. 确定要删除吗 ?
 
@@ -71,7 +81,7 @@ BOT_LOGOUT: |-
   您的机器人 @{} 被登出, ( 已重置 Token / 被刪除 ), 已移除.
 
 SET_STARTS_DEF: |-
-  设置欢迎消息
+  编辑欢迎消息
 SELECT_TO_SET: |-
   选择要设置的机器人.
 JUMP_TO_SET: |-
@@ -89,7 +99,6 @@ INPUT_MESSAGES: |-
 
   或:
 
-  使用 /reset 重置
   使用 /submit 提交空消息
   使用 /cancel 退出
 MESSAGE_ADDED: |-

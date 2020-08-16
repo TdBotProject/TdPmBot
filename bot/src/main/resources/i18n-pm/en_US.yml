@@ -8,7 +8,7 @@ HELP_MSG: |-
   /set_start_messages - set bot start messages
   /set_integration - integrate to group
 
-  For help, please check out https://github.com/TdBotProject/TdPmBot, or contact us at @TdBotProject 's discuss group.
+  For help, please contact us at @TdBotProject 's discuss group.
 PRIVATE_INSTANCE: |-
   Sorry, this instance does not provide public services.
 
@@ -39,6 +39,13 @@ EDIT_BOTS_DEF: |-
   edit your bots
 SELECT_TO_MANAGE: |-
   Choose a bot from the list below:
+BOT_EDITS: |-
+  Here it is: @{}.
+  What do you want to do with the bot?
+MENU_BACK_TO_BOT_LIST: |-
+  <<   Back to Bots List
+MENU_START_MESSAGES: |-
+  Edit Start Messages   >>
 
 DELETE_BOT_DEF: |-
   delete a bot

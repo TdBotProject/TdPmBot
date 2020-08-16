@@ -165,27 +165,9 @@ class SetIntegration : UserBotSelector(true) {
 
         val L = LocaleController.forChat(userId)
 
-        val action: Int
+        val botUserId = data[0].toInt()
 
-        val botUserId = try {
-
-            action = data[1].toInt()
-
-            data[0].toInt()
-
-        } catch (e: Exception) {
-
-            warnUserCalled(userId, "invalid set integration callback")
-
-            delete(chatId, messageId)
-
-            sudo makeAnswer { cacheTime = 114 } answerTo queryId
-
-            // 非法请求
-
-            return
-
-        }
+        val action = data[1].toInt()
 
         val userBot = database { UserBot.findById(botUserId) }
 
@@ -222,53 +204,61 @@ class SetIntegration : UserBotSelector(true) {
 
         }
 
-        if (action == 0) {
+        when (action) {
 
-            // disable admin only
+            0 -> {
 
-            database.write {
+                // disable admin only
 
-                integration.adminOnly = false
-                integration.flush()
+                database.write {
 
-            }
+                    integration.adminOnly = false
+                    integration.flush()
 
-            sudo makeAnswer L.DISABLED answerTo queryId
+                }
 
-        } else if (action == 1) {
-
-            database.write {
-
-                integration.adminOnly = true
-                integration.flush()
+                sudo makeAnswer L.DISABLED answerTo queryId
 
             }
 
-            sudo makeAnswer L.ENABLED answerTo queryId
+            1 -> {
 
-        } else if (action == 2) {
+                database.write {
 
-            database.write {
+                    integration.adminOnly = true
+                    integration.flush()
 
-                integration.paused = true
-                integration.flush()
+                }
 
-            }
-
-            sudo makeAnswer L.DISABLED answerTo queryId
-
-        } else if (action == 3) {
-
-            database.write {
-
-                integration.paused = false
-                integration.flush()
+                sudo makeAnswer L.ENABLED answerTo queryId
 
             }
 
-            sudo makeAnswer L.ENABLED answerTo queryId
+            2 -> {
 
-            /*} else if (action == 4) {
+                database.write {
+
+                    integration.paused = true
+                    integration.flush()
+
+                }
+
+                sudo makeAnswer L.DISABLED answerTo queryId
+
+            }
+
+            3 -> {
+
+                database.write {
+
+                    integration.paused = false
+                    integration.flush()
+
+                }
+
+                sudo makeAnswer L.ENABLED answerTo queryId
+
+                /*} else if (action == 4) {
 
                 database.write {
 
@@ -289,6 +279,8 @@ class SetIntegration : UserBotSelector(true) {
                 }
 
                 sudo makeAnswer L.ENABLED answerTo queryId*/
+
+            }
 
         }
 

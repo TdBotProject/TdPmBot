@@ -90,7 +90,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             sudo make L.MESSAGE_EDITED replyAt targetMessage syncTo targetChat
 
-            forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.SendMessageOptions(), asAlbum = false, sendCopy = false, removeCaption = false)
+            forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.MessageSendOptions(), asAlbum = false, sendCopy = false, removeCaption = false)
 
             finishEvent()
 
