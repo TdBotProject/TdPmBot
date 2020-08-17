@@ -2,7 +2,7 @@ package io.github.nekohasekai.pm.database
 
 import io.github.nekohasekai.nekolib.core.utils.KeyValueTable
 
-object ActionMessages : KeyValueTable<Int, Long>() {
+object ActionMessages : KeyValueTable<Int, Long>("action_messages") {
 
     val userId = integer("user_id").entityId()
 

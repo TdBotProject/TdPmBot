@@ -8,8 +8,8 @@ import io.github.nekohasekai.nekolib.i18n.LICENSE
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.*
-import io.github.nekohasekai.pm.manage.menu.IntegrationEdits
-import io.github.nekohasekai.pm.manage.menu.StartMessageEdits
+import io.github.nekohasekai.pm.manage.menu.IntegrationMenu
+import io.github.nekohasekai.pm.manage.menu.StartMessagesMenu
 import org.jetbrains.exposed.sql.deleteWhere
 import td.TdApi
 
@@ -65,7 +65,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         destroy()
 
-        Launcher make L.BOT_LOGOUT.input(userBot.username) sendTo userBot.owner
+        Launcher make L.BOT_AUTH_FAILED.input(userBot.username) sendTo userBot.owner
 
     }
 
@@ -88,8 +88,8 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
         addHandler(JoinHandler(this))
         addHandler(BlockHandler(this))
 
-        addHandler(StartMessageEdits())
-        addHandler(IntegrationEdits())
+        addHandler(StartMessagesMenu())
+        addHandler(IntegrationMenu())
 
         initStartPayload("finish_creation")
 

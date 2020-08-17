@@ -5,7 +5,6 @@ HELP_MSG: |-
 
   /new_bot - create a new pm bot
   /my_bots - edit bots
-  /delete_bot - delete a pm bot
 
   For help, please contact us at @TdBotProject 's discuss group.
 PRIVATE_INSTANCE: |-
@@ -39,37 +38,36 @@ EDIT_BOTS_DEF: |-
 SELECT_TO_MANAGE: |-
   Choose a bot from the list below:
 BOT_EDITS: |-
-  Here it is: @{}.
+  Here it is: {} @{}.
   What do you want to do with the bot?
 MENU_BACK_TO_BOT_LIST: |-
   <<   Back to Bots List
 MENU_START_MESSAGES: |-
-  Edit Start Messages   >>
+  Edit Start Messages
 MENU_INTEGRATION: |-
-  Edit Group Integration >>
-  
-DELETE_BOT_DEF: |-
-  delete a bot
+  Edit Group Integration
+START_MESSAGES_STATUS: |-
+  Here it is: {} @{}.
+  Current start messages: {}
+
 NO_BOTS: |-
   You don't have any bots yet. Use the /new_bot command to create a new bot first.
-SELECT_TO_DELETE: |-
-  Choose a bot to delete.
-BOT_SELECTED: |-
-  You selected @{}
-INVALID_SELECTED: |-
-  Invalid bot selected.
-
-  Type /cancel to cancel the operation.
-DELETE_CONFIRM: |-
-  OK, you selected @{}. Are you sure?
-
-  Send 'Yes, I am totally sure.' to confirm you really want to delete this bot.
-DELETE_CONFIRM_REGEX: |-
-  (y|.*yes.*|.*ok.*|.*sure.*)
-CONFIRM_NOT_MATCH: |-
-  Please enter the confirmation text 'Yes, I am totally sure.' to confirm you really want to delete this bot.
-
-  Type /cancel to cancel the operation.
+MENU_BOT_DELETE_CONFIRM: |-
+  You are about to delete your bot <b>{}</b> @{}. Is that correct?
+MENU_BOT_DELETE_CONFIRM_AGAIN: |-
+  Are you <b>TOTALLY</b> sure you want to delete <b>{}</b> @{} ?
+MENU_BOT_DEL_NO_1: |-
+  No
+MENU_BOT_DEL_NO_2: |-
+  Nope, nevermind
+MENU_BOT_DEL_NO_3: |-
+  No!
+MENU_BOT_DEL_NO_4: |-
+  Hell no!
+MENU_BOT_DEL_YES_1: |-
+  Yes, delete the bot
+MENU_BOT_DEL_YES_2: |-
+  Yes, I'm 100% sure!
 STOPPING: |-
   Stopping...
 DELETING: |-
@@ -81,14 +79,10 @@ BOT_AUTH_FAILED: |-
 BOT_LOGOUT: |-
   Your bot @{} has been logged out ( token revoke / deleted ), has been removed.
 
-SET_STARTS_DEF: |-
-  set bot start messages
 SELECT_TO_SET: |-
   Choose a bot to set.
 JUMP_TO_SET: |-
   Now go to your bot to continue setting: @{}
-SET_MESSAGES_STATUS: |-
-  Current start messages: {}
 SETTING_UNDEF: |-
   defualt
 EMPTY: |-
@@ -137,8 +131,6 @@ INTEGRATION_PAUSED: |-
   paused
 INTEGRATION_PAUSED_NOTICE: |-
   Bot @{} cannot access the integrated group, so the integration is paused, please check it and request resume.
-INTEGRATION_UNABLE_TO_RESUME: |-
-  Bot cannot access the group, so the integration cannot be resumed, please check again.
 INTEGRATION_SET: |-
   Integrate to group
 INTEGRATION_PAUSE: |-
@@ -151,10 +143,6 @@ INTEGRATION_ENABLE_ADMIN_ONLY: |-
   Set as admin only
 INTEGRATION_DISABLE_ADMIN_ONLY: |-
   Make all members operable
-INTEGRATION_ENABLE_CLEAN_MODE: |-
-  Enable clean mode
-INTEGRATION_DISABLE_CLEAN_MODE: |-
-  Disable clean mode
 
 DEFAULT_WELCOME: |-
   Hello!

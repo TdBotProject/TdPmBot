@@ -9,7 +9,7 @@ import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.ActionMessages
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.database.UserBots
-import io.github.nekohasekai.pm.manage.menu.BotEdits
+import io.github.nekohasekai.pm.manage.menu.BotMenu
 import td.TdApi
 
 class MyBots : TdHandler() {
@@ -33,7 +33,7 @@ class MyBots : TdHandler() {
 
         initData(dataId)
 
-        sudo addHandler BotEdits()
+        sudo addHandler BotMenu()
 
     }
 
@@ -102,11 +102,11 @@ class MyBots : TdHandler() {
                 if (line == null) {
 
                     line = newLine()
-                    line!!.dataButton("@${it.key}", BotEdits.dataId, it.value.toByteArray())
+                    line!!.dataButton("@${it.key}", BotMenu.dataId, it.value.toByteArray())
 
                 } else {
 
-                    line!!.dataButton("@${it.key}", BotEdits.dataId, it.value.toByteArray())
+                    line!!.dataButton("@${it.key}", BotMenu.dataId, it.value.toByteArray())
                     line = null
 
                 }

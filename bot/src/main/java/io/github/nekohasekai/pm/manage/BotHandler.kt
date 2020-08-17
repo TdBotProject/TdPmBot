@@ -1,16 +1,32 @@
 package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.utils.makeAlert
+import io.github.nekohasekai.nekolib.core.utils.displayName
+import io.github.nekohasekai.nekolib.core.utils.displayNameHtml
 import io.github.nekohasekai.nekolib.core.utils.shift
 import io.github.nekohasekai.nekolib.core.utils.toInt
 import io.github.nekohasekai.nekolib.i18n.L
-import io.github.nekohasekai.pm.INVALID_SELECTED
 import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.database.UserBot
-import io.github.nekohasekai.pm.manage.MyBots
+import io.github.nekohasekai.pm.instance.BotInstances
 
 abstract class BotHandler : TdHandler() {
+
+    fun botUserName(botUserId: Int, userBot: UserBot?): String {
+
+        return if (botUserId == me.id) me.username else userBot!!.username
+
+    }
+
+    fun botName(botUserId: Int, userBot: UserBot?): String {
+
+        return if (botUserId == me.id) me else {
+
+            BotInstances.initBot(userBot!!).me
+
+        }.displayName
+
+    }
 
     override suspend fun onNewCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>) {
 

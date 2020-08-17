@@ -21,28 +21,29 @@ internal val L.EDIT_BOTS_DEF by string
 internal val L.BOT_EDITS by string
 internal val L.MENU_BACK_TO_BOT_LIST by string
 internal val L.MENU_INTEGRATION by string
+internal val L.MENU_BOT_DELETE by string
 
 internal val L.MENU_START_MESSAGES by string
 internal val L.START_MESSAGES_STATUS by string
 
-internal val L.DELETE_BOT_DEF by string
 internal val L.NO_BOTS by string
-internal val L.SELECT_TO_DELETE by string
-internal val L.BOT_SELECTED by string
-internal val L.INVALID_SELECTED by string
-internal val L.DELETE_CONFIRM by string
-internal val L.DELETE_CONFIRM_REGEX by string
-internal val L.CONFIRM_NOT_MATCH by string
+internal val L.MENU_BOT_DELETE_CONFIRM by string
+internal val L.MENU_BOT_DELETE_CONFIRM_AGAIN by string
+internal val L.MENU_BOT_DEL_NO_1 by string
+internal val L.MENU_BOT_DEL_NO_2 by string
+internal val L.MENU_BOT_DEL_NO_3 by string
+internal val L.MENU_BOT_DEL_NO_4 by string
+internal val L.MENU_BOT_DEL_YES_1 by string
+internal val L.MENU_BOT_DEL_YES_2 by string
 internal val L.STOPPING by string
 internal val L.DELETING by string
 internal val L.BOT_DELETED by string
+internal val L.INVALID_SELECTED by string
 internal val L.BOT_AUTH_FAILED by string
 internal val L.BOT_LOGOUT by string
 
-internal val L.SET_STARTS_DEF by string
 internal val L.SELECT_TO_SET by string
 internal val L.JUMP_TO_SET by string
-internal val L.SET_MESSAGES_STATUS by string
 internal val L.SETTING_UNDEF by string
 internal val L.EMPTY by string
 internal val L.MESSAGES_STATUS_COUNT by string
@@ -52,7 +53,6 @@ internal val L.MESSAGE_ADDED_FWD by string
 internal val L.MESSAGES_RESET by string
 internal val L.ERROR_IN_PREVIEW by string
 
-internal val L.SET_INTEGRATION_DEF by string
 internal val L.SET_INTEGRATION by string
 internal val L.INTEGRATION_HAS_SET by string
 internal val L.INTEGRATION_STATUS by string
@@ -67,8 +67,6 @@ internal val L.INTEGRATION_RESUME by string
 internal val L.INTEGRATION_DEL by string
 internal val L.INTEGRATION_ENABLE_ADMIN_ONLY by string
 internal val L.INTEGRATION_DISABLE_ADMIN_ONLY by string
-internal val L.INTEGRATION_ENABLE_CLEAN_MODE by string
-internal val L.INTEGRATION_DISABLE_CLEAN_MODE by string
 
 internal val L.INPUT_NOTICE by string
 internal val L.USER_NOT_FOUND by string

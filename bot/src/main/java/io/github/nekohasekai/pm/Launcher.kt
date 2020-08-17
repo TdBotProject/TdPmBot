@@ -9,7 +9,6 @@ import io.github.nekohasekai.nekolib.utils.GetIdCommand
 import io.github.nekohasekai.pm.database.*
 import io.github.nekohasekai.pm.instance.*
 import io.github.nekohasekai.pm.manage.CreateBot
-import io.github.nekohasekai.pm.manage.DeleteBot
 import io.github.nekohasekai.pm.manage.MyBots
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -95,7 +94,6 @@ object Launcher : TdCli(), PmInstance {
 
         addHandler(CreateBot())
         addHandler(MyBots())
-        addHandler(DeleteBot())
 
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))
@@ -114,7 +112,6 @@ object Launcher : TdCli(), PmInstance {
             upsertCommands(
                     CreateBot.DEF,
                     MyBots.DEF,
-                    DeleteBot.DEF,
                     LocaleSwitcher.DEF,
                     HELP_COMMAND,
                     CANCEL_COMMAND

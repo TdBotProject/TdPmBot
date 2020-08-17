@@ -11,7 +11,7 @@ import io.github.nekohasekai.pm.manage.BotHandler
 import io.github.nekohasekai.pm.manage.MyBots
 import td.TdApi
 
-class IntegrationEdits : BotHandler() {
+class IntegrationMenu : BotHandler() {
 
     companion object {
 
@@ -33,11 +33,13 @@ class IntegrationEdits : BotHandler() {
 
     }
 
-    fun integrationMenu(L: LocaleController, botUserId: Int, botUserName: String, chatId: Long, messageId: Long, isEdit: Boolean) {
+    fun integrationMenu(L: LocaleController, botUserId: Int, userBot: UserBot?, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val integration = BotIntegration.Cache.fetch(botUserId).value
 
-        var content = L.SET_INTEGRATION.input(botUserName, when {
+        val botUserName = botUserName(botUserId, userBot)
+
+        var content = L.SET_INTEGRATION.input(botName(botUserId, userBot), when {
 
             integration == null -> L.INTEGRATION_UNDEF
             integration.paused -> L.INTEGRATION_PAUSED
@@ -85,7 +87,7 @@ class IntegrationEdits : BotHandler() {
 
             }
 
-            dataLine(L.BACK_ARROW, BotEdits.dataId, botUserId.toByteArray())
+            dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
 
         } at messageId edit isEdit sendOrEditTo chatId
 
@@ -99,7 +101,7 @@ class IntegrationEdits : BotHandler() {
 
         if (data.isEmpty()) {
 
-            integrationMenu(L, userBot?.botId ?: me.id, userBot?.username ?: me.username, chatId, messageId, true)
+            integrationMenu(L, userBot?.botId ?: me.id, userBot, chatId, messageId, true)
 
             return
 
@@ -193,7 +195,7 @@ class IntegrationEdits : BotHandler() {
 
         BotIntegration.Cache.fetch(botUserId).value = if (action < 4) integration else null
 
-        integrationMenu(L, botUserId, userBot?.username ?: me.username, chatId, messageId, true)
+        integrationMenu(L, botUserId, userBot, chatId, messageId, true)
 
     }
 
@@ -268,7 +270,7 @@ class IntegrationEdits : BotHandler() {
 
             if (actionMessage.value != null) {
 
-                findHandler<IntegrationEdits>().integrationMenu(L, me.id, me.username, userId.toLong(), actionMessage.value!!, true)
+                findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, userId.toLong(), actionMessage.value!!, true)
 
             }
 

@@ -11,7 +11,7 @@ import io.github.nekohasekai.pm.manage.BotHandler
 import td.TdApi
 import java.util.*
 
-class StartMessageEdits : BotHandler() {
+class StartMessagesMenu : BotHandler() {
 
     companion object {
 
@@ -35,7 +35,7 @@ class StartMessageEdits : BotHandler() {
 
         val startMessages = StartMessages.Cache.fetch(botUserId).value
 
-        sudo make L.START_MESSAGES_STATUS.input(userBot?.username ?: me.username, when {
+        sudo make L.START_MESSAGES_STATUS.input(botName(botUserId, userBot), botUserName(botUserId, userBot), when {
 
             startMessages == null -> L.SETTING_UNDEF
             startMessages.isEmpty() -> L.EMPTY
@@ -55,7 +55,7 @@ class StartMessageEdits : BotHandler() {
 
             }
 
-            dataLine(L.BACK_ARROW, BotEdits.dataId, botUserId.toByteArray())
+            dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
 
         } at messageId edit isEdit sendOrEditTo chatId
 

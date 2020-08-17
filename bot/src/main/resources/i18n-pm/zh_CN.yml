@@ -5,7 +5,6 @@ HELP_MSG: |-
 
   /new_bot - 创建新机器人
   /my_bots - 编辑机器人
-  /delete_bot - 删除机器人
 
   如需帮助，请通过 @TdBotProject 的讨论群组与我们联系.
 
@@ -36,40 +35,39 @@ EDIT_BOTS_DEF: |-
 SELECT_TO_EDIT: |-
   请在下方列表中选择您要编辑的机器人.
 BOT_EDITS: |-
-  这里是您的机器人: @{}.
+  这里是您的机器人: {} @{}.
   现在您想做什么 ?
 MENU_BACK_TO_BOT_LIST: |-
-  <<   返回机器人列表
+  <<   返回列表
 MENU_START_MESSAGES: |-
-  编辑欢迎消息   >>
+  编辑欢迎消息
 MENU_INTEGRATION: |-
-  编辑接入群组   >>
-START_MESSAGES_STATUS: |-
-  这里是您的机器人: @{}.
-  当前欢迎消息: {}
-
-DELETE_BOT_DEF: |-
+  编辑接入群组
+MENU_BOT_DELETE: |-
   删除机器人
+START_MESSAGES_STATUS: |-
+  这里是您的机器人: {} @{}.
+  当前欢迎消息: {}.
+
 NO_BOTS: |-
   无事可做, 请首先使用 /new_bot 命令创建新机器人.
-SELECT_TO_DELETE: |-
-  选择您要删除的机器人.
-BOT_SELECTED: |-
-  您选择了 @{}
-INVALID_SELECTED: |-
-  选择的机器人无效.
+MENU_BOT_DELETE_CONFIRM: |-
+  将要删除机器人<b>{}</b> @{}. 这正确吗?
+MENU_BOT_DELETE_CONFIRM_AGAIN: |-
+  您 <b>完全确定</b> 您要删除 <b>{}</b> @{} 吗?
+MENU_BOT_DEL_NO_1: |-
+  不
+MENU_BOT_DEL_NO_2: |-
+  没门
+MENU_BOT_DEL_NO_3: |-
+  不!
+MENU_BOT_DEL_NO_4: |-
+  绝对不行!
+MENU_BOT_DEL_YES_1: |-
+  是的, 删除这个机器人
+MENU_BOT_DEL_YES_2: |-
+  是的, 我 100% 确定!
 
-  使用 /cancel 取消当前操作.
-DELETE_CONFIRM: |-
-  好的, 您选择了 @{}. 确定要删除吗 ?
-
-  发送 '是的, 我完全确定.' 以确认您真的想要删除这个机器人.
-CONFIRM_NOT_MATCH: |-
-  请发送确认文本 '是的, 我完全确定.' 以确认您真的想要删除这个机器人.
-
-  使用 /cancel 取消删除.
-DELETE_CONFIRM_REGEX: |-
-  (y|.*是.*|.*确定.*)
 STOPPING: |-
   停止机器人...
 DELETING: |-
@@ -81,14 +79,11 @@ BOT_AUTH_FAILED: |-
 BOT_LOGOUT: |-
   您的机器人 @{} 被登出, ( 已重置 Token / 被刪除 ), 已移除.
 
-SET_STARTS_DEF: |-
-  编辑欢迎消息
+
 SELECT_TO_SET: |-
   选择要设置的机器人.
 JUMP_TO_SET: |-
   现在到转到您的机器人继续设置: @{}
-SET_MESSAGES_STATUS: |-
-  当前欢迎消息: {}
 SETTING_UNDEF: |-
   暂未设置
 EMPTY: |-
@@ -119,8 +114,6 @@ MESSAGES_RESET: |-
 ERROR_IN_PREVIEW: |-
   出错: {}, 请重新设置: 注意设置完成后不要删除其中包含文件的消息 (包括 贴纸, 视频等媒体).
 
-SET_INTEGRATION_DEF: |-
-  设置接入群组
 SET_INTEGRATION: |-
   您可以将 PM 机器人 @{} 接入到群组, 所有消息将被发往目标群组而不是您的私聊.
 
@@ -137,8 +130,6 @@ INTEGRATION_PAUSED: |-
   已暂停
 INTEGRATION_PAUSED_NOTICE: |-
   机器人 @{} 无法访问接入的群组, 故接入被暂停, 请检查并执行恢复.
-INTEGRATION_UNABLE_TO_RESUME: |-
-  机器人无法访问接入的群组, 故接入无法恢复, 请检查.
 INTEGRATION_SET: |-
   接入群组
 INTEGRATION_PAUSE: |-
@@ -151,10 +142,6 @@ INTEGRATION_ENABLE_ADMIN_ONLY: |-
   设为仅管理员可操作
 INTEGRATION_DISABLE_ADMIN_ONLY: |-
   设为所有成员都可操作
-INTEGRATION_ENABLE_CLEAN_MODE: |-
-  启用简介模式
-INTEGRATION_DISABLE_CLEAN_MODE: |-
-  禁用简介模式
 
 DEFAULT_WELCOME: |-
   您好!

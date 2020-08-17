@@ -7,7 +7,7 @@ import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.manage.BotHandler
 import io.github.nekohasekai.pm.manage.MyBots
 
-class BotEdits : BotHandler() {
+class BotMenu : BotHandler() {
 
     companion object {
 
@@ -19,8 +19,9 @@ class BotEdits : BotHandler() {
 
         initData(dataId)
 
-        sudo addHandler StartMessageEdits()
-        sudo addHandler IntegrationEdits()
+        sudo addHandler StartMessagesMenu()
+        sudo addHandler IntegrationMenu()
+        sudo addHandler BotDeleteMenu()
 
     }
 
@@ -28,12 +29,22 @@ class BotEdits : BotHandler() {
 
         val L = L.forChat(userId)
 
-        sudo make L.BOT_EDITS.input(userBot?.username ?: me.username) withMarkup inlineButton {
+        sudo make L.BOT_EDITS.input(botName(botUserId, userBot), botUserName(botUserId, userBot)) withMarkup inlineButton {
 
-            dataLine(L.MENU_START_MESSAGES, StartMessageEdits.dataId, botUserId.toByteArray())
-            dataLine(L.MENU_INTEGRATION, IntegrationEdits.dataId, botUserId.toByteArray())
+            dataLine(L.MENU_START_MESSAGES, StartMessagesMenu.dataId, botUserId.toByteArray())
+            dataLine(L.MENU_INTEGRATION, IntegrationMenu.dataId, botUserId.toByteArray())
 
-            dataLine(L.MENU_BACK_TO_BOT_LIST, MyBots.dataId)
+            newLine {
+
+                if (userBot != null) {
+
+                    dataButton(L.MENU_BOT_DELETE, BotDeleteMenu.dataId, botUserId.toByteArray())
+
+                }
+
+                dataButton(L.MENU_BACK_TO_BOT_LIST, MyBots.dataId)
+
+            }
 
         } at messageId edit isEdit sendOrEditTo chatId
 
