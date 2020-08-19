@@ -21,7 +21,8 @@ class BotMenu : BotHandler() {
 
         sudo addHandler StartMessagesMenu()
         sudo addHandler IntegrationMenu()
-        sudo addHandler BotDeleteMenu()
+        sudo addHandler DeleteMenu()
+        sudo addHandler PreferencesMenu()
 
     }
 
@@ -33,18 +34,15 @@ class BotMenu : BotHandler() {
 
             dataLine(L.MENU_START_MESSAGES, StartMessagesMenu.dataId, botUserId.toByteArray())
             dataLine(L.MENU_INTEGRATION, IntegrationMenu.dataId, botUserId.toByteArray())
+            dataLine(L.MENU_OPIONS, PreferencesMenu.dataId, botUserId.toByteArray())
 
-            newLine {
+            if (userBot != null) {
 
-                if (userBot != null) {
-
-                    dataButton(L.MENU_BOT_DELETE, BotDeleteMenu.dataId, botUserId.toByteArray())
-
-                }
-
-                dataButton(L.MENU_BACK_TO_BOT_LIST, MyBots.dataId)
+                dataLine(L.MENU_BOT_DELETE, DeleteMenu.dataId, botUserId.toByteArray())
 
             }
+
+            dataLine(L.MENU_BACK_TO_BOT_LIST, MyBots.dataId)
 
         } at messageId edit isEdit sendOrEditTo chatId
 

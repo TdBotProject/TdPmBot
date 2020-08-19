@@ -2,12 +2,9 @@ package io.github.nekohasekai.pm.instance
 
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.utils.deleteDelay
-import io.github.nekohasekai.nekolib.core.utils.input
-import io.github.nekohasekai.nekolib.core.utils.make
-import io.github.nekohasekai.nekolib.core.utils.syncDelete
-import io.github.nekohasekai.pm.DELETED
+import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.pm.MESSAGE_DELETED
+import io.github.nekohasekai.pm.MESSAGE_DELETED_BY_ME
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -34,11 +31,9 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val integration = integration
 
-        /*if (chatId == integration?.integration && integration.cleanMode) {
+        if (chatId == admin || chatId == integration?.integration) {
 
-            return
-
-        } else */if (chatId == admin || chatId == integration?.integration) {
+            if (settings?.ignoreDeleteAction == true) return
 
             // 主人删除消息 对等删除
 
@@ -76,13 +71,15 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             if (success + failed > 0) {
 
-                sudo make L.DELETED.input(success, success + failed) onSuccess deleteDelay() sendTo chatId
+                sudo make L.MESSAGE_DELETED_BY_ME.input(success, success + failed) onSuccess deleteDelayIf(settings?.keepActionMessages != true) sendTo chatId
 
             }
 
         } else {
 
-            // 用户删除消息, 追加提示.
+            // 用户删除消息, 追加提示 / 删除.
+
+            val twoWaySync = settings?.twoWaySync == true
 
             records.filter {
 
@@ -108,7 +105,15 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                         MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
 
-                        sudo make L.MESSAGE_DELETED replyAt it[MessageRecords.messageId] sendTo admin
+                        if (twoWaySync) {
+
+                            delete(admin, it[MessageRecords.messageId])
+
+                        } else {
+
+                            sudo make L.MESSAGE_DELETED replyAt it[MessageRecords.messageId] sendTo admin
+
+                        }
 
                     }
 

@@ -6,8 +6,8 @@
         <compilerSettings />
         <compilerArguments>
           <option name="jvmTarget" value="11" />
-          <option name="languageVersion" value="1.3" />
-          <option name="apiVersion" value="1.3" />
+          <option name="languageVersion" value="1.4" />
+          <option name="apiVersion" value="1.4" />
           <option name="pluginOptions">
             <array />
           </option>
@@ -32,13 +32,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nekolib" />
-    <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.3.10" level="project" />
+    <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-nop:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-core:0.26.2" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-dao:0.26.2" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-jdbc:0.26.2" level="project" />
-    <orderEntry type="library" name="Maven: com.esotericsoftware:kryo:5.0.0-RC8" level="project" />
+    <orderEntry type="library" name="Maven: com.esotericsoftware:kryo:5.0.0-RC9" level="project" />
     <orderEntry type="library" name="Maven: com.esotericsoftware:reflectasm:1.11.8" level="project" />
     <orderEntry type="library" name="Maven: org.objenesis:objenesis:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.esotericsoftware:minlog:1.3.1" level="project" />
@@ -49,11 +49,11 @@
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:2.7.0" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.3.72" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.72" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.3.72" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9" level="project" />
     <orderEntry type="module" module-name="nekolib-bot-http-api" />
     <orderEntry type="library" name="Maven: com.github.pengrad:java-telegram-bot-api:4.9.0" level="project" />
   </component>

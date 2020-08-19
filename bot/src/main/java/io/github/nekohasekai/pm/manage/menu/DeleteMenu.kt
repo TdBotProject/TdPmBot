@@ -10,7 +10,7 @@ import io.github.nekohasekai.pm.instance.BotInstances
 import io.github.nekohasekai.pm.manage.BotHandler
 import java.util.*
 
-class BotDeleteMenu : BotHandler() {
+class DeleteMenu : BotHandler() {
 
     companion object {
 
@@ -30,7 +30,7 @@ class BotDeleteMenu : BotHandler() {
 
         sudo makeHtml (if (!again) L.MENU_BOT_DELETE_CONFIRM else L.MENU_BOT_DELETE_CONFIRM_AGAIN).input(
 
-                HtmlUtil.escape(botName(botUserId, userBot)),
+                botNameHtml(botUserId, userBot),
                 botUserName(botUserId, userBot)
 
         ) withMarkup inlineButton {

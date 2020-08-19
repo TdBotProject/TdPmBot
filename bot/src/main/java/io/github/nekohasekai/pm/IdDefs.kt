@@ -10,3 +10,5 @@ const val DATA_EDIT_BOTS = 2L
 const val DATA_EDIT_BOT = 3L
 const val DATA_EDIT_STARTS_MESSAGES = 4L
 const val DATA_DELETE_BOT_MENU = 5L
+const val DATA_DELETE_MESSAGE = 6L
+const val DATA_EDIT_OPTIONS = 7L

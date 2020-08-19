@@ -95,8 +95,6 @@ class IntegrationMenu : BotHandler() {
 
     override suspend fun onNewBotCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>, botUserId: Int, userBot: UserBot?) {
 
-        sudo confirmTo queryId
-
         val L = L.forChat(userId)
 
         if (data.isEmpty()) {
@@ -187,7 +185,7 @@ class IntegrationMenu : BotHandler() {
 
                 }
 
-                sudo makeAnswer L.DELETED answerTo queryId
+                sudo makeAnswer L.DISABLED answerTo queryId
 
             }
 
@@ -235,8 +233,6 @@ class IntegrationMenu : BotHandler() {
                 BotIntegration.new(me.id) {
 
                     this.integration = chatId
-                    this.adminOnly = false
-                    this.paused = false
 
                 }
 

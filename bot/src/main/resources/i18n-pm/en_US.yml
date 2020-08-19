@@ -41,14 +41,33 @@ BOT_EDITS: |-
   Here it is: {} @{}.
   What do you want to do with the bot?
 MENU_BACK_TO_BOT_LIST: |-
-  <<   Back to Bots List
+  🔙 Back to Bots List
 MENU_START_MESSAGES: |-
-  Edit Start Messages
+  💾 Start Messages
 MENU_INTEGRATION: |-
-  Edit Group Integration
+  🌐 Group Integration
+MENU_BOT_DELETE: |-
+  🔳 Delete Bot
 START_MESSAGES_STATUS: |-
   Here it is: {} @{}.
   Current start messages: {}
+MENU_OPIONS: |-
+  📅  Preferences
+
+OPTIONS_HELP: |-
+  Here it is: {} @{}, below are the behavioral options for your bot.
+
+  <b>Keep Prompts</b>: Do not automatically delete the action prompt message.
+
+  <b>Two-way Sync</b>: Copy someone's message directly, instead of forwarding it each time, and synchronize their editing and deleting actions.
+
+  <b>Ignore Deletion</b>: Do not synchronize the deletion of a message with your own, and add a button to delete the message from the prompt when "Keep Prompts" is enabled.
+OPTION_KEEP_ACTION_MESSAGES: |-
+  Keep Prompts
+OPTION_TWO_WAY_SYNC: |-
+  Two-way Sync
+OPTION_IGNORE_DELETE_ACTION: |-
+  Ignore my deletion
 
 NO_BOTS: |-
   You don't have any bots yet. Use the /new_bot command to create a new bot first.
@@ -169,8 +188,12 @@ REPLIED: |-
   Replied.
 EDITED: |-
   Edited.
-DELETED: |-
-  Deleted ({} / {}).
+MESSAGE_DELETED_BY_ME: |-
+  Deleted.
+MESSAGE_DELETED_BY: |-
+  Deleted.
+
+  Operator: {}
 RECORD_NF: |-
   record not found.
 REPLIED_NF: |-

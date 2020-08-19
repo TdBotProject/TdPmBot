@@ -22,6 +22,11 @@ internal val L.BOT_EDITS by string
 internal val L.MENU_BACK_TO_BOT_LIST by string
 internal val L.MENU_INTEGRATION by string
 internal val L.MENU_BOT_DELETE by string
+internal val L.MENU_OPIONS by string
+internal val L.OPTIONS_HELP by string
+internal val L.OPTION_KEEP_ACTION_MESSAGES by string
+internal val L.OPTION_TWO_WAY_SYNC by string
+internal val L.OPTION_IGNORE_DELETE_ACTION by string
 
 internal val L.MENU_START_MESSAGES by string
 internal val L.START_MESSAGES_STATUS by string
@@ -76,7 +81,8 @@ internal val L.NOTHING_TO_EXIT by string
 internal val L.SENT by string
 internal val L.REPLIED by string
 internal val L.EDITED by string
-internal val L.DELETED by string
+internal val L.MESSAGE_DELETED_BY_ME by string
+internal val L.MESSAGE_DELETED_BY by string
 internal val L.RECORD_NF by string
 internal val L.REPLIED_NF by string
 internal val L.MESSAGE_DELETED by string

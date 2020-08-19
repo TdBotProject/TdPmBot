@@ -24,6 +24,7 @@ object Launcher : TdCli(), PmInstance {
     override val L get() = LocaleController.forChat(admin)
 
     override val integration get() = BotIntegration.Cache.fetch(me.id).value
+    override val settings get() = BotSetting.Cache.fetch(me.id).value
     override val blocks by lazy { UserBlocks.Cache(me.id) }
 
     @JvmStatic
@@ -78,6 +79,7 @@ object Launcher : TdCli(), PmInstance {
                     StartMessages,
                     ActionMessages,
                     BotIntegrations,
+                    BotSettings,
                     MessageRecords,
                     UserBlocks
             )

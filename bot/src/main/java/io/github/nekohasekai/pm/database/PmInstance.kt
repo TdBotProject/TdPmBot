@@ -7,6 +7,7 @@ interface PmInstance {
     val L: LocaleController
     val admin: Long
     val integration: BotIntegration?
+    val settings: BotSetting?
     val blocks: UserBlocks.Cache
 
 }

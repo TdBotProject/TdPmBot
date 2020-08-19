@@ -21,6 +21,8 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
     override val L get() = LocaleController.forChat(userBot.owner)
 
     override val integration get() = BotIntegration.Cache.fetch(botUserId).value
+    override val settings get() = BotSetting.Cache.fetch(botUserId).value
+
     override val blocks = UserBlocks.Cache(botUserId)
 
     override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
@@ -51,6 +53,8 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         database.write {
 
+            UserBlocks.deleteWhere { UserBlocks.botId eq botUserId }
+            StartMessages.deleteWhere { StartMessages.botId eq botUserId }
             MessageRecords.deleteWhere { currentBot }
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }

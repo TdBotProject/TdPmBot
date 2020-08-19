@@ -3,11 +3,10 @@ package io.github.nekohasekai.pm.instance
 import cn.hutool.core.date.SystemClock
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.raw.getChat
-import io.github.nekohasekai.nekolib.core.raw.getChatMemberOrNull
-import io.github.nekohasekai.nekolib.core.raw.getMessage
-import io.github.nekohasekai.nekolib.core.raw.getMessageOrNull
+import io.github.nekohasekai.nekolib.core.raw.*
 import io.github.nekohasekai.nekolib.core.utils.*
+import io.github.nekohasekai.nekolib.i18n.DELETE
+import io.github.nekohasekai.nekolib.i18n.DELETED
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecords
@@ -18,6 +17,18 @@ import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+
+    companion object {
+
+        const val dataId = DATA_DELETE_MESSAGE
+
+    }
+
+    override fun onLoad() {
+
+        initData(dataId)
+
+    }
 
     var currentChat = 0L
 
@@ -99,7 +110,27 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             saveSent(currentChat, sentMessage.id)
 
-            sudo make L.SENT onSuccess deleteDelayIf(!useIntegration) replyTo message
+            (sudo make L.SENT).apply {
+
+                if (settings?.keepActionMessages == true) {
+
+                    if (settings.ignoreDeleteAction) {
+
+                        withMarkup(inlineButton {
+
+                            dataLine(L.DELETE, dataId, sentMessage.chatId.toByteArray(), sentMessage.id.toByteArray())
+
+                        })
+
+                    }
+
+                } else {
+
+                    onSuccess = deleteDelay()
+
+                }
+
+            } replyTo message
 
             return
 
@@ -135,7 +166,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         } catch (e: TdException) {
 
-            sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
+            sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
 
             null
 
@@ -159,7 +190,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { e.message } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
 
                     return
 
@@ -167,7 +198,27 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 saveSent(targetUser.id, sentMessage.id)
 
-                sudo make L.SENT onSuccess deleteDelayIf(!useIntegration) replyTo message
+                (sudo make L.SENT).apply {
+
+                    if (settings?.keepActionMessages == true) {
+
+                        if (settings.ignoreDeleteAction) {
+
+                            withMarkup(inlineButton {
+
+                                dataLine(L.DELETE, dataId, sentMessage.chatId.toByteArray(), sentMessage.id.toByteArray())
+
+                            })
+
+                        }
+
+                    } else {
+
+                        onSuccess = deleteDelay()
+
+                    }
+
+                } replyTo message
 
             }
 
@@ -182,7 +233,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
+                    sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
 
                     return
 
@@ -194,7 +245,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { e.message } onSuccess deleteDelayIf(!useIntegration, message) replyTo message
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
 
                     return
 
@@ -202,11 +253,73 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 saveSent(targetUser.id, sentMessage.id)
 
-                sudo make L.REPLIED onSuccess deleteDelayIf(!useIntegration) replyTo message
+                (sudo make L.REPLIED).apply {
+
+                    if (settings?.keepActionMessages == true) {
+
+                        if (settings.ignoreDeleteAction) {
+
+                            withMarkup(inlineButton {
+
+                                dataLine(L.DELETE, dataId, sentMessage.chatId.toByteArray(), sentMessage.id.toByteArray())
+
+                            })
+
+                        }
+
+                    } else {
+
+                        onSuccess = deleteDelay()
+
+                    }
+
+                } replyTo message
 
             }
 
         }
+
+    }
+
+    override suspend fun onNewCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>) {
+
+        val useIntegration = chatId == integration?.integration
+
+        if (chatId != admin && !useIntegration) return
+
+        if (useIntegration && integration!!.adminOnly && checkChatAdmin(chatId, userId, queryId)) return
+
+        val targetChat = data[0].toLong()
+        val targetMessage = data[1].toLong()
+
+        getMessageWith(targetChat, targetMessage) {
+
+            onSuccess {
+
+                sudo delete it
+
+                sudo makeAnswer L.DELETED answerTo queryId
+
+                if (useIntegration) {
+
+                    sudo makeHtml L.MESSAGE_DELETED_BY.input(getUser(userId).asInlineMention) at messageId editTo chatId
+
+                } else {
+
+                    sudo make L.MESSAGE_DELETED_BY_ME at messageId editTo chatId
+
+                }
+
+            }
+
+            onFailure {
+
+                sudo makeAlert L.RECORD_NF answerTo queryId
+
+            }
+
+        }
+
 
     }
 

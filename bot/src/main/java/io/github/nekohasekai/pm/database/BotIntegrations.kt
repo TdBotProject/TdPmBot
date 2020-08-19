@@ -6,8 +6,8 @@ object BotIntegrations : IdTable<Int>("bot_integrations") {
 
     val botId = integer("bot_id").entityId()
     val integration = long("integration")
-    val adminOnly = bool("admin_only")
-    val paused = bool("paused")
+    val adminOnly = bool("admin_only").default(false)
+    val paused = bool("paused").default(false)
 
     override val id = botId
 

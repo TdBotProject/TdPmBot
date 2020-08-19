@@ -28,6 +28,16 @@ abstract class BotHandler : TdHandler() {
 
     }
 
+    fun botNameHtml(botUserId: Int, userBot: UserBot?): String {
+
+        return if (botUserId == me.id) me else {
+
+            BotInstances.initBot(userBot!!).me
+
+        }.displayNameHtml
+
+    }
+
     override suspend fun onNewCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>) {
 
         val botId = data[0].toInt()

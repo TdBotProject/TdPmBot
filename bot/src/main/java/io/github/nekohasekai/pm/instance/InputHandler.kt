@@ -12,7 +12,9 @@ import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import io.github.nekohasekai.pm.manage.menu.IntegrationMenu
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -26,24 +28,6 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
         val integration = integration
 
         if (admin == chatId || chatId == integration?.integration || !message.fromPrivate) return
-
-        database.write {
-
-            MessageRecords.insert {
-
-                it[messageId] = message.id
-
-                it[type] = MESSAGE_TYPE_INPUT_MESSAGE
-
-                it[this.chatId] = chatId
-
-                it[createAt] = (SystemClock.now() / 100L).toInt()
-
-                it[botId] = me.id
-
-            }
-
-        }
 
         suspend fun MessageFactory.syncToTarget(): TdApi.Message? {
 
@@ -124,7 +108,58 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         }
 
-        val forwardedMessage = (sudo makeForward message).syncToTarget() ?: return
+        val forwardedMessage = (sudo make inputForward(message) {
+
+            if (settings?.twoWaySync == true) {
+
+                copyOptions.sendCopy = true
+
+            }
+
+        }).apply {
+
+            if (settings?.twoWaySync == true && message.replyToMessageId != 0L) {
+
+                val record = database {
+
+                    MessageRecords.select {
+
+                        currentBot and (MessageRecords.messageId eq message.replyToMessageId) and MessageRecords.targetId.isNotNull()
+
+                    }.firstOrNull()
+
+                }
+
+                if (record != null) {
+
+                    replyToMessageId = record[MessageRecords.targetId]!!
+
+                }
+
+
+            }
+
+        }.syncToTarget() ?: return
+
+        database.write {
+
+            MessageRecords.insert {
+
+                it[messageId] = message.id
+
+                it[type] = MESSAGE_TYPE_INPUT_MESSAGE
+
+                it[this.chatId] = chatId
+
+                it[targetId] = forwardedMessage.id
+
+                it[createAt] = (SystemClock.now() / 100L).toInt()
+
+                it[botId] = me.id
+
+            }
+
+        }
 
         database.write {
 
