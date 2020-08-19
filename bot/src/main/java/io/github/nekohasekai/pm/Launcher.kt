@@ -177,7 +177,7 @@ object Launcher : TdCli(), PmInstance {
 
             if (startMessages == null) {
 
-                sudo make L.PRIVATE_INSTANCE sendTo chatId
+                sudo make L.DEFAULT_WELCOME sendTo chatId
 
             } else {
 

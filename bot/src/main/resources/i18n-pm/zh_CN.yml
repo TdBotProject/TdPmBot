@@ -7,6 +7,8 @@ HELP_MSG: |-
   /my_bots - 编辑机器人
 
   如需帮助，请通过 @TdBotProject 的讨论群组与我们联系.
+PRIVATE_INSTANCE: |-
+  抱歉, 本实例不提供公开服务.
 
 CREATE_BOT_DEF: 创建新机器人
 INPUT_BOT_TOKEN: |-
