@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.nekohasekai</groupId>
-    <artifactId>td-pm-parent</artifactId>
+    <artifactId>td-pm-root</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
