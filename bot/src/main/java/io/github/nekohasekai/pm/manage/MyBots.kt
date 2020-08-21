@@ -39,6 +39,12 @@ class MyBots : TdHandler() {
 
     val actionMessages by lazy { KeyValueCacheMap(database, ActionMessages) }
 
+    override suspend fun gc() {
+
+        actionMessages.gc()
+
+    }
+
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
         if (!message.fromPrivate) {
@@ -115,8 +121,12 @@ class MyBots : TdHandler() {
 
         } onSuccess {
 
-            currentActionMessage.value = it.id
-            currentActionMessage.changed = true
+            currentActionMessage.apply {
+
+                value = it.id
+                changed = true
+
+            }
 
         } at messageId edit isEdit sendOrEditTo chatId
 

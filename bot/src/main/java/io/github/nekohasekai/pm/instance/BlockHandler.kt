@@ -22,6 +22,12 @@ class BlockHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInsta
 
     }
 
+    override suspend fun gc() {
+
+        blocks.clear()
+
+    }
+
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
         val integration = integration

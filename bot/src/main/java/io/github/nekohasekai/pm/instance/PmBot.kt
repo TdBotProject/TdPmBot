@@ -45,6 +45,14 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     }
 
+    override suspend fun gc() {
+
+        super.gc()
+
+        gc(this)
+
+    }
+
     suspend fun destroy() {
 
         waitForClose()

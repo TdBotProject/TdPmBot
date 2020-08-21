@@ -8,12 +8,13 @@ import io.github.nekohasekai.nekolib.i18n.*
 import io.github.nekohasekai.nekolib.utils.GetIdCommand
 import io.github.nekohasekai.pm.database.*
 import io.github.nekohasekai.pm.instance.*
+import io.github.nekohasekai.pm.manage.AdminCommands
 import io.github.nekohasekai.pm.manage.CreateBot
 import io.github.nekohasekai.pm.manage.MyBots
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import td.TdApi
+import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
 
 object Launcher : TdCli(), PmInstance {
@@ -106,6 +107,8 @@ object Launcher : TdCli(), PmInstance {
 
         addHandler(GetIdCommand())
 
+        addHandler(AdminCommands())
+
     }
 
     override suspend fun onLogin() {
@@ -131,6 +134,44 @@ object Launcher : TdCli(), PmInstance {
             BotInstances.loadAll()
 
         }
+
+        timer.schedule(nextDay(), 24 * 60 * 60 * 1000L) {
+
+            GlobalScope.launch(Dispatchers.IO) { gc() }
+
+        }
+
+    }
+
+    override suspend fun gc() {
+
+        defaultLog.debug(">> 执行垃圾回收")
+
+        defaultLog.debug(">> 实例缓存")
+
+        super.gc()
+
+        defaultLog.debug(">> 其他缓存")
+
+        BotIntegration.Cache.clear()
+        BotSetting.Cache.clear()
+        StartMessages.Cache.clear()
+
+        defaultLog.debug(">> 消息数据库")
+
+        defaultLog.trace(">> ${me.displayNameFormatted}")
+
+        gc(this)
+
+        BotInstances.instanceMap.forEach {
+
+            defaultLog.trace(">> ${it.value.me.displayNameFormatted}")
+
+            it.value.gc()
+
+        }
+
+        defaultLog.debug("<< 执行垃圾回收")
 
     }
 
