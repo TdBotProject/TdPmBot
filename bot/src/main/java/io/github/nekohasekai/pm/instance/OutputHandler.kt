@@ -140,7 +140,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val record = database {
 
-            MessageRecords.select { currentBot and (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
+            MessageRecords.select { messagesForCurrentBot and (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
 
         }
 

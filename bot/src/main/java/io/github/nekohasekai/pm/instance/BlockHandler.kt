@@ -1,25 +1,20 @@
 package io.github.nekohasekai.pm.instance
 
 import cn.hutool.core.date.SystemClock
-import cn.hutool.core.util.NumberUtil
 import io.github.nekohasekai.nekolib.core.client.TdException
-import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getChatMember
 import io.github.nekohasekai.nekolib.core.raw.getUser
-import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.NO_PERMISSION
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import td.TdApi
 
-class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class BlockHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInstance by pmInstance {
 
     override fun onLoad() {
 
@@ -39,59 +34,13 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         }
 
-        var chatToBlock = 0L
+        super.onFunction(userId, chatId, message, function, param, params, originParams)
 
-        if (message.replyToMessageId != 0L) {
+    }
 
-            val record = database {
+    override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, targetUser: Int) {
 
-                MessageRecords.select { currentBot and (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
-
-            }
-
-            if (record == null) {
-
-                sudo make L.failed { RECORD_NF } onSuccess deleteDelay(message) sendTo chatId
-
-                return
-
-            }
-
-            chatToBlock = record[MessageRecords.chatId]
-
-        } else {
-
-            for (entity in message.entities!!) {
-
-                if (entity.type is TdApi.TextEntityTypeMention) {
-
-                    val username = message.text!!.substring(entity.offset, entity.offset + entity.length).substringAfter("@")
-
-                    val user = searchPublicChatOrNull(username) ?: continue
-
-                    chatToBlock = user.id
-
-                    break
-
-                } else if (entity.type is TdApi.TextEntityTypeMentionName) {
-
-                    chatToBlock = (entity.type as TdApi.TextEntityTypeMentionName).userId.toLong()
-
-                    break
-
-                }
-
-            }
-
-        }
-
-        if (chatToBlock == 0L && NumberUtil.isInteger(param)) {
-
-            chatToBlock = param.toLong()
-
-        }
-
-        if (chatToBlock == 0L) {
+        if (targetUser == 0) {
 
             sudo make L.PM_HELP sendTo chatId
 
@@ -99,13 +48,11 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         }
 
-        val userToBlock = chatToBlock.toInt()
-
         var userHtml: String
 
         try {
 
-            val targetChat = getChat(chatToBlock)
+            val targetChat = getChat(targetUser.toLong())
 
             val chatType = targetChat.type
 
@@ -123,11 +70,11 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             }
 
-            userHtml = "$chatToBlock"
+            userHtml = "$targetUser"
 
         }
 
-        val record = blocks.fetch(userToBlock).value == true
+        val record = blocks.fetch(targetUser).value == true
 
         fun saveNotice(noticeMessageId: Long) {
 
@@ -139,7 +86,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     it[type] = MESSAGE_TYPE_INPUT_NOTICE
 
-                    it[this.chatId] = chatToBlock
+                    it[this.chatId] = targetUser.toLong()
 
                     it[createAt] = (SystemClock.now() / 100L).toInt()
 
@@ -169,7 +116,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             val userIdLong = userId.toLong()
 
-            if (userToBlock == userId) {
+            if (targetUser == userId) {
 
                 sudo makeHtml L.CANNOT_BLOCK_SELF syncReplyTo message
 
@@ -177,7 +124,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             } else if (chatId == integration?.integration && userIdLong != admin) {
 
-                val chatMember = getChatMember(chatId, userToBlock)
+                val chatMember = getChatMember(chatId, targetUser)
 
                 if (chatMember.isAdmin || (chatMember.isMember && !integration.adminOnly)) {
 
@@ -191,7 +138,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             }
 
-            blocks.fetch(userToBlock).apply {
+            blocks.fetch(targetUser).apply {
 
                 value = true
 
@@ -215,7 +162,7 @@ class BlockHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             }
 
-            blocks.fetch(userToBlock).apply {
+            blocks.fetch(targetUser).apply {
 
                 value = false
 

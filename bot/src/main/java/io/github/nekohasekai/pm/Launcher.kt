@@ -102,6 +102,7 @@ object Launcher : TdCli(), PmInstance {
         addHandler(EditHandler(this))
         addHandler(DeleteHandler(this))
         addHandler(JoinHandler(this))
+        addHandler(RecallHandler(this))
 
         addHandler(GetIdCommand())
 

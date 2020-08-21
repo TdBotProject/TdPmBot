@@ -1,21 +1,15 @@
 package io.github.nekohasekai.pm.instance
 
-import cn.hutool.core.util.NumberUtil
 import io.github.nekohasekai.nekolib.core.client.TdException
-import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
-import io.github.nekohasekai.nekolib.core.raw.searchPublicChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
-import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
 import td.TdApi
 
-class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class JoinHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInstance by pmInstance {
 
     override fun onLoad() {
 
@@ -37,103 +31,7 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
         if (function == "join") {
 
-            var chatToJoin = 0L
-
-            if (message.replyToMessageId != 0L) {
-
-                val record = database {
-
-                    MessageRecords.select { currentBot and (MessageRecords.messageId eq message.replyToMessageId) }.firstOrNull()
-
-                }
-
-                if (record == null) {
-
-                    sudo make L.failed { RECORD_NF } onSuccess deleteDelay(message) sendTo chatId
-
-                    return
-
-                }
-
-                chatToJoin = record[MessageRecords.chatId]
-
-            } else {
-
-                for (entity in message.entities!!) {
-
-                    if (entity.type is TdApi.TextEntityTypeMention) {
-
-                        val username = message.text!!.substring(entity.offset, entity.offset + entity.length).substringAfter("@")
-
-                        val user = searchPublicChatOrNull(username) ?: continue
-
-                        chatToJoin = user.id
-
-                        break
-
-                    } else if (entity.type is TdApi.TextEntityTypeMentionName) {
-
-                        chatToJoin = (entity.type as TdApi.TextEntityTypeMentionName).userId.toLong()
-
-                        break
-
-                    }
-
-                }
-
-            }
-
-            if (chatToJoin == 0L && NumberUtil.isInteger(param)) {
-
-                chatToJoin = param.toLong()
-
-            }
-
-            if (chatToJoin == 0L) {
-
-                sudo make L.PM_HELP sendTo chatId
-
-                return
-
-            }
-
-            val targetChat = try {
-
-                getChat(chatToJoin)
-
-            } catch (e: TdException) {
-
-                sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelay(message) sendTo chatId
-
-                return
-
-            }
-
-            val chatType = targetChat.type
-
-            if (chatType !is TdApi.ChatTypePrivate) {
-
-                sudo make L.failed { USER_NOT_FOUND } replyTo message
-
-                return
-
-            }
-
-            val targetUser = try {
-
-                getUser(chatType.userId)
-
-            } catch (e: TdException) {
-
-                sudo make L.failed { USER_NOT_FOUND } replyTo message
-
-                return
-
-            }
-
-            findHandler<OutputHandler>().currentChat = targetChat.id
-
-            sudo makeHtml L.JOINED_NOTICE.input(targetUser.asIdMention, targetUser.displayNameHtml.asCode) sendTo chatId
+            super.onFunction(userId, chatId, message, function, param, params, originParams)
 
         } else {
 
@@ -152,6 +50,56 @@ class JoinHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
             }
 
         }
+
+    }
+
+    override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, targetUser: Int) {
+
+        if (targetUser == 0) {
+
+            sudo make L.PM_HELP sendTo chatId
+
+            return
+
+        }
+
+        val targetChat = try {
+
+            getChat(targetUser.toLong())
+
+        } catch (e: TdException) {
+
+            sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelay(message) sendTo chatId
+
+            return
+
+        }
+
+        val chatType = targetChat.type
+
+        if (chatType !is TdApi.ChatTypePrivate) {
+
+            sudo make L.failed { USER_NOT_FOUND } replyTo message
+
+            return
+
+        }
+
+        val user = try {
+
+            getUser(targetUser)
+
+        } catch (e: TdException) {
+
+            sudo make L.failed { USER_NOT_FOUND } replyTo message
+
+            return
+
+        }
+
+        findHandler<OutputHandler>().currentChat = targetChat.id
+
+        sudo makeHtml L.JOINED_NOTICE.input(user.asIdMention, user.displayNameHtml.asCode) sendTo chatId
 
     }
 

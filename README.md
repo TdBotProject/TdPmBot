@@ -35,7 +35,7 @@ LOG_LEVEL: 日志等级, 默认为 INFO.
 SERVICE_NAME: systemd 服务名称, 默认 `td-pm`, 修改如果您需要多个实例.
 MVN_ARGS: Maven 编译参数.
 JAVA_ARGS: JVM 启动参数.
-ARGS=: 启动参数.
+ARGS: 启动参数.
 ```
 
 若您不知道账号ID, 可留空, 启动后发送 /id 到机器人获取.
@@ -52,14 +52,13 @@ ARGS=: 启动参数.
 `./bot.sh update` 更新  
 `./bot.sh upgrade` 更新并重启服务  
 `./bot.sh log` 实时日志  
-`./bot.sh logs` 打印所有日志
+`./bot.sh logs` 所有日志
 
 ## Docker
 
 ```
 docker run -d --name td-pm \
   -v <数据目录>:/root/data \
-  -e BOT_LANG=zh_CN \
   -e BOT_TOKEN=<机器人令牌> \
   -e ADMIN=<管理员ID> \
   -e PUBLIC=true \
@@ -89,15 +88,13 @@ docker logs td-pm -f -t
 ■ 设置开始消息 (任意, 多条)  
 ■ 支持接入群組  
 ■ 屏蔽 / 解除
-
-□ 清理对话所有消息  
+■ 清理对话所有消息  
 
 ■ 自动设置命令提示  
 ■ 创建BOT (步进)  
 ■ 刪除BOT (步进)  
 ■ 多语言    
-□ 创建上限限制  
-□ BOT管理 (inline按钮)
+■ BOT管理 (inline按钮)
 
 ## 需要帮助
 

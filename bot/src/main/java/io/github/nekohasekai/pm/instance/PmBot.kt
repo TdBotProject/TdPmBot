@@ -55,7 +55,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
             UserBlocks.deleteWhere { UserBlocks.botId eq botUserId }
             StartMessages.deleteWhere { StartMessages.botId eq botUserId }
-            MessageRecords.deleteWhere { currentBot }
+            MessageRecords.deleteWhere { messagesForCurrentBot }
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }
 
@@ -91,6 +91,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
         addHandler(DeleteHandler(this))
         addHandler(JoinHandler(this))
         addHandler(BlockHandler(this))
+        addHandler(RecallHandler(this))
 
         addHandler(StartMessagesMenu())
         addHandler(IntegrationMenu())

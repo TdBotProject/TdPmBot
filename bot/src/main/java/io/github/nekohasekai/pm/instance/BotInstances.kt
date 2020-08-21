@@ -6,7 +6,7 @@ import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.UserBot
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-val TdHandler.currentBot get() = (MessageRecords.botId eq me.id)
+val TdHandler.messagesForCurrentBot get() = (MessageRecords.botId eq me.id)
 
 object BotInstances {
 

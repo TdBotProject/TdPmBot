@@ -26,7 +26,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
         val record = database {
 
-            MessageRecords.select { currentBot and (MessageRecords.messageId eq messageId) }.firstOrNull()
+            MessageRecords.select { messagesForCurrentBot and (MessageRecords.messageId eq messageId) }.firstOrNull()
 
         } ?: return
 
@@ -83,7 +83,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 MessageRecords.select {
 
-                    currentBot and (
+                    messagesForCurrentBot and (
                             MessageRecords.targetId eq record[MessageRecords.messageId]
                             ) and (MessageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED)
 

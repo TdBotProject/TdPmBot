@@ -190,9 +190,17 @@ EDITED: |-
   已编辑.
 MESSAGE_DELETED_BY_ME: |-
   已删除.
+MESSAGE_RECALLED_BY_ME: |-
+  已批量删除.
 MESSAGE_DELETED_BY: |-
   已删除.
 
+  操作者: {}
+MESSAGE_RECALLED_BY: |-
+  已批量删除.
+
+  目标会话: {}
+  名称: {}
   操作者: {}
 RECORD_NF: |-
   找不到对应记录.
@@ -222,4 +230,5 @@ PM_HELP: |-
   使用 /join <目标> 以进入会话,
   使用 /block <目标> 以屏蔽会话,
   使用 /unblock <目标> 以解除屏蔽,
+  使用 /recall <目标> 清空与目标的全部消息,
   使用 /exit 退出会话.

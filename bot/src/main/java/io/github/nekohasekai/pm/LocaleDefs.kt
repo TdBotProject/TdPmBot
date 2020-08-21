@@ -82,7 +82,9 @@ internal val L.SENT by string
 internal val L.REPLIED by string
 internal val L.EDITED by string
 internal val L.MESSAGE_DELETED_BY_ME by string
+internal val L.MESSAGE_RECALLED_BY_ME by string
 internal val L.MESSAGE_DELETED_BY by string
+internal val L.MESSAGE_RECALLED_BY by string
 internal val L.RECORD_NF by string
 internal val L.REPLIED_NF by string
 internal val L.MESSAGE_DELETED by string

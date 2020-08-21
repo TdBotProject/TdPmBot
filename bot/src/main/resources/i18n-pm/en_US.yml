@@ -190,6 +190,14 @@ EDITED: |-
   Edited.
 MESSAGE_DELETED_BY_ME: |-
   Deleted.
+MESSAGE_RECALLED_BY_ME: |-
+  Batch Deleted.
+MESSAGE_RECALLED_BY: |-
+  Batch Deleted.
+
+  TargetUser: {}
+  Name: {}
+  Operator: {}
 MESSAGE_DELETED_BY: |-
   Deleted.
 
@@ -222,4 +230,5 @@ PM_HELP: |-
   Use /join <target> to join a chat,
   Use /block <target> to block a chat,
   Use /unblock <target> to unblock a chat,
+  Use /recall <target> to delete all the messages in the target chat,
   Use /exit to exit a chat.
