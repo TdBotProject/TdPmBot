@@ -76,10 +76,14 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         if (userId != currentUser || times < 1) {
 
+            currentUser = userId
+            times = 5
+
             val user = getUser(userId)
 
-            val inputNotice = (sudo makeHtml L.INPUT_NOTICE.input(user.asIdMention, user.displayNameHtml)).syncToTarget()
-                    ?: return
+            val inputNotice = (
+                    sudo makeHtml L.INPUT_NOTICE.input(user.id.asCode, user.asInlineMention)
+                    ).syncToTarget() ?: return
 
             database.write {
 
@@ -98,9 +102,6 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
                 }
 
             }
-
-            currentUser = userId
-            times = 5
 
         } else {
 
