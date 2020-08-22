@@ -14,6 +14,7 @@ import io.github.nekohasekai.pm.manage.MyBots
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import td.TdApi
+import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
 
@@ -135,7 +136,7 @@ object Launcher : TdCli(), PmInstance {
 
         }
 
-        timer.schedule(nextDay(), 24 * 60 * 60 * 1000L) {
+        timer.schedule(Date(nextDay()), 24 * 60 * 60 * 1000L) {
 
             GlobalScope.launch(Dispatchers.IO) { gc() }
 
