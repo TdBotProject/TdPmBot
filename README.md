@@ -56,6 +56,14 @@ ARGS: 启动参数.
 `./bot.sh log` 实时日志  
 `./bot.sh logs` 所有日志
 
+## 迁移
+
+`./bot.sh run --backup [fileName 可选]`
+
+备份所有迁移需要的文件到 tar.xz 包, 解压即可覆盖数据.
+
+注: 建议迁移后手动运行 `/gc` 命令拉取消息记录.
+
 ## Docker
 
 ```

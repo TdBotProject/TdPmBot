@@ -77,7 +77,7 @@ elif [ "$1" == "run" ]; then
 
   shift
 
-  if [ ! -x "$@" ]; then
+  if [ ! -x "$*" ]; then
 
     exec java $JAVA_ARGS -jar $target $@
 

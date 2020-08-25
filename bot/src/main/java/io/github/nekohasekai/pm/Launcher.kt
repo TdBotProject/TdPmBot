@@ -1,5 +1,7 @@
 package io.github.nekohasekai.pm
 
+import cn.hutool.core.date.DateUtil
+import cn.hutool.core.io.FileUtil
 import cn.hutool.log.level.Level
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
@@ -14,6 +16,7 @@ import io.github.nekohasekai.pm.manage.MyBots
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import td.TdApi
+import java.io.File
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
@@ -50,7 +53,80 @@ object Launcher : TdCli(), PmInstance {
 
         TdLoader.tryLoad()
 
-        if (args.any { it == "--download-library" }) exitProcess(0)
+        args.forEachIndexed { index, arg ->
+
+            if (arg == "--download-library") {
+
+                exitProcess(0)
+
+            } else if (arg == "--backup") {
+
+                var backupTo: File
+
+                backupTo = getFile(if (args.size <= index + 1) {
+
+                    "."
+
+                } else {
+
+                    args[index + 1]
+
+                })
+
+                if (backupTo.isDirectory) {
+
+                    backupTo = File(backupTo, "td-pm-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz")
+
+                } else if (!backupTo.name.endsWith(".tar.xz")) {
+
+                    defaultLog.error(">> File name must ends with .tar.xz")
+
+                    exitProcess(100)
+
+                }
+
+                val output = FileUtil.touch(backupTo).tarXz()
+
+                output.writeFile("pm.conf")
+
+                // 数据目录
+
+                output.writeDirectory("data/")
+
+                // 数据库
+
+                output.writeFile("data/pm_data.db")
+
+                output.writeFile("data/td.binlog")
+
+                val pmBots = getFile("data/pm").listFiles()
+
+                if (!pmBots.isNullOrEmpty()) {
+
+                    output.writeDirectory("data/pm/")
+
+                    pmBots.forEach {
+
+                        output.writeDirectory("data/pm/${it.name}/")
+
+                        output.writeFile("data/pm/${it.name}/td.binlog")
+
+                    }
+
+                }
+
+                output.finish()
+
+                output.close()
+
+                defaultLog.info(">> Saved to ${backupTo.canonicalPath}")
+
+                exitProcess(0)
+
+            }
+
+        }
+
 
         if (admin == 0L) {
 
@@ -59,6 +135,7 @@ object Launcher : TdCli(), PmInstance {
         }
 
         start()
+
 
     }
 

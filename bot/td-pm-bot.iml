@@ -45,6 +45,7 @@
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.32.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.tukaani:xz:1.8" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.20" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:4.8.1" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:2.7.0" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
