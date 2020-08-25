@@ -12,6 +12,7 @@ import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import td.TdApi
@@ -296,8 +297,6 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             onSuccess {
 
-                sudo delete it
-
                 sudo makeAnswer L.DELETED answerTo queryId
 
                 if (useIntegration) {
@@ -309,6 +308,14 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
                     sudo make L.MESSAGE_DELETED_BY_ME at messageId editTo chatId
 
                 }
+
+                database.write {
+
+                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq messageId) }
+
+                }
+
+                sudo delete it
 
             }
 
