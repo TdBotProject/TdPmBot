@@ -321,14 +321,6 @@ object Launcher : TdCli(), PmInstance {
 
         }
 
-        if (chatId != admin) {
-
-            sudo makeHtml L.PUBLIC_WARN.input(repoUrl) syncTo chatId
-
-            delay(600L)
-
-        }
-
         sudo makeHtml L.LICENSE.input(repoName, licenseUrl, "Github Repo".toLink(repoUrl)) syncTo chatId
 
         delay(600L)
