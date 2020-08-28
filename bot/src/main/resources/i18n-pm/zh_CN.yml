@@ -42,8 +42,6 @@ CREATE_FINISHED: |-
 
 EDIT_BOTS_DEF: |-
   编辑您的机器人
-SELECT_TO_EDIT: |-
-  请在下方列表中选择您要编辑的机器人.
 BOT_EDITS: |-
   这里是您的机器人: {} @{}.
   现在您想做什么 ?

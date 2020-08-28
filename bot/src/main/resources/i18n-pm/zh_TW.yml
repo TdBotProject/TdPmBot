@@ -1,0 +1,277 @@
+HELP_MSG: |-
+  本機器人能幫助您創建和管理 Telegram 私聊機器人.
+
+  您可以控制我通過發送以下命令：
+
+  /new_bot - 創建新機器人
+  /my_bots - 編輯機器人
+
+  如需幫助，請通過 @TdBotProject 的討論群組與我們聯繫.
+PM_HELP: |-
+  無事可做.
+
+  目標可為: 對消息回復 / 對話ID / @使用者名稱 / 引用
+
+  使用 /join <目標> 以進入會話,
+  使用 /block <目標> 以屏蔽會話,
+  使用 /unblock <目標> 以解除屏蔽,
+  使用 /recall <目標> 清空與目標的全部消息,
+  使用 /exit 退出會話.
+
+CREATE_BOT_DEF: 創建新機器人
+INPUT_BOT_TOKEN: |-
+  輸入從 @BotFather 獲取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
+INVALID_BOT_TOKEN: |-
+  無效的 Bot Token{}.
+
+  使用 /cancel 取消創建.
+FETCHING_INFO: |-
+  檢索必要的訊息...
+CREATING_BOT: |-
+  創建機器人...
+ALREADY_EXISTS: |-
+  錯誤: 該機器人已在本實例中存在.
+FINISH_CREATION: |-
+  點擊該連結完成創建: https://t.me/{}?start=finish_creation
+
+  <b>如果您看見 "開始" 按鈕, 請點擊它.</b>
+CREATE_FINISHED: |-
+  大功告成 !
+
+  現在您可以返回繼續設置您的機器人, 或者到 @BotFather 為它設置簡介, 關於行和頭像.
+
+EDIT_BOTS_DEF: |-
+  編輯您的機器人
+BOT_EDITS: |-
+  這裡是您的機器人: {} @{}.
+  現在您想做什麼 ?
+MENU_BACK_TO_BOT_LIST: |-
+  🔙  返回列表
+MENU_START_MESSAGES: |-
+  💾  歡迎消息
+MENU_INTEGRATION: |-
+  🌐  接入群組
+MENU_BOT_DELETE: |-
+  🔳  刪除機器人
+START_MESSAGES_STATUS: |-
+  這裡是您的機器人: {} @{}.
+  當前歡迎消息: {}.
+MENU_OPTIONS: |-
+  📅  行為選項
+MENU_COMMANDS: |-
+  📘  命令管理
+
+OPTIONS_HELP: |-
+  這裡是您的機器人: {} @{}, 以下是機器人的可選行為選項.
+
+  <b>保留提示</b>: 不要自動刪除操作提示消息.
+
+  <b>雙向同步</b>: 直接複製對方的消息, 而不是每次都轉發, 並同步對方的編輯, 刪除操作.
+
+  <b>忽略刪除</b>: 不要同步本方的消息刪除, 當同時開啟 "保留提示" 時在提示中增加一個刪除該消息的按鈕.
+OPTION_KEEP_ACTION_MESSAGES: |-
+  保留提示
+OPTION_TWO_WAY_SYNC: |-
+  雙向同步
+OPTION_IGNORE_DELETE_ACTION: |-
+  忽略刪除
+
+NO_BOTS: |-
+  無事可做, 請首先使用 /new_bot 命令創建新機器人.
+MENU_BOT_DELETE_CONFIRM: |-
+  將要刪除機器人<b>{}</b> @{}. 這正確嗎?
+MENU_BOT_DELETE_CONFIRM_AGAIN: |-
+  您 <b>完全確定</b> 您要刪除 <b>{}</b> @{} 嗎?
+MENU_BOT_DEL_NO_1: |-
+  不
+MENU_BOT_DEL_NO_2: |-
+  想得美
+MENU_BOT_DEL_NO_3: |-
+  不!
+MENU_BOT_DEL_NO_4: |-
+  絕對不行!
+MENU_BOT_DEL_YES_1: |-
+  是的, 刪除這個機器人
+MENU_BOT_DEL_YES_2: |-
+  是的, 我 100% 確定!
+
+STOPPING: |-
+  停止機器人...
+DELETING: |-
+  刪除數據...
+BOT_DELETED: |-
+  機器人已刪除.
+BOT_AUTH_FAILED: |-
+  您的機器人 @{} 無法認證 ( 已重設 Token / 被刪除 ), 已移除.
+BOT_LOGOUT: |-
+  您的機器人 @{} 被登出, ( 已重設 Token / 被刪除 ), 已移除.
+
+
+SELECT_TO_SET: |-
+  選擇要設置的機器人.
+JUMP_TO_SET: |-
+  現在到轉到您的機器人繼續設置: @{}
+SETTING_UNDEF: |-
+  暫未設置
+EMPTY: |-
+  空
+MESSAGES_STATUS_COUNT: |-
+  {} 條消息
+INPUT_MESSAGES: |-
+  現在向我發送任意消息:
+
+  或:
+
+  使用 /submit 提交空消息
+  使用 /cancel 退出
+MESSAGE_ADDED: |-
+  已添加.
+
+  使用 /preview 預覽
+  使用 /submit 提交
+  使用 /cancel 退出
+MESSAGE_ADDED_FWD: |-
+  已添加 (轉發).
+
+  使用 /preview 預覽
+  使用 /submit 提交
+  使用 /cancel 退出
+MESSAGES_RESET: |-
+  已重設.
+ERROR_IN_PREVIEW: |-
+  出錯: {}, 請重新設置: 注意設置完成後不要刪除其中包含文件的消息 (包括 貼紙, 影片等媒體).
+
+SET_INTEGRATION: |-
+  您可以將 PM 機器人 @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
+
+  接入狀態: {}
+INTEGRATION_HAS_SET: |-
+  成功, 所有消息將被發往本群.
+INTEGRATION_STATUS: |-
+  僅群組管理員可操作機器人: {}
+INTEGRATION_UNDEF: |-
+  未接入
+INTEGRATION_OK: |-
+  已接入
+INTEGRATION_PAUSED: |-
+  已暫停
+INTEGRATION_PAUSED_NOTICE: |-
+  機器人 @{} 無法訪問接入的群組, 故接入被暫停, 請檢查並執行恢復.
+INTEGRATION_SET: |-
+  接入群組
+INTEGRATION_PAUSE: |-
+  暫停接入
+INTEGRATION_RESUME: |-
+  恢復接入
+INTEGRATION_DEL: |-
+  取消接入
+INTEGRATION_ENABLE_ADMIN_ONLY: |-
+  設為僅管理員可操作
+INTEGRATION_DISABLE_ADMIN_ONLY: |-
+  設為所有成員都可操作
+
+DEFAULT_WELCOME: |-
+  您好!
+
+  您可以在此留言聯繫我(們).
+POWERED_BY: |-
+  本機器人使用 @{} 創建, {}
+
+INPUT_NOTICE: |-
+  來自: <code>{}</code>
+  名稱: {}
+INPUT_FN_NOTICE: |-
+  來自: <code>{}</code>
+  名稱: {}
+  命令: <code>/{}</code>
+USER_NOT_FOUND: |-
+  找不到用戶.
+JOINED_NOTICE: |-
+  已進入會話: {}
+  名稱: {}
+EXITED: |-
+  已退出.
+NOTHING_TO_EXIT: |-
+  無事可做.
+SENT: |-
+  已發送.
+REPLIED: |-
+  已回復.
+EDITED: |-
+  已編輯.
+MESSAGE_DELETED_BY_ME: |-
+  已刪除.
+MESSAGE_RECALLED_BY_ME: |-
+  已批次刪除.
+MESSAGE_DELETED_BY: |-
+  已刪除.
+
+  操作者: {}
+MESSAGE_RECALLED_BY: |-
+  已批次刪除.
+
+  目標會話: {}
+  名稱: {}
+  操作者: {}
+RECORD_NF: |-
+  找不到對應記錄.
+REPLIED_NF: |-
+  要回復的消息已被對方刪除.
+MESSAGE_DELETED: |-
+  這條消息被對方刪除了.
+MESSAGE_EDITED: |-
+  這條消息被對方更改了.
+
+BLOCKED: |-
+  已屏蔽 {}.
+BLOCK_EXISTS: |-
+  曾經屏蔽過 {}.
+BLOCK_NOT_EXISTS: |-
+  未屏蔽過 {}.
+UNBLOCKED: |-
+  已取消屏蔽.
+CANNOT_BLOCK_SELF: |-
+  不能屏蔽自己.
+
+COMMANDS_HELP: |-
+  這裡是您的機器人: {} @{}, 請在下方列表中選擇您要編輯的命令.
+
+  已添加命令列表:
+
+  {}
+
+  您可以為每個命令設置不同的消息內容, 並接收到對方消息所回復之命令.
+COMMAND_NEW: |-
+  新建命令
+COMMAND_INPUT_NAME: |-
+  現在向我發送命令名稱, 1 - 32 個小寫英文字符, 數字或下劃線:
+COMMAND_NAME_INVALID: |-
+  命令名稱無效, 僅支持 1 - 32 個小寫英文字符, 數字或下劃線.
+
+  {}
+COMMAND_INPUT_DESCRIPTION: |-
+  輸入命令說明, 3 - 256 個字元:
+COMMAND_DESCRIPTION_INVALID: |-
+  命令說明無效, 僅支持 3 - 256 個字元:
+
+  {}
+COMMAND_START: |-
+  <code>/start</code> 命令由開始消息保留, 請使用另一個.
+COMMAND_HELP: |-
+  這裡是您的機器人: {} @{}, 您正在編輯命令 <b><code>/{}</code></b>.
+
+  簡介: <code>{}</code>
+  消息: {}
+  隱藏: {}
+COMMAND_RENAME: |-
+  重命名
+COMMAND_EDIT_DESCRIPTION: |-
+  編輯簡介
+COMMAND_EDIT_MESSAGES: |-
+  重新設置消息
+COMMAND_HIDE: |-
+  隱藏
+COMMAND_SHOW: |-
+  顯示
+COMMAND_DELETE: |-
+  刪除
