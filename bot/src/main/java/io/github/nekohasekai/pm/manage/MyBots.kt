@@ -3,7 +3,6 @@ package io.github.nekohasekai.pm.manage
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
-import io.github.nekohasekai.nekolib.i18n.L
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.ActionMessages
@@ -22,7 +21,7 @@ class MyBots : TdHandler() {
 
         val DEF = TdApi.BotCommand(
                 command,
-                L.EDIT_BOTS_DEF
+                LocaleController.EDIT_BOTS_DEF
         )
 
     }
@@ -59,7 +58,7 @@ class MyBots : TdHandler() {
 
     }
 
-    fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    fun deleteActionMessage(userId: Int,chatId: Long,messageId: Long) {
 
         val currentActionMessage = actionMessages.fetch(userId)
 
@@ -70,6 +69,25 @@ class MyBots : TdHandler() {
             delete(chatId, currentActionMessageId)
 
         }
+
+    }
+
+    fun saveActionMessage(userId: Int,messageId: Long) {
+
+        val currentActionMessage = actionMessages.fetch(userId)
+
+        currentActionMessage.apply {
+
+            value = messageId
+            changed = true
+
+        }
+
+    }
+
+    fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+
+        deleteActionMessage(userId, chatId, messageId)
 
         val bots = LinkedHashMap<String, Int>()
 
@@ -89,7 +107,7 @@ class MyBots : TdHandler() {
 
         }
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         if (bots.isEmpty()) {
 
@@ -121,12 +139,7 @@ class MyBots : TdHandler() {
 
         } onSuccess {
 
-            currentActionMessage.apply {
-
-                value = it.id
-                changed = true
-
-            }
+           saveActionMessage(userId, it.id)
 
         } at messageId edit isEdit sendOrEditTo chatId
 

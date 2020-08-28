@@ -76,7 +76,7 @@ class CreateBot : TdHandler() {
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>) {
+    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
 
         userCalled(userId, "inputted token: ${message.text}")
 

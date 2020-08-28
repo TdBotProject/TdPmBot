@@ -1,12 +1,13 @@
 package io.github.nekohasekai.pm
 
-import io.github.nekohasekai.nekolib.i18n.L
+import io.github.nekohasekai.nekolib.i18n.LocaleController
 
+private typealias L = LocaleController
 private val L.pm by L.receiveLocaleSet("pm")
 private val string = L.receiveLocaleString { pm }
 
 internal val L.HELP_MSG by string
-internal val L.PRIVATE_INSTANCE by string
+internal val L.PM_HELP by string
 
 internal val L.CREATE_BOT_DEF by string
 internal val L.INPUT_BOT_TOKEN by string
@@ -22,7 +23,9 @@ internal val L.BOT_EDITS by string
 internal val L.MENU_BACK_TO_BOT_LIST by string
 internal val L.MENU_INTEGRATION by string
 internal val L.MENU_BOT_DELETE by string
-internal val L.MENU_OPIONS by string
+internal val L.MENU_OPTIONS by string
+internal val L.MENU_COMMANDS by string
+
 internal val L.OPTIONS_HELP by string
 internal val L.OPTION_KEEP_ACTION_MESSAGES by string
 internal val L.OPTION_TWO_WAY_SYNC by string
@@ -65,7 +68,6 @@ internal val L.INTEGRATION_UNDEF by string
 internal val L.INTEGRATION_OK by string
 internal val L.INTEGRATION_PAUSED by string
 internal val L.INTEGRATION_PAUSED_NOTICE by string
-internal val L.INTEGRATION_UNABLE_TO_RESUME by string
 internal val L.INTEGRATION_SET by string
 internal val L.INTEGRATION_PAUSE by string
 internal val L.INTEGRATION_RESUME by string
@@ -74,6 +76,7 @@ internal val L.INTEGRATION_ENABLE_ADMIN_ONLY by string
 internal val L.INTEGRATION_DISABLE_ADMIN_ONLY by string
 
 internal val L.INPUT_NOTICE by string
+internal val L.INPUT_FN_NOTICE by string
 internal val L.USER_NOT_FOUND by string
 internal val L.JOINED_NOTICE by string
 internal val L.EXITED by string
@@ -98,4 +101,17 @@ internal val L.BLOCK_NOT_EXISTS by string
 internal val L.UNBLOCKED by string
 internal val L.CANNOT_BLOCK_SELF by string
 
-internal val L.PM_HELP by string
+internal val L.COMMANDS_HELP by string
+internal val L.COMMAND_NEW by string
+internal val L.COMMAND_INPUT_NAME by string
+internal val L.COMMAND_NAME_INVALID by string
+internal val L.COMMAND_START by string
+internal val L.COMMAND_INPUT_DESCRIPTION by string
+internal val L.COMMAND_DESCRIPTION_INVALID by string
+internal val L.COMMAND_HELP by string
+internal val L.COMMAND_RENAME by string
+internal val L.COMMAND_EDIT_DESCRIPTION by string
+internal val L.COMMAND_EDIT_MESSAGES by string
+internal val L.COMMAND_HIDE by string
+internal val L.COMMAND_SHOW by string
+internal val L.COMMAND_DELETE by string

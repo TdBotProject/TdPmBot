@@ -7,8 +7,16 @@ HELP_MSG: |-
   /my_bots - 编辑机器人
 
   如需帮助，请通过 @TdBotProject 的讨论群组与我们联系.
-PRIVATE_INSTANCE: |-
-  抱歉, 本实例不提供公开服务.
+PM_HELP: |-
+  无事可做.
+
+  目标可为: 对消息回复 / 对话ID / @用户名 / 引用
+
+  使用 /join <目标> 以进入会话,
+  使用 /block <目标> 以屏蔽会话,
+  使用 /unblock <目标> 以解除屏蔽,
+  使用 /recall <目标> 清空与目标的全部消息,
+  使用 /exit 退出会话.
 
 CREATE_BOT_DEF: 创建新机器人
 INPUT_BOT_TOKEN: |-
@@ -50,8 +58,10 @@ MENU_BOT_DELETE: |-
 START_MESSAGES_STATUS: |-
   这里是您的机器人: {} @{}.
   当前欢迎消息: {}.
-MENU_OPIONS: |-
+MENU_OPTIONS: |-
   📅  行为选项
+MENU_COMMANDS: |-
+  📘  命令管理
 
 OPTIONS_HELP: |-
   这里是您的机器人: {} @{}, 以下是机器人的可选行为选项.
@@ -67,7 +77,6 @@ OPTION_TWO_WAY_SYNC: |-
   双向同步
 OPTION_IGNORE_DELETE_ACTION: |-
   忽略删除
-
 
 NO_BOTS: |-
   无事可做, 请首先使用 /new_bot 命令创建新机器人.
@@ -171,8 +180,12 @@ POWERED_BY: |-
   本机器人使用 @{} 创建, {}
 
 INPUT_NOTICE: |-
-  来自: {}
+  来自: <code>{}</code>
   名称: {}
+INPUT_FN_NOTICE: |-
+  来自: <code>{}</code>
+  名称: {}
+  命令: <code>/{}</code>
 USER_NOT_FOUND: |-
   找不到用户.
 JOINED_NOTICE: |-
@@ -222,13 +235,45 @@ UNBLOCKED: |-
 CANNOT_BLOCK_SELF: |-
   不能屏蔽自己.
 
-PM_HELP: |-
-  无事可做.
+COMMANDS_HELP: |-
+  这里是您的机器人: {} @{}, 请在下方列表中选择您要编辑的命令.
 
-  目标可为: 对消息回复 / 对话ID / @用户名 / 引用
+  已添加命令列表:
 
-  使用 /join <目标> 以进入会话,
-  使用 /block <目标> 以屏蔽会话,
-  使用 /unblock <目标> 以解除屏蔽,
-  使用 /recall <目标> 清空与目标的全部消息,
-  使用 /exit 退出会话.
+  {}
+
+  您可以为每个命令设置不同的消息内容, 并接收到对方消息所回复之命令.
+COMMAND_NEW: |-
+  新建命令
+COMMAND_INPUT_NAME: |-
+  现在向我发送命令名称, 1 - 32 个小写英文字符, 数字或下划线:
+COMMAND_NAME_INVALID: |-
+  命令名称无效, 仅支持 1 - 32 个小写英文字符, 数字或下划线.
+
+  {}
+COMMAND_INPUT_DESCRIPTION: |-
+  输入命令说明, 3 - 256 个字符:
+COMMAND_DESCRIPTION_INVALID: |-
+  命令说明无效, 仅支持 3 - 256 个字符:
+
+  {}
+COMMAND_START: |-
+  <code>/start</code> 命令由开始消息保留, 请使用另一个.
+COMMAND_HELP: |-
+  这里是您的机器人: {} @{}, 您正在编辑命令 <b><code>/{}</code></b>.
+
+  简介: <code>{}</code>
+  消息: {}
+  隐藏: {}
+COMMAND_RENAME: |-
+  重命名
+COMMAND_EDIT_DESCRIPTION: |-
+  编辑简介
+COMMAND_EDIT_MESSAGES: |-
+  重新设置消息
+COMMAND_HIDE: |-
+  隐藏
+COMMAND_SHOW: |-
+  显示
+COMMAND_DELETE: |-
+  删除

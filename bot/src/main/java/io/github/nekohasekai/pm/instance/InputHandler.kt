@@ -6,9 +6,7 @@ import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getUser
 import io.github.nekohasekai.nekolib.core.utils.*
-import io.github.nekohasekai.pm.INPUT_NOTICE
-import io.github.nekohasekai.pm.INTEGRATION_PAUSED_NOTICE
-import io.github.nekohasekai.pm.Launcher
+import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
 import io.github.nekohasekai.pm.manage.menu.IntegrationMenu
@@ -23,7 +21,25 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
     private var currentUser by AtomicInteger()
     private var times by AtomicInteger()
 
-    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
+    override fun onLoad() {
+
+        super.onLoad()
+
+        initPersist(PERSIST_UNDER_FUNCTION)
+
+    }
+
+    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+
+        sudo removePersist userId
+
+        onNewMessage(userId, chatId, message, data[0] as String)
+
+    }
+
+    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) = onNewMessage(userId, chatId, message, null)
+
+    suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message, command: String?) {
 
         val integration = integration
 
@@ -50,7 +66,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     Launcher make L.INTEGRATION_PAUSED_NOTICE.input(me.username) syncTo admin
 
-                    Launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, admin, 0L, false)
+                    Launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, admin.toInt(), admin, 0L, false)
 
                 }
 
@@ -81,9 +97,15 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             val user = getUser(userId)
 
-            val inputNotice = (
-                    sudo makeHtml L.INPUT_NOTICE.input(user.id.asCode, user.asInlineMention)
-                    ).syncToTarget() ?: return
+            val inputNotice = if (command != null) {
+
+                sudo makeHtml L.INPUT_FN_NOTICE.input(user.id, user.asInlineMention, command)
+
+            } else {
+
+                sudo makeHtml L.INPUT_NOTICE.input(user.id, user.asInlineMention)
+
+            }.syncToTarget() ?: return
 
             database.write {
 

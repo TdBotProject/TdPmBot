@@ -15,6 +15,8 @@ import io.github.nekohasekai.pm.manage.CreateBot
 import io.github.nekohasekai.pm.manage.MyBots
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 import java.io.File
 import java.util.*
@@ -159,6 +161,7 @@ object Launcher : TdCli(), PmInstance {
                     ActionMessages,
                     BotIntegrations,
                     BotSettings,
+                    BotCommands,
                     MessageRecords,
                     UserBlocks
             )
@@ -184,12 +187,18 @@ object Launcher : TdCli(), PmInstance {
         addHandler(RecallHandler(this))
 
         addHandler(GetIdCommand())
-
         addHandler(AdminCommands())
 
     }
 
-    override suspend fun onLogin() {
+    suspend fun updateCommands() {
+
+        val commands = database {
+            BotCommands
+                    .select { commandsForCurrentBot and (BotCommands.hide eq false) }
+                    .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
+                    .toTypedArray()
+        }
 
         if (public) {
 
@@ -197,15 +206,22 @@ object Launcher : TdCli(), PmInstance {
                     CreateBot.DEF,
                     MyBots.DEF,
                     LocaleSwitcher.DEF,
+                    * commands,
                     HELP_COMMAND,
                     CANCEL_COMMAND
             )
 
         } else {
 
-            upsertCommands()
+            upsertCommands(* commands)
 
         }
+
+    }
+
+    override suspend fun onLogin() {
+
+        updateCommands()
 
         database {
 
@@ -275,7 +291,19 @@ object Launcher : TdCli(), PmInstance {
 
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        if (!public && chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+        if (message.fromPrivate && ((chatId != admin && !public) || function != "cancel")) {
+
+            val command = BotCommands.Cache.fetch(me.id to function).value?.takeIf { ! it.hide } ?: rejectFunction()
+
+            command.messages.forEach {
+
+                sudo make it syncTo chatId
+
+            }
+
+            if (chatId != admin && !public) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function)
+
+        } else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
 
     }
 

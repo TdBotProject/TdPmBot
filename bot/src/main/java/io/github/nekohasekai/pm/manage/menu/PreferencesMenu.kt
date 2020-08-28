@@ -4,11 +4,12 @@ import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.BACK_ARROW
 import io.github.nekohasekai.nekolib.i18n.DISABLED
 import io.github.nekohasekai.nekolib.i18n.ENABLED
-import io.github.nekohasekai.nekolib.i18n.L
+import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.BotSetting
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.manage.BotHandler
+import io.github.nekohasekai.pm.manage.MyBots
 
 class PreferencesMenu : BotHandler() {
 
@@ -28,7 +29,7 @@ class PreferencesMenu : BotHandler() {
 
         val botSetting = BotSetting.Cache.fetch(botUserId).value
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         fun Boolean?.toBlock() = if (this == true) "■" else "□"
 
@@ -63,13 +64,17 @@ class PreferencesMenu : BotHandler() {
 
             dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
 
+        } onSuccess {
+
+            if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
+
         } at messageId edit isEdit sendOrEditTo chatId
 
     }
 
     override suspend fun onNewBotCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>, botUserId: Int, userBot: UserBot?) {
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         if (data.isNotEmpty()) {
 

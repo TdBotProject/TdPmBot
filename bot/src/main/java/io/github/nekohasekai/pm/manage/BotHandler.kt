@@ -5,7 +5,7 @@ import io.github.nekohasekai.nekolib.core.utils.displayName
 import io.github.nekohasekai.nekolib.core.utils.displayNameHtml
 import io.github.nekohasekai.nekolib.core.utils.shift
 import io.github.nekohasekai.nekolib.core.utils.toInt
-import io.github.nekohasekai.nekolib.i18n.L
+import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.Launcher
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.instance.BotInstances
@@ -52,7 +52,7 @@ abstract class BotHandler : TdHandler() {
 
         }
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         if (userBot != null && userBot.owner != userId) {
 

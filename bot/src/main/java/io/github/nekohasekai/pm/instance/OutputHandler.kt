@@ -155,7 +155,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            sudo make L.RECORD_NF onSuccess deleteDelay(message) replyTo message
+            sudo make L.RECORD_NF onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
 
             return
 
@@ -167,7 +167,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         } catch (e: TdException) {
 
-            sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
+            sudo make L.failed { USER_NOT_FOUND } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
 
             null
 
@@ -191,7 +191,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
 
                     return
 
@@ -234,7 +234,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
+                    sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
 
                     return
 
@@ -246,7 +246,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 } catch (e: TdException) {
 
-                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
 
                     return
 

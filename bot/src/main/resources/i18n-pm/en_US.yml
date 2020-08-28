@@ -7,8 +7,16 @@ HELP_MSG: |-
   /my_bots - edit bots
 
   For help, please contact us at @TdBotProject 's discuss group.
-PRIVATE_INSTANCE: |-
-  Sorry, this instance does not provide public services.
+PM_HELP: |-
+  Noting to do.
+
+  target: reply to message / chatId / @username / mention
+
+  Use /join <target> to join a chat,
+  Use /block <target> to block a chat,
+  Use /unblock <target> to unblock a chat,
+  Use /recall <target> to delete all the messages in the target chat,
+  Use /exit to exit a chat.
 
 CREATE_BOT_DEF: |-
   create a new bot
@@ -17,7 +25,7 @@ INPUT_BOT_TOKEN: |-
 INVALID_BOT_TOKEN: |-
   Invalid bot token.
 
-  Type /cancel to cancel the operation.
+  Use /cancel to cancel the operation.
 FETCHING_INFO: |-
   Fetching info...
 CREATING_BOT: |-
@@ -51,8 +59,10 @@ MENU_BOT_DELETE: |-
 START_MESSAGES_STATUS: |-
   Here it is: {} @{}.
   Current start messages: {}
-MENU_OPIONS: |-
+MENU_OPTIONS: |-
   📅  Preferences
+MENU_COMMANDS: |-
+  📘  Commands
 
 OPTIONS_HELP: |-
   Here it is: {} @{}, below are the behavioral options for your bot.
@@ -113,20 +123,20 @@ INPUT_MESSAGES: |-
 
   Or:
 
-  Type /submit to submit empty messages
-  Type /cancel to exit
+  Use /submit to submit empty messages
+  Use /cancel to exit
 MESSAGE_ADDED: |-
   Added.
 
-  Type /preview to preview
-  Type /submit to submit
-  Type /cancel to exit
+  Use /preview to preview
+  Use /submit to submit
+  Use /cancel to exit
 MESSAGE_ADDED_FWD: |-
   Added (forward).
 
-  Type /preview to preview
-  Type /submit to submit
-  Type /cancel to exit
+  Use /preview to preview
+  Use /submit to submit
+  Use /cancel to exit
 MESSAGES_RESET: |-
   Has been reset.
 ERROR_IN_PREVIEW: |-
@@ -170,8 +180,12 @@ DEFAULT_WELCOME: |-
 POWERED_BY: |-
   This bot is powered by @{}, {}
 INPUT_NOTICE: |-
-  From: {}
+  From: <code>{}</code>
   Name: {}
+INPUT_FN_NOTICE: |-
+  From: <code>{}</code>
+  Name: {}
+  Command: <code>/{}</code>
 USER_NOT_FOUND: |-
   user not found.
 JOINED_NOTICE: |-
@@ -222,13 +236,48 @@ UNBLOCKED: |-
 CANNOT_BLOCK_SELF: |-
   Can't block yourself.
 
-PM_HELP: |-
-  Noting to do.
 
-  target: reply to message / chatId / @username / mention
+COMMANDS_HELP: |-
+  Here it is: {} @{}.
 
-  Use /join <target> to join a chat,
-  Use /block <target> to block a chat,
-  Use /unblock <target> to unblock a chat,
-  Use /recall <target> to delete all the messages in the target chat,
-  Use /exit to exit a chat.
+  Current commands:
+
+  {}
+
+  You can set a different message for each command and receive the command corresponding to the new messages.
+
+  Choose a command to configure from the list below:
+COMMAND_NEW: |-
+  New Command
+COMMAND_INPUT_NAME: |-
+  Now send me command name, 1-32 characters. Can contain only lowercase English letters, digits and underscores:
+COMMAND_NAME_INVALID: |-
+  Invalid command name, 1-32 characters reqired. Can contain only lowercase English letters, digits and underscores:
+
+  {}
+COMMAND_INPUT_DESCRIPTION: |-
+  Input description of the command, 3-256 characters:
+COMMAND_DESCRIPTION_INVALID: |-
+  Invalid description, 3-256 characters required:
+
+  {}
+COMMAND_START: |-
+  The <code>/start</code> command is reserved by start messages, please use another name.
+COMMAND_HELP: |-
+  Here it is: {} @{}, you are editing the command <b><code>/{}</code></b>.
+
+  Description: <code>{}</code>
+  Messages: {}
+  Hide: {}
+COMMAND_RENAME: |-
+  Rename
+COMMAND_EDIT_DESCRIPTION: |-
+  Edit Description
+COMMAND_EDIT_MESSAGES: |-
+  Edit Messages
+COMMAND_HIDE: |-
+  Hide
+COMMAND_SHOW: |-
+  Disable Hide
+COMMAND_DELETE: |-
+  Delete Command

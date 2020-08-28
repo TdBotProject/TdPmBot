@@ -1,13 +1,13 @@
 package io.github.nekohasekai.pm.manage.menu
 
-import cn.hutool.http.HtmlUtil
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.BACK_ARROW
-import io.github.nekohasekai.nekolib.i18n.L
+import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.instance.BotInstances
 import io.github.nekohasekai.pm.manage.BotHandler
+import io.github.nekohasekai.pm.manage.MyBots
 import java.util.*
 
 class DeleteMenu : BotHandler() {
@@ -26,7 +26,7 @@ class DeleteMenu : BotHandler() {
 
     fun botDeleteMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, again: Boolean) {
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         sudo makeHtml (if (!again) L.MENU_BOT_DELETE_CONFIRM else L.MENU_BOT_DELETE_CONFIRM_AGAIN).input(
 
@@ -53,6 +53,10 @@ class DeleteMenu : BotHandler() {
 
             dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
 
+        } onSuccess {
+
+            if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
+
         } at messageId edit isEdit sendOrEditTo chatId
 
     }
@@ -70,6 +74,8 @@ class DeleteMenu : BotHandler() {
             0 -> botDeleteMenu(botUserId, userBot, userId, chatId, messageId, isEdit = true, again = true)
 
             1 -> {
+
+                val L = LocaleController.forChat(userId)
 
                 sudo make Typing sendTo chatId
 

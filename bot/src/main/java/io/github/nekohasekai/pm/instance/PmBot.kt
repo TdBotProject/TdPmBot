@@ -8,9 +8,12 @@ import io.github.nekohasekai.nekolib.i18n.LICENSE
 import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.*
+import io.github.nekohasekai.pm.manage.menu.CommandsMenu
 import io.github.nekohasekai.pm.manage.menu.IntegrationMenu
 import io.github.nekohasekai.pm.manage.menu.StartMessagesMenu
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
@@ -37,11 +40,22 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     }
 
+    suspend fun updateCommands() {
+
+        upsertCommands(* database {
+            BotCommands
+                    .select { commandsForCurrentBot and (BotCommands.hide eq false) }
+                    .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
+                    .toTypedArray()
+        })
+
+    }
+
     override suspend fun onLogin() {
 
         defaultLog.info("${me.displayName} (@${me.username}): PmBot Loaded")
 
-        upsertCommands()
+        updateCommands()
 
     }
 
@@ -103,6 +117,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         addHandler(StartMessagesMenu())
         addHandler(IntegrationMenu())
+        addHandler(CommandsMenu())
 
         initStartPayload("finish_creation")
 
@@ -118,7 +133,19 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        if (chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+        if (message.fromPrivate && (chatId != admin || function != "cancel")) {
+
+            val command = BotCommands.Cache.fetch(botUserId to function).value ?: rejectFunction()
+
+            command.messages.forEach {
+
+                sudo make it syncTo chatId
+
+            }
+
+            writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function)
+
+        } else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
 
     }
 

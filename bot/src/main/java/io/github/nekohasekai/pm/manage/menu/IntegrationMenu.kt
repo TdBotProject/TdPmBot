@@ -33,7 +33,7 @@ class IntegrationMenu : BotHandler() {
 
     }
 
-    fun integrationMenu(L: LocaleController, botUserId: Int, userBot: UserBot?, chatId: Long, messageId: Long, isEdit: Boolean) {
+    fun integrationMenu(L: LocaleController, botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val integration = BotIntegration.Cache.fetch(botUserId).value
 
@@ -89,17 +89,21 @@ class IntegrationMenu : BotHandler() {
 
             dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
 
+        } onSuccess {
+
+            if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
+
         } at messageId edit isEdit sendOrEditTo chatId
 
     }
 
     override suspend fun onNewBotCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>, botUserId: Int, userBot: UserBot?) {
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         if (data.isEmpty()) {
 
-            integrationMenu(L, userBot?.botId ?: me.id, userBot, chatId, messageId, true)
+            integrationMenu(L, userBot?.botId ?: me.id, userBot, userId, chatId, messageId, true)
 
             return
 
@@ -193,7 +197,7 @@ class IntegrationMenu : BotHandler() {
 
         BotIntegration.Cache.fetch(botUserId).value = if (action < 4) integration else null
 
-        integrationMenu(L, botUserId, userBot, chatId, messageId, true)
+        integrationMenu(L, botUserId, userBot, userId, chatId, messageId, true)
 
     }
 
@@ -266,7 +270,7 @@ class IntegrationMenu : BotHandler() {
 
             if (actionMessage.value != null) {
 
-                findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, userId.toLong(), actionMessage.value!!, true)
+                findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, userId, userId.toLong(), actionMessage.value!!, true)
 
             }
 

@@ -8,6 +8,7 @@ import io.github.nekohasekai.pm.database.StartMessages
 import io.github.nekohasekai.pm.database.UserBot
 import io.github.nekohasekai.pm.instance.BotInstances
 import io.github.nekohasekai.pm.manage.BotHandler
+import io.github.nekohasekai.pm.manage.MyBots
 import td.TdApi
 import java.util.*
 
@@ -31,7 +32,7 @@ class StartMessagesMenu : BotHandler() {
 
     fun startMessagesMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, botUserId: Int, userBot: UserBot?) {
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         val startMessages = StartMessages.Cache.fetch(botUserId).value
 
@@ -57,6 +58,10 @@ class StartMessagesMenu : BotHandler() {
 
             dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
 
+        } onSuccess {
+
+            if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
+
         } at messageId edit isEdit sendOrEditTo chatId
 
     }
@@ -65,7 +70,7 @@ class StartMessagesMenu : BotHandler() {
 
         sudo confirmTo queryId
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         if (data.isEmpty()) {
 
@@ -142,7 +147,7 @@ class StartMessagesMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>) {
+    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
 
         if (subId == 0L) {
 
@@ -168,7 +173,7 @@ class StartMessagesMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistCancel(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>) {
+    override suspend fun onPersistCancel(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
 
         if (data.size > 1) {
 
@@ -182,11 +187,11 @@ class StartMessagesMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistFunction(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any>, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+    override suspend fun onPersistFunction(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
         if (function == "preview") {
 
-            val L = L.forChat(userId)
+            val L = LocaleController.forChat(userId)
 
             val cache = data[0] as StartMessagesCache
 
@@ -216,7 +221,7 @@ class StartMessagesMenu : BotHandler() {
 
             sudo removePersist userId
 
-            val L = L.forChat(userId)
+            val L = LocaleController.forChat(userId)
 
             val cache = data[0] as StartMessagesCache
 
@@ -226,9 +231,9 @@ class StartMessagesMenu : BotHandler() {
 
                 // 权限检查
 
-                userCalled(userId, "submit start messages to outdated bot")
+                sudo removePersist userId
 
-                sudo make L.INVALID_SELECTED sendTo chatId
+                onSendTimeoutMessage(userId, chatId)
 
                 return
 
@@ -256,31 +261,6 @@ class StartMessagesMenu : BotHandler() {
                 startMessagesMenu(userId, chatId, messageId, false, me.id, null)
 
             }
-
-        } else if (function == "reset") {
-
-            sudo removePersist userId
-
-            val L = L.forChat(userId)
-
-            val cache = data[0] as StartMessagesCache
-
-            val botUserId = cache.botId
-
-            if (chatId != Launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
-
-                // 权限检查
-
-                userCalled(userId, "submit start messages to outdated bot")
-
-                sudo make L.INVALID_SELECTED sendTo chatId
-
-                return
-
-            }
-
-            userCalled(userId, "reset start messages to $botUserId")
-
 
         } else {
 

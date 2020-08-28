@@ -7,7 +7,7 @@ import io.github.nekohasekai.nekolib.core.utils.deleteDelay
 import io.github.nekohasekai.nekolib.core.utils.entities
 import io.github.nekohasekai.nekolib.core.utils.make
 import io.github.nekohasekai.nekolib.core.utils.text
-import io.github.nekohasekai.nekolib.i18n.L
+import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.RECORD_NF
 import io.github.nekohasekai.pm.database.MessageRecords
@@ -19,7 +19,7 @@ abstract class AbstractUserInputHandler : TdHandler() {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        val L = L.forChat(userId)
+        val L = LocaleController.forChat(userId)
 
         var targetUser = 0
 
