@@ -43,6 +43,8 @@ CREATE_FINISHED: |-
 
 EDIT_BOTS_DEF: |-
   edit your bots
+SELECT_TO_EDIT: |-
+  Choose a bot from the list below:
 BOT_EDITS: |-
   Here it is: {} @{}.
   What do you want to do with the bot?
