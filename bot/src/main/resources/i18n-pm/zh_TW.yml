@@ -1,3 +1,4 @@
+---
 HELP_MSG: |-
   本機器人能幫助您創建和管理 Telegram 私聊機器人.
 
@@ -17,8 +18,8 @@ PM_HELP: |-
   使用 /unblock <目標> 以解除屏蔽,
   使用 /recall <目標> 清空與目標的全部消息,
   使用 /exit 退出會話.
-
-CREATE_BOT_DEF: 創建新機器人
+CREATE_BOT_DEF: |-
+  創建新機器人
 INPUT_BOT_TOKEN: |-
   輸入從 @BotFather 獲取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
 INVALID_BOT_TOKEN: |-
@@ -39,7 +40,6 @@ CREATE_FINISHED: |-
   大功告成 !
 
   現在您可以返回繼續設置您的機器人, 或者到 @BotFather 為它設置簡介, 關於行和頭像.
-
 EDIT_BOTS_DEF: |-
   編輯您的機器人
 BOT_EDITS: |-
@@ -60,7 +60,6 @@ MENU_OPTIONS: |-
   📅  行為選項
 MENU_COMMANDS: |-
   📘  命令管理
-
 OPTIONS_HELP: |-
   這裡是您的機器人: {} @{}, 以下是機器人的可選行為選項.
 
@@ -75,7 +74,6 @@ OPTION_TWO_WAY_SYNC: |-
   雙向同步
 OPTION_IGNORE_DELETE_ACTION: |-
   忽略刪除
-
 NO_BOTS: |-
   無事可做, 請首先使用 /new_bot 命令創建新機器人.
 MENU_BOT_DELETE_CONFIRM: |-
@@ -94,7 +92,6 @@ MENU_BOT_DEL_YES_1: |-
   是的, 刪除這個機器人
 MENU_BOT_DEL_YES_2: |-
   是的, 我 100% 確定!
-
 STOPPING: |-
   停止機器人...
 DELETING: |-
@@ -105,8 +102,6 @@ BOT_AUTH_FAILED: |-
   您的機器人 @{} 無法認證 ( 已重設 Token / 被刪除 ), 已移除.
 BOT_LOGOUT: |-
   您的機器人 @{} 被登出, ( 已重設 Token / 被刪除 ), 已移除.
-
-
 SELECT_TO_SET: |-
   選擇要設置的機器人.
 JUMP_TO_SET: |-
@@ -140,7 +135,6 @@ MESSAGES_RESET: |-
   已重設.
 ERROR_IN_PREVIEW: |-
   出錯: {}, 請重新設置: 注意設置完成後不要刪除其中包含文件的消息 (包括 貼紙, 影片等媒體).
-
 SET_INTEGRATION: |-
   您可以將 PM 機器人 @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
 
@@ -169,14 +163,12 @@ INTEGRATION_ENABLE_ADMIN_ONLY: |-
   設為僅管理員可操作
 INTEGRATION_DISABLE_ADMIN_ONLY: |-
   設為所有成員都可操作
-
 DEFAULT_WELCOME: |-
   您好!
 
   您可以在此留言聯繫我(們).
 POWERED_BY: |-
   本機器人使用 @{} 創建, {}
-
 INPUT_NOTICE: |-
   來自: <code>{}</code>
   名稱: {}
@@ -203,15 +195,15 @@ MESSAGE_DELETED_BY_ME: |-
   已刪除.
 MESSAGE_RECALLED_BY_ME: |-
   已批次刪除.
-MESSAGE_DELETED_BY: |-
-  已刪除.
-
-  操作者: {}
 MESSAGE_RECALLED_BY: |-
   已批次刪除.
 
   目標會話: {}
   名稱: {}
+  操作者: {}
+MESSAGE_DELETED_BY: |-
+  已刪除.
+
   操作者: {}
 RECORD_NF: |-
   找不到對應記錄.
@@ -221,7 +213,6 @@ MESSAGE_DELETED: |-
   這條消息被對方刪除了.
 MESSAGE_EDITED: |-
   這條消息被對方更改了.
-
 BLOCKED: |-
   已屏蔽 {}.
 BLOCK_EXISTS: |-
@@ -232,7 +223,6 @@ UNBLOCKED: |-
   已取消屏蔽.
 CANNOT_BLOCK_SELF: |-
   不能屏蔽自己.
-
 COMMANDS_HELP: |-
   這裡是您的機器人: {} @{}, 請在下方列表中選擇您要編輯的命令.
 
