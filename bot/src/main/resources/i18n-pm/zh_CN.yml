@@ -1,3 +1,4 @@
+---
 HELP_MSG: |-
   本机器人能帮助您创建和管理 Telegram 私聊机器人.
 
@@ -17,8 +18,8 @@ PM_HELP: |-
   使用 /unblock <目标> 以解除屏蔽,
   使用 /recall <目标> 清空与目标的全部消息,
   使用 /exit 退出会话.
-
-CREATE_BOT_DEF: 创建新机器人
+CREATE_BOT_DEF: |-
+  创建新机器人
 INPUT_BOT_TOKEN: |-
   输入从 @BotFather 获取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
 INVALID_BOT_TOKEN: |-
@@ -39,11 +40,10 @@ CREATE_FINISHED: |-
   大功告成 !
 
   现在您可以返回继续设置您的机器人, 或者到 @BotFather 为它设置简介, 关于行和头像.
-
 EDIT_BOTS_DEF: |-
   编辑您的机器人
 SELECT_TO_EDIT: |-
-  请在下方列表中选择您要编辑的机器人.
+  Choose a bot from the list below:
 BOT_EDITS: |-
   这里是您的机器人: {} @{}.
   现在您想做什么 ?
@@ -62,7 +62,6 @@ MENU_OPTIONS: |-
   📅  行为选项
 MENU_COMMANDS: |-
   📘  命令管理
-
 OPTIONS_HELP: |-
   这里是您的机器人: {} @{}, 以下是机器人的可选行为选项.
 
@@ -77,7 +76,6 @@ OPTION_TWO_WAY_SYNC: |-
   双向同步
 OPTION_IGNORE_DELETE_ACTION: |-
   忽略删除
-
 NO_BOTS: |-
   无事可做, 请首先使用 /new_bot 命令创建新机器人.
 MENU_BOT_DELETE_CONFIRM: |-
@@ -96,7 +94,6 @@ MENU_BOT_DEL_YES_1: |-
   是的, 删除这个机器人
 MENU_BOT_DEL_YES_2: |-
   是的, 我 100% 确定!
-
 STOPPING: |-
   停止机器人...
 DELETING: |-
@@ -107,8 +104,6 @@ BOT_AUTH_FAILED: |-
   您的机器人 @{} 无法认证 ( 已重置 Token / 被刪除 ), 已移除.
 BOT_LOGOUT: |-
   您的机器人 @{} 被登出, ( 已重置 Token / 被刪除 ), 已移除.
-
-
 SELECT_TO_SET: |-
   选择要设置的机器人.
 JUMP_TO_SET: |-
@@ -142,7 +137,6 @@ MESSAGES_RESET: |-
   已重置.
 ERROR_IN_PREVIEW: |-
   出错: {}, 请重新设置: 注意设置完成后不要删除其中包含文件的消息 (包括 贴纸, 视频等媒体).
-
 SET_INTEGRATION: |-
   您可以将 PM 机器人 @{} 接入到群组, 所有消息将被发往目标群组而不是您的私聊.
 
@@ -171,14 +165,12 @@ INTEGRATION_ENABLE_ADMIN_ONLY: |-
   设为仅管理员可操作
 INTEGRATION_DISABLE_ADMIN_ONLY: |-
   设为所有成员都可操作
-
 DEFAULT_WELCOME: |-
   您好!
 
   您可以在此留言联系我(们).
 POWERED_BY: |-
   本机器人使用 @{} 创建, {}
-
 INPUT_NOTICE: |-
   来自: <code>{}</code>
   名称: {}
@@ -205,15 +197,15 @@ MESSAGE_DELETED_BY_ME: |-
   已删除.
 MESSAGE_RECALLED_BY_ME: |-
   已批量删除.
-MESSAGE_DELETED_BY: |-
-  已删除.
-
-  操作者: {}
 MESSAGE_RECALLED_BY: |-
   已批量删除.
 
   目标会话: {}
   名称: {}
+  操作者: {}
+MESSAGE_DELETED_BY: |-
+  已删除.
+
   操作者: {}
 RECORD_NF: |-
   找不到对应记录.
@@ -223,7 +215,6 @@ MESSAGE_DELETED: |-
   这条消息被对方删除了.
 MESSAGE_EDITED: |-
   这条消息被对方更改了.
-
 BLOCKED: |-
   已屏蔽 {}.
 BLOCK_EXISTS: |-
@@ -234,7 +225,6 @@ UNBLOCKED: |-
   已取消屏蔽.
 CANNOT_BLOCK_SELF: |-
   不能屏蔽自己.
-
 COMMANDS_HELP: |-
   这里是您的机器人: {} @{}, 请在下方列表中选择您要编辑的命令.
 
