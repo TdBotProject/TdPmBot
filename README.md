@@ -25,7 +25,7 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 复制 `_pm.conf` 到 `pm.conf`
 
 ```
-BOT_LANG: 工作语言, 暂仅支持 `zh_CN`, `en_US`.
+BOT_LANG: 工作语言, 暂仅支持 `zh_CN`, `zh_TW`, `en_US`.
 BOT_TOKEN: 机器人令牌.
 PUBLIC: 是否以公开模式运行.
 ADMIN: 管理员ID.
