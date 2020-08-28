@@ -43,7 +43,7 @@ CREATE_FINISHED: |-
 
 EDIT_BOTS_DEF: |-
   edit your bots
-SELECT_TO_MANAGE: |-
+SELECT_TO_EDIT: |-
   Choose a bot from the list below:
 BOT_EDITS: |-
   Here it is: {} @{}.
@@ -142,8 +142,6 @@ MESSAGES_RESET: |-
 ERROR_IN_PREVIEW: |-
   Error: {}, please reset: Please do not delete the message containing file (including stickers, videos and other media) after the setting is completed.
 
-SET_INTEGRATION_DEF: |-
-  set integration group
 SET_INTEGRATION: |-
   You can integration your PM bot @{} to a group, and all messages will be sent to the group instead of your private chat.
 
