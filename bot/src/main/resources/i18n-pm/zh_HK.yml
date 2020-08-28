@@ -1,0 +1,271 @@
+---
+HELP_MSG: |-
+  I can help you create and manage Telegram PM bots.
+
+  You can control me by sending these commands:
+
+  /new_bot - create a new pm bot
+  /my_bots - edit bots
+
+  For help, please contact us at @TdBotProject 's discuss group.
+PM_HELP: |-
+  Noting to do.
+
+  target: reply to message / chatId / @username / mention
+
+  Use /join <target> to join a chat,
+  Use /block <target> to block a chat,
+  Use /unblock <target> to unblock a chat,
+  Use /recall <target> to delete all the messages in the target chat,
+  Use /exit to exit a chat.
+CREATE_BOT_DEF: |-
+  create a new bot
+INPUT_BOT_TOKEN: |-
+  Enter the <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> obtained from @BotFather :
+INVALID_BOT_TOKEN: |-
+  Invalid bot token.
+
+  Use /cancel to cancel the operation.
+FETCHING_INFO: |-
+  Fetching info...
+CREATING_BOT: |-
+  Creating bot...
+ALREADY_EXISTS: |-
+  Failed: bot alreay exists.
+FINISH_CREATION: |-
+  Click this link to complete the creation: https://t.me/{}?start=finish_creation
+
+  <b>If you see the "Start" button, click it.</b>
+CREATE_FINISHED: |-
+  Done! Congratulations on your new bot.
+
+  You can go back to continue setting up your bot or add a description, about section and profile picture for your it at @BotFather.
+EDIT_BOTS_DEF: |-
+  edit your bots
+SELECT_TO_EDIT: |-
+  Choose a bot from the list below:
+BOT_EDITS: |-
+  Here it is: {} @{}.
+  What do you want to do with the bot?
+MENU_BACK_TO_BOT_LIST: |-
+  🔙 Back to Bots List
+MENU_START_MESSAGES: |-
+  💾 Start Messages
+MENU_INTEGRATION: |-
+  🌐 Group Integration
+MENU_BOT_DELETE: |-
+  🔳 Delete Bot
+START_MESSAGES_STATUS: |-
+  Here it is: {} @{}.
+  Current start messages: {}
+MENU_OPTIONS: |-
+  📅  Preferences
+MENU_COMMANDS: |-
+  📘  Commands
+OPTIONS_HELP: |-
+  Here it is: {} @{}, below are the behavioral options for your bot.
+
+  <b>Keep Prompts</b>: Do not automatically delete the action prompt message.
+
+  <b>Two-way Sync</b>: Copy someone's message directly, instead of forwarding it each time, and synchronize their editing and deleting actions.
+
+  <b>Ignore Deletion</b>: Do not synchronize the deletion of a message with your own, and add a button to delete the message from the prompt when "Keep Prompts" is enabled.
+OPTION_KEEP_ACTION_MESSAGES: |-
+  Keep Prompts
+OPTION_TWO_WAY_SYNC: |-
+  Two-way Sync
+OPTION_IGNORE_DELETE_ACTION: |-
+  Ignore my deletion
+NO_BOTS: |-
+  You don't have any bots yet. Use the /new_bot command to create a new bot first.
+MENU_BOT_DELETE_CONFIRM: |-
+  You are about to delete your bot <b>{}</b> @{}. Is that correct?
+MENU_BOT_DELETE_CONFIRM_AGAIN: |-
+  Are you <b>TOTALLY</b> sure you want to delete <b>{}</b> @{} ?
+MENU_BOT_DEL_NO_1: |-
+  No
+MENU_BOT_DEL_NO_2: |-
+  Nope, nevermind
+MENU_BOT_DEL_NO_3: |-
+  No!
+MENU_BOT_DEL_NO_4: |-
+  Hell no!
+MENU_BOT_DEL_YES_1: |-
+  Yes, delete the bot
+MENU_BOT_DEL_YES_2: |-
+  Yes, I'm 100% sure!
+STOPPING: |-
+  Stopping...
+DELETING: |-
+  Deleting...
+BOT_DELETED: |-
+  Done! The bot is gone.
+BOT_AUTH_FAILED: |-
+  Your bot @{} could not be authenticated ( token revoke / deleted ), has been removed.
+BOT_LOGOUT: |-
+  Your bot @{} has been logged out ( token revoke / deleted ), has been removed.
+SELECT_TO_SET: |-
+  Choose a bot to set.
+JUMP_TO_SET: |-
+  Now go to your bot to continue setting: @{}
+SETTING_UNDEF: |-
+  defualt
+EMPTY: |-
+  empty
+MESSAGES_STATUS_COUNT: |-
+  {} messages
+INPUT_MESSAGES: |-
+  Now send me messages:
+
+  Or:
+
+  Use /submit to submit empty messages
+  Use /cancel to exit
+MESSAGE_ADDED: |-
+  Added.
+
+  Use /preview to preview
+  Use /submit to submit
+  Use /cancel to exit
+MESSAGE_ADDED_FWD: |-
+  Added (forward).
+
+  Use /preview to preview
+  Use /submit to submit
+  Use /cancel to exit
+MESSAGES_RESET: |-
+  Has been reset.
+ERROR_IN_PREVIEW: |-
+  Error: {}, please reset: Please do not delete the message containing file (including stickers, videos and other media) after the setting is completed.
+SET_INTEGRATION: |-
+  You can integration your PM bot @{} to a group, and all messages will be sent to the group instead of your private chat.
+
+  Integration status: {}
+INTEGRATION_HAS_SET: |-
+  Done, all messages will be sent to here.
+INTEGRATION_STATUS: |-
+  Only group admins can operate: {}
+INTEGRATION_UNDEF: |-
+  none
+INTEGRATION_OK: |-
+  ok
+INTEGRATION_PAUSED: |-
+  paused
+INTEGRATION_PAUSED_NOTICE: |-
+  Bot @{} cannot access the integrated group, so the integration is paused, please check it and request resume.
+INTEGRATION_SET: |-
+  Integrate to group
+INTEGRATION_PAUSE: |-
+  Pause Integration
+INTEGRATION_RESUME: |-
+  Resume Integration
+INTEGRATION_DEL: |-
+  Remove Integration
+INTEGRATION_ENABLE_ADMIN_ONLY: |-
+  Set as admin only
+INTEGRATION_DISABLE_ADMIN_ONLY: |-
+  Make all members operable
+DEFAULT_WELCOME: |-
+  Hello!
+
+  You can contact us by leaving a message here.
+POWERED_BY: |-
+  This bot is powered by @{}, {}
+INPUT_NOTICE: |-
+  From: <code>{}</code>
+  Name: {}
+INPUT_FN_NOTICE: |-
+  From: <code>{}</code>
+  Name: {}
+  Command: <code>/{}</code>
+USER_NOT_FOUND: |-
+  user not found.
+JOINED_NOTICE: |-
+  Joined Chat: {}
+  Name: {}
+EXITED: |-
+  Exited.
+NOTHING_TO_EXIT: |-
+  No joined chat to exit. I wasn't doing anything anyway. Zzzzz...
+SENT: |-
+  Sent.
+REPLIED: |-
+  Replied.
+EDITED: |-
+  Edited.
+MESSAGE_DELETED_BY_ME: |-
+  Deleted.
+MESSAGE_RECALLED_BY_ME: |-
+  Batch Deleted.
+MESSAGE_RECALLED_BY: |-
+  Batch Deleted.
+
+  TargetUser: {}
+  Name: {}
+  Operator: {}
+MESSAGE_DELETED_BY: |-
+  Deleted.
+
+  Operator: {}
+RECORD_NF: |-
+  record not found.
+REPLIED_NF: |-
+  replied message deleted by target user.
+MESSAGE_DELETED: |-
+  This message has been deleted by target user.
+MESSAGE_EDITED: |-
+  This message has been edited by target user.
+BLOCKED: |-
+  {} has been blocked.
+BLOCK_EXISTS: |-
+  {} already been blocked.
+BLOCK_NOT_EXISTS: |-
+  {} has not been blocked.
+UNBLOCKED: |-
+  {} has been unblocked.
+CANNOT_BLOCK_SELF: |-
+  Can't block yourself.
+COMMANDS_HELP: |-
+  Here it is: {} @{}.
+
+  Current commands:
+
+  {}
+
+  You can set a different message for each command and receive the command corresponding to the new messages.
+
+  Choose a command to configure from the list below:
+COMMAND_NEW: |-
+  New Command
+COMMAND_INPUT_NAME: |-
+  Now send me command name, 1-32 characters. Can contain only lowercase English letters, digits and underscores:
+COMMAND_NAME_INVALID: |-
+  Invalid command name, 1-32 characters reqired. Can contain only lowercase English letters, digits and underscores:
+
+  {}
+COMMAND_INPUT_DESCRIPTION: |-
+  Input description of the command, 3-256 characters:
+COMMAND_DESCRIPTION_INVALID: |-
+  Invalid description, 3-256 characters required:
+
+  {}
+COMMAND_START: |-
+  The <code>/start</code> command is reserved by start messages, please use another name.
+COMMAND_HELP: |-
+  Here it is: {} @{}, you are editing the command <b><code>/{}</code></b>.
+
+  Description: <code>{}</code>
+  Messages: {}
+  Hide: {}
+COMMAND_RENAME: |-
+  Rename
+COMMAND_EDIT_DESCRIPTION: |-
+  Edit Description
+COMMAND_EDIT_MESSAGES: |-
+  Edit Messages
+COMMAND_HIDE: |-
+  Hide
+COMMAND_SHOW: |-
+  Disable Hide
+COMMAND_DELETE: |-
+  Delete Command
