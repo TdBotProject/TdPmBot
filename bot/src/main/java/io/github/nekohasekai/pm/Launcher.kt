@@ -168,7 +168,7 @@ object Launcher : TdCli(), PmInstance {
 
         }
 
-        initFunction("help")
+        if (public) initFunction("help")
 
         addHandler(LocaleSwitcher(DATA_SWITCH_LOCALE) { userId, chatId, message ->
 
@@ -291,19 +291,39 @@ object Launcher : TdCli(), PmInstance {
 
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        if (message.fromPrivate && ((chatId != admin && !public) || function != "cancel")) {
+        if (function == "cancel") {
 
-            val command = BotCommands.Cache.fetch(me.id to function).value?.takeIf { ! it.hide } ?: rejectFunction()
+            if (chatId == admin) {
 
-            command.messages.forEach {
+                super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
 
-                sudo make it syncTo chatId
+            } else if (!public) {
+
+                rejectFunction()
 
             }
 
+        }
+
+        val command = BotCommands.Cache.fetch(me.id to function).value?.takeIf { !it.hide }
+
+        if (!message.fromPrivate) {
+
+            if (command == null) return
+
+            command.messages.forEach { sudo make it syncTo chatId }
+
+            return
+
+        } else {
+
+            if (command == null) rejectFunction()
+
+            command.messages.forEach { sudo make it syncTo chatId }
+
             if (chatId != admin && !public) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function)
 
-        } else super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+        }
 
     }
 
