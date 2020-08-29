@@ -35,23 +35,25 @@ class DeleteMenu : BotHandler() {
 
         ) withMarkup inlineButton {
 
+            val botId = botUserId.toByteArray()
+
             if (!again) {
 
-                dataLine(L.MENU_BOT_DEL_NO_1, BotMenu.dataId, botUserId.toByteArray())
-                dataLine(L.MENU_BOT_DEL_NO_2, BotMenu.dataId, botUserId.toByteArray())
-                dataLine(L.MENU_BOT_DEL_YES_1, dataId, botUserId.toByteArray(), 0.toByteArray())
+                dataLine(L.MENU_BOT_DEL_NO_1, BotMenu.dataId, botId)
+                dataLine(L.MENU_BOT_DEL_NO_2, BotMenu.dataId, botId)
+                dataLine(L.MENU_BOT_DEL_YES_1, dataId, botId, byteArrayOf(0))
 
             } else {
 
-                dataLine(L.MENU_BOT_DEL_NO_3, BotMenu.dataId, botUserId.toByteArray())
-                dataLine(L.MENU_BOT_DEL_NO_4, BotMenu.dataId, botUserId.toByteArray())
-                dataLine(L.MENU_BOT_DEL_YES_2, dataId, botUserId.toByteArray(), 1.toByteArray())
+                dataLine(L.MENU_BOT_DEL_NO_3, BotMenu.dataId, botId)
+                dataLine(L.MENU_BOT_DEL_NO_4, BotMenu.dataId, botId)
+                dataLine(L.MENU_BOT_DEL_YES_2, dataId, botId, byteArrayOf(1))
 
             }
 
             Collections.shuffle(this)
 
-            dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
+            dataLine(L.BACK_ARROW, BotMenu.dataId, botId)
 
         } onSuccess {
 
@@ -69,7 +71,7 @@ class DeleteMenu : BotHandler() {
 
             botDeleteMenu(botUserId, userBot, userId, chatId, messageId, isEdit = true, again = false)
 
-        } else when (data[0].toInt()) {
+        } else when (data[0][0].toInt()) {
 
             0 -> botDeleteMenu(botUserId, userBot, userId, chatId, messageId, isEdit = true, again = true)
 

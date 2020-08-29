@@ -20,6 +20,8 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
     override suspend fun onMessageContent(chatId: Long, messageId: Long, newContent: TdApi.MessageContent) {
 
+        if (!sudo.waitForAuth()) return
+
         val integration = integration
 
         val useIntegration = integration != null && !integration.paused && chatId != admin

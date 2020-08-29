@@ -109,6 +109,8 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
+            userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
+
             saveSent(currentChat, sentMessage.id)
 
             (sudo make L.SENT).apply {
@@ -197,6 +199,8 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 }
 
+                userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
+
                 saveSent(targetUser.id, sentMessage.id)
 
                 (sudo make L.SENT).apply {
@@ -252,6 +256,8 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 }
 
+                userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
+
                 saveSent(targetUser.id, sentMessage.id)
 
                 (sudo make L.REPLIED).apply {
@@ -293,6 +299,12 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
         val targetChat = data[0].toLong()
         val targetMessage = data[1].toLong()
 
+        database.write {
+
+            MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId inList listOf(messageId, targetMessage)) }
+
+        }
+
         getMessageWith(targetChat, targetMessage) {
 
             onSuccess {
@@ -309,12 +321,6 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 }
 
-                database.write {
-
-                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq messageId) }
-
-                }
-
                 sudo delete it
 
             }
@@ -322,6 +328,8 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
             onFailure {
 
                 sudo makeAlert L.RECORD_NF answerTo queryId
+
+                editMessageReplyMarkup(chatId, messageId, null)
 
             }
 

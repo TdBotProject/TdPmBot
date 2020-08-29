@@ -44,19 +44,21 @@ class StartMessagesMenu : BotHandler() {
 
         }) withMarkup inlineButton {
 
+            val botId = botUserId.toByteArray()
+
             newLine {
 
-                dataButton(L.EDIT, dataId, botUserId.toByteArray(), 1.toByteArray())
+                dataButton(L.EDIT, dataId, botId, byteArrayOf(0))
 
                 if (startMessages != null) {
 
-                    dataButton(L.RESET, dataId, botUserId.toByteArray(), 2.toByteArray())
+                    dataButton(L.RESET, dataId, byteArrayOf(1))
 
                 }
 
             }
 
-            dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
+            dataLine(L.BACK_ARROW, BotMenu.dataId, botId)
 
         } onSuccess {
 
@@ -76,7 +78,7 @@ class StartMessagesMenu : BotHandler() {
 
             startMessagesMenu(userId, chatId, messageId, true, botUserId, userBot)
 
-        } else when (data[0].toInt()) {
+        } else when (data[0][0].toInt()) {
 
             -1 -> {
 
@@ -92,13 +94,13 @@ class StartMessagesMenu : BotHandler() {
 
             }
 
-            1 -> {
+            0 -> {
 
                 if (userBot == null) {
 
                     sudo make L.INPUT_MESSAGES withMarkup inlineButton {
 
-                        dataLine(L.BACK_ARROW, dataId, botUserId.toByteArray(), (-1).toByteArray())
+                        dataLine(L.BACK_ARROW, dataId, botUserId.toByteArray(), byteArrayOf(-1))
 
                     } onSuccess {
 
@@ -118,7 +120,7 @@ class StartMessagesMenu : BotHandler() {
 
                     sudo make L.JUMP_TO_SET.input(userBot.username) withMarkup inlineButton {
 
-                        dataLine(L.BACK_ARROW, dataId, botUserId.toByteArray(), (-1).toByteArray())
+                        dataLine(L.BACK_ARROW, dataId, botUserId.toByteArray(), byteArrayOf(-1))
 
                     } at messageId editTo chatId
 
@@ -126,7 +128,7 @@ class StartMessagesMenu : BotHandler() {
 
             }
 
-            2 -> {
+            1 -> {
 
                 StartMessages.Cache.fetch(botUserId).apply {
 

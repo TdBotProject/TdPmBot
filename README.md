@@ -46,15 +46,23 @@ ARGS: 启动参数.
 
 ## 管理
 
-`./bot.sh run` 编译安装并进入交互式认证  
-`./bot.sh init` 注册 systemd 服务  
-`./bot.sh <start/stop/restart>` 启动停止  
-`./bot.sh <enable/disable>` 启用禁用 (开机启动)  
-`./bot.sh rebuild` 重新编译  
-`./bot.sh update` 更新  
-`./bot.sh upgrade` 更新并重启服务  
-`./bot.sh log` 实时日志  
-`./bot.sh logs` 所有日志
+```shell script
+
+./bot.sh run # 编译安装并进入交互式认证  
+./bot.sh init # 注册 systemd 服务  
+./bot.sh <start/stop/restart> # 启动停止  
+./bot.sh <enable/disable> # 启用禁用 (开机启动)  
+./bot.sh rebuild # 重新编译  
+./bot.sh update # 更新  
+./bot.sh upgrade # 更新并重启服务  
+./bot.sh log # 实时日志  
+./bot.sh logs # 所有日志
+
+echo "alias pm='bash $PWD/bot.sh'" >> $HOME/.bashrc
+source $HOME/.bashrc
+
+# 注册 bot.sh 的命令别名 ( pm )
+```
 
 ## 迁移
 

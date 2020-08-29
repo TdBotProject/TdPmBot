@@ -2,6 +2,7 @@ package io.github.nekohasekai.pm.database
 
 import cn.hutool.core.date.DateUtil
 import io.github.nekohasekai.nekolib.core.client.TdHandler
+import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getMessageOrNull
 import io.github.nekohasekai.nekolib.core.utils.defaultLog
 import io.github.nekohasekai.nekolib.core.utils.displayName
@@ -40,6 +41,8 @@ suspend fun TdHandler.gc(instance: PmInstance) {
                 val messageId = row[MessageRecords.messageId]
 
                 if (integration?.paused == false) {
+
+                    getChat(integration.integration)
 
                     if (getMessageOrNull(integration.integration, messageId) != null) continue
 

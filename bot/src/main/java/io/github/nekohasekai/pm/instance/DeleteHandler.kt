@@ -15,15 +15,13 @@ import org.jetbrains.exposed.sql.select
 
 class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
-    val currentBot get() = (MessageRecords.botId eq me.id)
-
     override suspend fun onDeleteMessages(chatId: Long, messageIds: LongArray, isPermanent: Boolean, fromCache: Boolean) {
 
-        if (!isPermanent || fromCache) return
+        if (!sudo.waitForAuth() || !isPermanent || fromCache) return
 
         val records = database {
 
-            MessageRecords.select { currentBot and (MessageRecords.messageId inList messageIds.toList()) }.toList()
+            MessageRecords.select { messagesForCurrentBot and (MessageRecords.messageId inList messageIds.toList()) }.toList()
 
         }
 
@@ -53,7 +51,7 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                     database.write {
 
-                        MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
+                        MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
 
                     }
 
@@ -92,18 +90,18 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 database.write {
 
-                    MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq record[MessageRecords.messageId]) }
+                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq record[MessageRecords.messageId]) }
 
                     MessageRecords.select {
 
-                        currentBot and (
+                        messagesForCurrentBot and (
                                 ((MessageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED) or
                                         (MessageRecords.type eq MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
                                         (MessageRecords.targetId eq record[MessageRecords.messageId]))
 
                     }.forEach {
 
-                        MessageRecords.deleteWhere { currentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
+                        MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
 
                         if (twoWaySync) {
 

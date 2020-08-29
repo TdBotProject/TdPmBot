@@ -57,15 +57,17 @@ class IntegrationMenu : BotHandler() {
 
             urlLine(L.INTEGRATION_SET, mkStartGroupPayloadUrl(botUserName, "set_integration"))
 
+            val botId = botUserId.toByteArray()
+
             if (integration != null) {
 
                 if (integration.adminOnly) {
 
-                    dataLine(L.INTEGRATION_DISABLE_ADMIN_ONLY, dataId, botUserId.toByteArray(), 0.toByteArray())
+                    dataLine(L.INTEGRATION_DISABLE_ADMIN_ONLY, dataId, botId, byteArrayOf(0))
 
                 } else {
 
-                    dataLine(L.INTEGRATION_ENABLE_ADMIN_ONLY, dataId, botUserId.toByteArray(), 1.toByteArray())
+                    dataLine(L.INTEGRATION_ENABLE_ADMIN_ONLY, dataId, botId, byteArrayOf(1))
 
                 }
 
@@ -73,21 +75,21 @@ class IntegrationMenu : BotHandler() {
 
                     if (!integration.paused) {
 
-                        dataButton(L.INTEGRATION_PAUSE, dataId, botUserId.toByteArray(), 2.toByteArray())
+                        dataButton(L.INTEGRATION_PAUSE, dataId, botId, byteArrayOf(2))
 
                     } else {
 
-                        dataButton(L.INTEGRATION_RESUME, dataId, botUserId.toByteArray(), 3.toByteArray())
+                        dataButton(L.INTEGRATION_RESUME, dataId, botId, byteArrayOf(3))
 
                     }
 
-                    dataButton(L.INTEGRATION_DEL, dataId, botUserId.toByteArray(), 4.toByteArray())
+                    dataButton(L.INTEGRATION_DEL, dataId, botId, byteArrayOf(4))
 
                 }
 
             }
 
-            dataLine(L.BACK_ARROW, BotMenu.dataId, botUserId.toByteArray())
+            dataLine(L.BACK_ARROW, BotMenu.dataId, botId)
 
         } onSuccess {
 
@@ -109,7 +111,7 @@ class IntegrationMenu : BotHandler() {
 
         }
 
-        val action = data[0].toInt()
+        val action = data[0][0].toInt()
 
         val integration = BotIntegration.Cache.fetch(botUserId).value
 

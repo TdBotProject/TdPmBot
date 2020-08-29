@@ -45,11 +45,15 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         if (admin == chatId || chatId == integration?.integration || !message.fromPrivate) return
 
+        userCalled(userId, "收到消息: ${message.text ?: "<${message.content.javaClass.simpleName.substringAfter("Message")}>"}")
+
         suspend fun MessageFactory.syncToTarget(): TdApi.Message? {
 
             if (integration != null && !integration.paused) {
 
                 try {
+
+                    getChat(integration.integration)
 
                     return this syncTo integration.integration
 

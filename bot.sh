@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # --------------------------- #
+cd $(dirname "$(readlink -f "$0")")
+# --------------------------- #
 ARTIFACT="td-pm-bot"
 MODULE="bot"
 SERVICE_NAME="td-pm"
@@ -163,13 +165,13 @@ elif [ "$1" == "upgrade" ]; then
 
 elif [ "$1" == "log" ]; then
 
-  journalctl -u $SERVICE_NAME -o short --no-hostname -f -n 40
+  exec journalctl -u $SERVICE_NAME -o short --no-hostname -f -n 40
 
 elif
   [ "$1" == "logs" ]
 then
 
-  journalctl -u $SERVICE_NAME -o short --no-hostname --no-tail -e
+  exec journalctl -u $SERVICE_NAME -o short --no-hostname --no-tail -e
 
 else
 
