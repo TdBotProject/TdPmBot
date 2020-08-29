@@ -39,9 +39,8 @@ class CommandMenu : BotHandler() {
         val L = LocaleController.forChat(userId)
 
         sudo makeHtml L.COMMAND_HELP.input(
-
-                botUserName(botUserId, userBot),
                 botNameHtml(botUserId, userBot),
+                botUserName(botUserId, userBot),
                 command.command,
                 HtmlUtil.escape(command.description),
                 if (command.messages.isEmpty()) L.EMPTY else L.MESSAGES_STATUS_COUNT.input(command.messages.size),

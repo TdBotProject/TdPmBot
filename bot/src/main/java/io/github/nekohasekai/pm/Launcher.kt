@@ -275,7 +275,7 @@ object Launcher : TdCli(), PmInstance {
 
     override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (blocks.containsKey(userId)) finishEvent()
+        if (blocks.fetch(userId).value == true) finishEvent()
 
         super.onNewMessage(userId, chatId, message)
 

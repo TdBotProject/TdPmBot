@@ -26,7 +26,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
     override val integration get() = BotIntegration.Cache.fetch(botUserId).value
     override val settings get() = BotSetting.Cache.fetch(botUserId).value
 
-    override val blocks = UserBlocks.Cache(botUserId)
+    override val blocks by lazy { UserBlocks.Cache(botUserId) }
 
     override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
 
@@ -125,7 +125,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (blocks.containsKey(userId)) finishEvent()
+        if (blocks.fetch(userId).value == true) finishEvent()
 
         super.onNewMessage(userId, chatId, message)
 

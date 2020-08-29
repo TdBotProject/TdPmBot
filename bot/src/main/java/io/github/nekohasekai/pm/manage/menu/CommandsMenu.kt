@@ -45,8 +45,8 @@ class CommandsMenu : BotHandler() {
         val L = LocaleController.forChat(userId)
 
         sudo makeHtml L.COMMANDS_HELP.input(
-                botUserName(botUserId, userBot),
                 botNameHtml(botUserId, userBot),
+                botUserName(botUserId, userBot),
                 if (commands.isEmpty()) L.EMPTY else
                     commands.joinToString("\n") { row ->
                         ("/" + row[BotCommands.command] + " - " + HtmlUtil.escape(row[BotCommands.description])).let {
