@@ -44,8 +44,9 @@ class CommandMenu : BotHandler() {
                 command.command,
                 HtmlUtil.escape(command.description),
                 if (command.messages.isEmpty()) L.EMPTY else L.MESSAGES_STATUS_COUNT.input(command.messages.size),
-                if (command.hide) L.ENABLED else L.DISABLED
-
+                if (command.hide) L.ENABLED else L.DISABLED,
+                botUserName(botUserId, userBot),
+                command.command
         ) withMarkup inlineButton {
 
             val botId = botUserId.toByteArray()

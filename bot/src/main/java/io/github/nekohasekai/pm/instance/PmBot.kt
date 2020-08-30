@@ -171,7 +171,15 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     override suspend fun onUndefinedPayload(userId: Int, chatId: Long, message: TdApi.Message, payload: String, params: Array<String>) {
 
-        if (chatId != admin && message.fromPrivate) rejectFunction() else super.onUndefinedPayload(userId, chatId, message, payload, params)
+        if (message.fromPrivate) {
+
+            val command = BotCommands.Cache.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
+
+            command.messages.forEach { sudo make it syncTo chatId }
+
+            if (chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, payload)
+
+        } else rejectFunction()
 
     }
 

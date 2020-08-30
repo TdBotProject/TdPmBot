@@ -260,11 +260,13 @@ COMMAND_DESCRIPTION_INVALID: |-
 COMMAND_START: |-
   The <code>/start</code> command is reserved by start messages, please use another name.
 COMMAND_HELP: |-
-  Here it is: {} @{}, you are editing the command <b><code>/{}</code></b>.
+  You are editing the command <b><code>/{}</code></b> for {} @{}.
 
   Description: <code>{}</code>
   Messages: {}
   Hide: {}
+
+  You can also access the command from the <b><a href="https://t.me/{}?start={}">Link</a><b>.
 COMMAND_RENAME: |-
   Rename
 COMMAND_EDIT_DESCRIPTION: |-

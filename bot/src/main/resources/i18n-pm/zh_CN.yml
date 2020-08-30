@@ -258,11 +258,13 @@ COMMAND_DESCRIPTION_INVALID: |-
 COMMAND_START: |-
   <code>/start</code> 命令由开始消息保留, 请使用另一个.
 COMMAND_HELP: |-
-  这里是您的机器人: {} @{}, 您正在编辑命令 <b><code>/{}</code></b>.
+  您正在编辑机器人: {} @{} 的命令 <b><code>/{}</code></b>.
 
   简介: <code>{}</code>
   消息: {}
   隐藏: {}
+
+  您也可从该 <b><a href="https://t.me/{}?start={}">链接</a></b> 访问本命令.
 COMMAND_RENAME: |-
   重命名
 COMMAND_EDIT_DESCRIPTION: |-

@@ -349,7 +349,7 @@ class CommandsMenu : BotHandler() {
 
             }
 
-            commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
+            Launcher.findHandler<CommandsMenu>().commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
 
         }
 
