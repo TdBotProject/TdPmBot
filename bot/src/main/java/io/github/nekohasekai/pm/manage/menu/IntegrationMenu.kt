@@ -39,12 +39,12 @@ class IntegrationMenu : BotHandler() {
 
         val botUserName = botUserName(botUserId, userBot)
 
-        var content = L.SET_INTEGRATION.input(botName(botUserId, userBot), when {
-
+        var content = L.SET_INTEGRATION.input(
+                botName(botUserId, userBot),
+                botUserName(botUserId, userBot), when {
             integration == null -> L.INTEGRATION_UNDEF
             integration.paused -> L.INTEGRATION_PAUSED
             else -> L.INTEGRATION_OK
-
         })
 
         if (integration != null) {

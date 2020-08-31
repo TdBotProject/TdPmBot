@@ -22,6 +22,10 @@ CREATE_BOT_DEF: |-
   create a new bot
 INPUT_BOT_TOKEN: |-
   Enter the <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> obtained from @BotFather :
+
+  You can also use this Token as a command parameter to pass in a direct creation ( <code>/new_bot <BotToken></code> ),
+
+  Once created, you will be prompted to start the bot and keep it unblocked, otherwise you will not receive messages.
 INVALID_BOT_TOKEN: |-
   Invalid bot token.
 
@@ -55,7 +59,8 @@ MENU_INTEGRATION: |-
 MENU_BOT_DELETE: |-
   🔳 Delete Bot
 START_MESSAGES_STATUS: |-
-  Here it is: {} @{}.
+  You are editing the welcome message for bot {} @{}, which is the message that anyone replies to when they send /start to the bot.
+
   Current start messages: {}
 MENU_OPTIONS: |-
   📅  Preferences
@@ -69,11 +74,15 @@ OPTIONS_HELP: |-
 
   <b>Two-way Sync</b>: Copy someone's message directly, instead of forwarding it each time, and synchronize their editing and deleting actions.
 
+  <b>Keep Reply</b>: Keep replying to messages without entering ( <code>/join</code> ) the target session.
+
   <b>Ignore Deletion</b>: Do not synchronize the deletion of a message with your own, and add a button to delete the message from the prompt when "Keep Prompts" is enabled.
 OPTION_KEEP_ACTION_MESSAGES: |-
   Keep Prompts
 OPTION_TWO_WAY_SYNC: |-
   Two-way Sync
+OPTION_KEEP_REPLY: |-
+  Keep Reply
 OPTION_IGNORE_DELETE_ACTION: |-
   Ignore my deletion
 
@@ -141,7 +150,7 @@ ERROR_IN_PREVIEW: |-
   Error: {}, please reset: Please do not delete the message containing file (including stickers, videos and other media) after the setting is completed.
 
 SET_INTEGRATION: |-
-  You can integration your PM bot @{} to a group, and all messages will be sent to the group instead of your private chat.
+  You can integration your PM bot {} @{} to a group, and all messages will be sent to the group instead of your private chat.
 
   Integration status: {}
 INTEGRATION_HAS_SET: |-
@@ -155,7 +164,7 @@ INTEGRATION_OK: |-
 INTEGRATION_PAUSED: |-
   paused
 INTEGRATION_PAUSED_NOTICE: |-
-  Bot @{} cannot access the integrated group, so the integration is paused, please check it and request resume.
+  Bot {} @{} cannot access the integrated group, so the integration is paused, please check it and request resume.
 INTEGRATION_SET: |-
   Integrate to group
 INTEGRATION_PAUSE: |-

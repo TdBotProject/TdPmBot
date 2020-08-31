@@ -52,9 +52,17 @@ class PreferencesMenu : BotHandler() {
 
             newLine {
 
+                textButton(L.OPTION_KEEP_REPLY)
+
+                dataButton(botSetting?.keepReply.toBlock(), dataId, botId, byteArrayOf(2))
+
+            }
+
+            newLine {
+
                 textButton(L.OPTION_IGNORE_DELETE_ACTION)
 
-                dataButton(botSetting?.ignoreDeleteAction.toBlock(), dataId, botId, byteArrayOf(2))
+                dataButton(botSetting?.ignoreDeleteAction.toBlock(), dataId, botId, byteArrayOf(3))
 
             }
 
@@ -170,6 +178,36 @@ class PreferencesMenu : BotHandler() {
 
                         BotSetting.new(botUserId) {
 
+                            keepReply = target
+
+                        }
+
+                    }
+
+                } else {
+
+                    target = !botSetting.keepReply
+
+                    database.write {
+
+                        botSetting.keepReply = target
+
+                        botSetting.flush()
+
+                    }
+
+                }
+
+            }
+
+            3 -> {
+
+                if (botSetting == null) {
+
+                    botSettingCache.value = database.write {
+
+                        BotSetting.new(botUserId) {
+
                             ignoreDeleteAction = target
 
                         }
@@ -185,6 +223,7 @@ class PreferencesMenu : BotHandler() {
                         botSetting.ignoreDeleteAction = target
 
                         botSetting.flush()
+
 
                     }
 

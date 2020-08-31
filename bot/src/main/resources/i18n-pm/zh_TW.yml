@@ -21,6 +21,10 @@ PM_HELP: |-
 CREATE_BOT_DEF: 創建新機器人
 INPUT_BOT_TOKEN: |-
   輸入從 @BotFather 獲取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
+
+  您也可以使用該 Token 作為命令參數傳入直接創建 ( <code>/new_bot <BotToken></code> ),
+
+  創建完成後您需要根據提示啟動該機器人並保持不禁用, 否則將無法收到消息.
 INVALID_BOT_TOKEN: |-
   無效的 Bot Token{}.
 
@@ -54,7 +58,8 @@ MENU_INTEGRATION: |-
 MENU_BOT_DELETE: |-
   🔳  刪除機器人
 START_MESSAGES_STATUS: |-
-  這裡是您的機器人: {} @{}.
+  您正在編輯機器人 {} @{} 的歡迎消息, 即任何人對機器人發送 /start 時回复的消息.
+
   當前歡迎消息: {}.
 MENU_OPTIONS: |-
   📅  行為選項
@@ -68,11 +73,15 @@ OPTIONS_HELP: |-
 
   <b>雙向同步</b>: 直接複製對方的消息, 而不是每次都轉發, 並同步對方的編輯, 刪除操作.
 
+  <b>保持回复</b>: 沒有進入 ( <code>/join</code> ) 對應會話的情況下保持對消息的回复.
+
   <b>忽略刪除</b>: 不要同步本方的消息刪除, 當同時開啟 "保留提示" 時在提示中增加一個刪除該消息的按鈕.
 OPTION_KEEP_ACTION_MESSAGES: |-
   保留提示
 OPTION_TWO_WAY_SYNC: |-
   雙向同步
+OPTION_KEEP_REPLY: |-
+  保持回复
 OPTION_IGNORE_DELETE_ACTION: |-
   忽略刪除
 
@@ -105,7 +114,6 @@ BOT_AUTH_FAILED: |-
   您的機器人 @{} 無法認證 ( 已重設 Token / 被刪除 ), 已移除.
 BOT_LOGOUT: |-
   您的機器人 @{} 被登出, ( 已重設 Token / 被刪除 ), 已移除.
-
 
 SELECT_TO_SET: |-
   選擇要設置的機器人.
@@ -142,7 +150,7 @@ ERROR_IN_PREVIEW: |-
   出錯: {}, 請重新設置: 注意設置完成後不要刪除其中包含文件的消息 (包括 貼紙, 影片等媒體).
 
 SET_INTEGRATION: |-
-  您可以將 PM 機器人 @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
+  您可以將 PM 機器人 {} @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
 
   接入狀態: {}
 INTEGRATION_HAS_SET: |-
@@ -156,7 +164,7 @@ INTEGRATION_OK: |-
 INTEGRATION_PAUSED: |-
   已暫停
 INTEGRATION_PAUSED_NOTICE: |-
-  機器人 @{} 無法訪問接入的群組, 故接入被暫停, 請檢查並執行恢復.
+  機器人 {} @{} 無法訪問接入的群組, 故接入被暫停, 請檢查並執行恢復.
 INTEGRATION_SET: |-
   接入群組
 INTEGRATION_PAUSE: |-

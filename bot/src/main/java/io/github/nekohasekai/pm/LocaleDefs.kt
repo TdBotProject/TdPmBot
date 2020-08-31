@@ -29,6 +29,7 @@ internal val L.MENU_COMMANDS by string
 internal val L.OPTIONS_HELP by string
 internal val L.OPTION_KEEP_ACTION_MESSAGES by string
 internal val L.OPTION_TWO_WAY_SYNC by string
+internal val L.OPTION_KEEP_REPLY by string
 internal val L.OPTION_IGNORE_DELETE_ACTION by string
 
 internal val L.MENU_START_MESSAGES by string

@@ -8,6 +8,7 @@ object BotSettings : IdTable<Int>("bots_settings") {
 
     val keepActionMessages = bool("keep_action_messages").default(false)
     val twoWaySync = bool("two_way_sync").default(false)
+    val keepReply = bool("keep_reply").default(false)
     val ignoreDeleteAction = bool("ignore_delete_action").default(false)
 
 

@@ -21,6 +21,10 @@ PM_HELP: |-
 CREATE_BOT_DEF: 创建新机器人
 INPUT_BOT_TOKEN: |-
   输入从 @BotFather 获取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
+
+  您也可以使用该 Token 作为命令参数传入直接创建 ( <code>/new_bot <BotToken></code> ),
+
+  创建完成后您需要根据提示启动该机器人并保持不禁用, 否则将无法收到消息.
 INVALID_BOT_TOKEN: |-
   无效的 Bot Token{}.
 
@@ -54,7 +58,8 @@ MENU_INTEGRATION: |-
 MENU_BOT_DELETE: |-
   🔳  删除机器人
 START_MESSAGES_STATUS: |-
-  这里是您的机器人: {} @{}.
+  您正在编辑机器人 {} @{} 的欢迎消息, 即任何人对机器人发送 /start 时回复的消息.
+
   当前欢迎消息: {}.
 MENU_OPTIONS: |-
   📅  行为选项
@@ -68,11 +73,15 @@ OPTIONS_HELP: |-
 
   <b>双向同步</b>: 直接复制对方的消息, 而不是每次都转发, 并同步对方的编辑, 删除操作.
 
+  <b>保持回复</b>: 没有进入 ( <code>/join</code> ) 对应会话的情况下保持对消息的回复.
+
   <b>忽略删除</b>: 不要同步本方的消息删除, 当同时开启 "保留提示" 时在提示中增加一个删除该消息的按钮.
 OPTION_KEEP_ACTION_MESSAGES: |-
   保留提示
 OPTION_TWO_WAY_SYNC: |-
   双向同步
+OPTION_KEEP_REPLY: |-
+  保持回复
 OPTION_IGNORE_DELETE_ACTION: |-
   忽略删除
 
@@ -142,7 +151,7 @@ ERROR_IN_PREVIEW: |-
   出错: {}, 请重新设置: 注意设置完成后不要删除其中包含文件的消息 (包括 贴纸, 视频等媒体).
 
 SET_INTEGRATION: |-
-  您可以将 PM 机器人 @{} 接入到群组, 所有消息将被发往目标群组而不是您的私聊.
+  您可以将 PM 机器人 {} @{} 接入到群组, 所有消息将被发往目标群组而不是您的私聊.
 
   接入状态: {}
 INTEGRATION_HAS_SET: |-
@@ -156,7 +165,7 @@ INTEGRATION_OK: |-
 INTEGRATION_PAUSED: |-
   已暂停
 INTEGRATION_PAUSED_NOTICE: |-
-  机器人 @{} 无法访问接入的群组, 故接入被暂停, 请检查并执行恢复.
+  机器人 {} @{} 无法访问接入的群组, 故接入被暂停, 请检查并执行恢复.
 INTEGRATION_SET: |-
   接入群组
 INTEGRATION_PAUSE: |-
@@ -265,6 +274,7 @@ COMMAND_HELP: |-
   隐藏: {}
 
   您也可从该 <b><a href="https://t.me/{}?start={}">链接</a></b> 访问本命令.
+
 COMMAND_RENAME: |-
   重命名
 COMMAND_EDIT_DESCRIPTION: |-

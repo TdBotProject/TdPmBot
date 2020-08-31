@@ -165,7 +165,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         suspend fun getTargetChat() = try {
 
-            getChat(record[MessageRecords.chatId])
+            getChat(record[MessageRecords.chatId]).id
 
         } catch (e: TdException) {
 
@@ -185,11 +185,11 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             MessageRecords.MESSAGE_TYPE_INPUT_NOTICE -> {
 
-                val targetUser = getTargetChat() ?: return
+                val targetChat = getTargetChat() ?: return
 
                 val sentMessage = try {
 
-                    sudo make message.content.asInput!! syncTo targetUser.id
+                    sudo make message.content.asInput!! syncTo targetChat
 
                 } catch (e: TdException) {
 
@@ -201,7 +201,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
 
-                saveSent(targetUser.id, sentMessage.id)
+                saveSent(targetChat, sentMessage.id)
 
                 (sudo make L.SENT).apply {
 
@@ -230,23 +230,30 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
             MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
             MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED -> {
 
-                val targetUser = getTargetChat() ?: return
+                val targetChat = getTargetChat() ?: return
 
-                val targetMessage = try {
+                val reply = currentChat == targetChat || settings?.keepReply == true
+                var targetMessage = 0L
 
-                    getMessage(targetUser.id, record[MessageRecords.targetId]!!)
+                if (reply) {
 
-                } catch (e: TdException) {
+                    targetMessage = try {
 
-                    sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
+                        getMessage(targetChat, record[MessageRecords.targetId]!!).id
 
-                    return
+                    } catch (e: TdException) {
+
+                        sudo make L.failed { REPLIED_NF } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
+
+                        return
+
+                    }
 
                 }
 
                 val sentMessage = try {
 
-                    sudo make message.content.asInput!! syncReplyTo targetMessage
+                    sudo make message.content.asInput!! replyAt targetMessage syncTo targetChat
 
                 } catch (e: TdException) {
 
@@ -258,9 +265,9 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
 
-                saveSent(targetUser.id, sentMessage.id)
+                saveSent(targetChat, sentMessage.id)
 
-                (sudo make L.REPLIED).apply {
+                (sudo make if (targetMessage != 0L) L.REPLIED else L.SENT).apply {
 
                     if (settings?.keepActionMessages == true) {
 

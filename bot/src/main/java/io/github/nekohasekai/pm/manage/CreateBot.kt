@@ -70,7 +70,7 @@ class CreateBot : TdHandler() {
 
         val L = LocaleController.forChat(userId)
 
-        sudo makeHtml L.INPUT_BOT_TOKEN withMarkup TdApi.ReplyMarkupForceReply(true) sendTo chatId
+        sudo makeHtml L.INPUT_BOT_TOKEN sendTo chatId
 
         writePersist(userId, persistId, 0L)
 

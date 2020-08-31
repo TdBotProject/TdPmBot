@@ -11,6 +11,7 @@ class BotSetting(id: EntityID<Int>) : Entity<Int>(id) {
     var botId by BotSettings.botId
     var keepActionMessages by BotSettings.keepActionMessages
     var twoWaySync by BotSettings.twoWaySync
+    var keepReply by BotSettings.keepReply
     var ignoreDeleteAction by BotSettings.ignoreDeleteAction
 
     companion object : EntityClass<Int, BotSetting>(BotSettings)

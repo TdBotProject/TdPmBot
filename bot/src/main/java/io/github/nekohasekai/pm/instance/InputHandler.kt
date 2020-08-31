@@ -68,7 +68,10 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     }
 
-                    Launcher make L.INTEGRATION_PAUSED_NOTICE.input(me.username) syncTo admin
+                    Launcher make L.INTEGRATION_PAUSED_NOTICE.input(
+                            me.displayName,
+                            me.username
+                    ) syncTo admin
 
                     Launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, admin.toInt(), admin, 0L, false)
 
@@ -94,7 +97,29 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         }
 
-        if (userId != currentUser || times < 1) {
+        var replyTo = message.replyToMessageId
+
+        if (replyTo != 0L) {
+
+            val record = database {
+
+                MessageRecords.select {
+
+                    messagesForCurrentBot and (MessageRecords.messageId eq message.replyToMessageId) and MessageRecords.targetId.isNotNull()
+
+                }.firstOrNull()
+
+            }
+
+            replyTo = if (record != null) {
+
+                record[MessageRecords.targetId]!!
+
+            } else 0L
+
+        }
+
+        if (userId != currentUser || times < 1 || replyTo != 0L) {
 
             currentUser = userId
             times = 5
@@ -109,7 +134,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 sudo makeHtml L.INPUT_NOTICE.input(user.id, user.asInlineMention)
 
-            }.syncToTarget() ?: return
+            }.replyAt(replyTo).syncToTarget() ?: return
 
             database.write {
 
@@ -159,7 +184,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 if (record != null) {
 
-                    replyToMessageId = record[MessageRecords.targetId]!!
+                    replyTo = record[MessageRecords.targetId]!!
 
                 }
 

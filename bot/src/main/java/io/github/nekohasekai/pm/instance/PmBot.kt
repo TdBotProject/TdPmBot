@@ -3,6 +3,7 @@ package io.github.nekohasekai.pm.instance
 import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.core.client.TdBot
 import io.github.nekohasekai.nekolib.core.client.TdException
+import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.LICENSE
 import io.github.nekohasekai.nekolib.i18n.LocaleController
@@ -56,6 +57,12 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
         defaultLog.info("${me.displayName} (@${me.username}): PmBot Loaded")
 
         updateCommands()
+
+        getChat(admin)
+
+        val integration = integration?.integration
+
+        if (integration != null) getChat(integration)
 
     }
 
