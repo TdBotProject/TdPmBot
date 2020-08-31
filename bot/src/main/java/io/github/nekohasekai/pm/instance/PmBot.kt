@@ -58,11 +58,15 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         updateCommands()
 
-        getChat(admin)
+        runCatching {
 
-        val integration = integration?.integration
+            getChat(admin)
 
-        if (integration != null) getChat(integration)
+            val integration = integration?.integration
+
+            if (integration != null) getChat(integration)
+
+        }
 
     }
 

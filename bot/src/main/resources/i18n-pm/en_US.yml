@@ -23,7 +23,7 @@ CREATE_BOT_DEF: |-
 INPUT_BOT_TOKEN: |-
   Enter the <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> obtained from @BotFather :
 
-  You can also use this Token as a command parameter to pass in a direct creation ( <code>/new_bot <BotToken></code> ),
+  You can also use this Token as a command parameter to pass in a direct creation ( <code>/new_bot BotToken</code> ),
 
   Once created, you will be prompted to start the bot and keep it unblocked, otherwise you will not receive messages.
 INVALID_BOT_TOKEN: |-

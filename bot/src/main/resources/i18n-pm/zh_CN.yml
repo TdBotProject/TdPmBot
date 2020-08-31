@@ -22,7 +22,7 @@ CREATE_BOT_DEF: 创建新机器人
 INPUT_BOT_TOKEN: |-
   输入从 @BotFather 获取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
 
-  您也可以使用该 Token 作为命令参数传入直接创建 ( <code>/new_bot <BotToken></code> ),
+  您也可以使用该 Token 作为命令参数传入直接创建 ( <code>/new_bot BotToken</code> ),
 
   创建完成后您需要根据提示启动该机器人并保持不禁用, 否则将无法收到消息.
 INVALID_BOT_TOKEN: |-
