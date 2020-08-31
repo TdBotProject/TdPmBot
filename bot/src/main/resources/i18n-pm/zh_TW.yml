@@ -20,8 +20,6 @@ PM_HELP: |-
   使用 /exit 退出會話.
 CREATE_BOT_DEF: |-
   創建新機器人
-INPUT_BOT_TOKEN: |-
-  輸入從 @BotFather 獲取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
 INVALID_BOT_TOKEN: |-
   無效的 Bot Token{}.
 
@@ -53,21 +51,10 @@ MENU_INTEGRATION: |-
   🌐  接入群組
 MENU_BOT_DELETE: |-
   🔳  刪除機器人
-START_MESSAGES_STATUS: |-
-  這裡是您的機器人: {} @{}.
-  當前歡迎消息: {}.
 MENU_OPTIONS: |-
   📅  行為選項
 MENU_COMMANDS: |-
   📘  命令管理
-OPTIONS_HELP: |-
-  這裡是您的機器人: {} @{}, 以下是機器人的可選行為選項.
-
-  <b>保留提示</b>: 不要自動刪除操作提示消息.
-
-  <b>雙向同步</b>: 直接複製對方的消息, 而不是每次都轉發, 並同步對方的編輯, 刪除操作.
-
-  <b>忽略刪除</b>: 不要同步本方的消息刪除, 當同時開啟 "保留提示" 時在提示中增加一個刪除該消息的按鈕.
 OPTION_KEEP_ACTION_MESSAGES: |-
   保留提示
 OPTION_TWO_WAY_SYNC: |-
@@ -135,10 +122,6 @@ MESSAGES_RESET: |-
   已重設.
 ERROR_IN_PREVIEW: |-
   出錯: {}, 請重新設置: 注意設置完成後不要刪除其中包含文件的消息 (包括 貼紙, 影片等媒體).
-SET_INTEGRATION: |-
-  您可以將 PM 機器人 @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
-
-  接入狀態: {}
 INTEGRATION_HAS_SET: |-
   成功, 所有消息將被發往本群.
 INTEGRATION_STATUS: |-
@@ -149,8 +132,6 @@ INTEGRATION_OK: |-
   已接入
 INTEGRATION_PAUSED: |-
   已暫停
-INTEGRATION_PAUSED_NOTICE: |-
-  機器人 @{} 無法訪問接入的群組, 故接入被暫停, 請檢查並執行恢復.
 INTEGRATION_SET: |-
   接入群組
 INTEGRATION_PAUSE: |-
