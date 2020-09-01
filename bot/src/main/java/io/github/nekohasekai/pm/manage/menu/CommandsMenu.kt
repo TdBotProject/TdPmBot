@@ -38,7 +38,7 @@ class CommandsMenu : BotHandler() {
 
     }
 
-    fun commandsMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    suspend fun commandsMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val commands = database { BotCommands.select { BotCommands.botId eq botUserId }.toList() }
 
@@ -69,7 +69,7 @@ class CommandsMenu : BotHandler() {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
-        } at messageId edit isEdit sendOrEditTo chatId
+        } at messageId edit isEdit syncOrEditTo chatId
 
     }
 

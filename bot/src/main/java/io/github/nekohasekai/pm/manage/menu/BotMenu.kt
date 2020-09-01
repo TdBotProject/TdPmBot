@@ -27,7 +27,7 @@ class BotMenu : BotHandler() {
 
     }
 
-    fun botMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, botUserId: Int, userBot: UserBot?) {
+    suspend fun botMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, botUserId: Int, userBot: UserBot?) {
 
         val L = LocaleController.forChat(userId)
 
@@ -52,7 +52,7 @@ class BotMenu : BotHandler() {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
-        } at messageId edit isEdit sendOrEditTo chatId
+        } at messageId edit isEdit syncOrEditTo chatId
 
     }
 

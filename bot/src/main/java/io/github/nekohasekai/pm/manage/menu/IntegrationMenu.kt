@@ -33,7 +33,7 @@ class IntegrationMenu : BotHandler() {
 
     }
 
-    fun integrationMenu(L: LocaleController, botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    suspend fun integrationMenu(L: LocaleController, botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val integration = BotIntegration.Cache.fetch(botUserId).value
 
@@ -95,7 +95,7 @@ class IntegrationMenu : BotHandler() {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
-        } at messageId edit isEdit sendOrEditTo chatId
+        } at messageId edit isEdit syncOrEditTo chatId
 
     }
 

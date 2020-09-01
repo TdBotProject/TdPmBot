@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.core.client.TdBot
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.raw.getChat
+import io.github.nekohasekai.nekolib.core.raw.getChatOrNull
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.LICENSE
 import io.github.nekohasekai.nekolib.i18n.LocaleController
@@ -102,7 +103,15 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         destroy()
 
-        Launcher make L.BOT_AUTH_FAILED.input(userBot.username) sendTo userBot.owner
+        val owner = admin
+
+        Launcher.apply {
+
+            getChatOrNull(owner) ?: return
+
+            sudo make L.BOT_AUTH_FAILED.input(userBot.username) sendTo owner
+
+        }
 
     }
 
@@ -110,7 +119,15 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         destroy()
 
-        Launcher make L.BOT_LOGOUT.input(userBot.username) sendTo userBot.owner
+        val owner = admin
+
+        Launcher.apply {
+
+            getChatOrNull(owner) ?: return
+
+            sudo make L.BOT_LOGOUT.input(userBot.username) sendTo owner
+
+        }
 
     }
 

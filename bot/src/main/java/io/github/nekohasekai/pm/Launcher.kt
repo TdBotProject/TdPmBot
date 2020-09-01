@@ -5,8 +5,7 @@ import cn.hutool.core.io.FileUtil
 import cn.hutool.log.level.Level
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
-import io.github.nekohasekai.nekolib.core.raw.parseMarkdown
-import io.github.nekohasekai.nekolib.core.raw.parseTextEntities
+import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.*
 import io.github.nekohasekai.nekolib.utils.GetIdCommand
@@ -221,6 +220,8 @@ object Launcher : TdCli(), PmInstance {
 
     }
 
+    override suspend fun skipFloodCheck(senderUserId: Int, message: TdApi.Message) = senderUserId == admin.toInt()
+
     override suspend fun onLogin() {
 
         updateCommands()
@@ -339,7 +340,7 @@ object Launcher : TdCli(), PmInstance {
 
             if (!public && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, payload)
 
-        }  else rejectFunction()
+        } else rejectFunction()
 
     }
 

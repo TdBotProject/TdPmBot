@@ -24,7 +24,7 @@ class DeleteMenu : BotHandler() {
 
     }
 
-    fun botDeleteMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, again: Boolean) {
+    suspend fun botDeleteMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, again: Boolean) {
 
         val L = LocaleController.forChat(userId)
 
@@ -59,7 +59,7 @@ class DeleteMenu : BotHandler() {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
-        } at messageId edit isEdit sendOrEditTo chatId
+        } at messageId edit isEdit syncOrEditTo chatId
 
     }
 

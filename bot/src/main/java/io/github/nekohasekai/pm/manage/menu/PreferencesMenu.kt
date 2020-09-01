@@ -72,7 +72,7 @@ class PreferencesMenu : BotHandler() {
 
     }
 
-    fun optionsMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    suspend fun optionsMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         val botSetting = BotSetting.Cache.fetch(botUserId).value
 
@@ -85,7 +85,7 @@ class PreferencesMenu : BotHandler() {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
-        } at messageId edit isEdit sendOrEditTo chatId
+        } at messageId edit isEdit syncOrEditTo chatId
 
     }
 

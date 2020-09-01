@@ -1,6 +1,7 @@
 package io.github.nekohasekai.pm.manage
 
 import io.github.nekohasekai.nekolib.core.client.TdHandler
+import io.github.nekohasekai.nekolib.core.raw.getMessage
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.FN_PRIVATE_ONLY
 import io.github.nekohasekai.nekolib.i18n.LocaleController
@@ -58,7 +59,7 @@ class MyBots : TdHandler() {
 
     }
 
-    fun deleteActionMessage(userId: Int,chatId: Long,messageId: Long) {
+    suspend fun deleteActionMessage(userId: Int,chatId: Long,messageId: Long) {
 
         val currentActionMessage = actionMessages.fetch(userId)
 
@@ -66,7 +67,13 @@ class MyBots : TdHandler() {
 
         if (currentActionMessageId != null && currentActionMessageId != messageId) {
 
-            delete(chatId, currentActionMessageId)
+            runCatching {
+
+                getMessage(chatId, currentActionMessageId)
+
+                syncDelete(chatId, currentActionMessageId)
+
+            }
 
         }
 
@@ -85,7 +92,7 @@ class MyBots : TdHandler() {
 
     }
 
-    fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    suspend fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
         deleteActionMessage(userId, chatId, messageId)
 
@@ -111,7 +118,7 @@ class MyBots : TdHandler() {
 
         if (bots.isEmpty()) {
 
-            sudo make L.NO_BOTS at messageId edit isEdit sendOrEditTo chatId
+            sudo make L.NO_BOTS at messageId edit isEdit syncOrEditTo chatId
 
             return
 
@@ -141,7 +148,9 @@ class MyBots : TdHandler() {
 
            saveActionMessage(userId, it.id)
 
-        } at messageId edit isEdit sendOrEditTo chatId
+        } at messageId edit isEdit syncOrEditTo chatId
+
+        finishWithDelay(1500L)
 
     }
 
