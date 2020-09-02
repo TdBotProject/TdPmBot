@@ -2,12 +2,12 @@ package io.github.nekohasekai.pm.instance
 
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
+import io.github.nekohasekai.nekolib.core.raw.getMessageWith
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.pm.MESSAGE_DELETED
 import io.github.nekohasekai.pm.MESSAGE_DELETED_BY_ME
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.or
@@ -99,17 +99,25 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
                                         (MessageRecords.type eq MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
                                         (MessageRecords.targetId eq record[MessageRecords.messageId]))
 
-                    }.forEach {
+                    }.forEach { row ->
 
-                        MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq it[MessageRecords.messageId]) }
+                        MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq row[MessageRecords.messageId]) }
 
                         if (twoWaySync) {
 
-                            delete(admin, it[MessageRecords.messageId])
+                            delete(admin, row[MessageRecords.messageId])
 
                         } else {
 
-                            sudo make L.MESSAGE_DELETED replyAt it[MessageRecords.messageId] sendTo admin
+                            getMessageWith(chatId, row[MessageRecords.messageId]) {
+
+                                onSuccess {
+
+                                    sudo make L.MESSAGE_DELETED replyTo it
+
+                                }
+
+                            }
 
                         }
 

@@ -16,7 +16,7 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 
 ### 依赖 (Windows)
 
-需要安装 [Git for Windows](https://gitforwindows.org/) 与 [VC++ 2015](https://github.com/abbodi1406/vcredist/releasesvc) 与 OpenJDK 11
+需要安装 [Git for Windows](https://gitforwindows.org/) 与 [VC++ 2015](https://github.com/abbodi1406/vcredist/releases) 与 [OpenJDK 11](https://github.com/ojdkbuild/ojdkbuild)
 
 您也可使用 `vcpkg` 编译安装 `openssl` 与 `zlib`
 

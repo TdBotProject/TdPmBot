@@ -32,7 +32,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nekolib" />
-    <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.4.0" level="project" />
+    <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-nop:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.exposed:exposed-core:0.27.1" level="project" />

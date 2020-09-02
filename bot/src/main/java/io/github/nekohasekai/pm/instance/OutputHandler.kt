@@ -1,6 +1,7 @@
 package io.github.nekohasekai.pm.instance
 
-import cn.hutool.core.date.SystemClock
+import com.esotericsoftware.kryo.KryoException
+import io.github.nekohasekai.nekolib.core.client.TdClient
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.*
@@ -11,11 +12,16 @@ import io.github.nekohasekai.nekolib.i18n.failed
 import io.github.nekohasekai.pm.*
 import io.github.nekohasekai.pm.database.MessageRecords
 import io.github.nekohasekai.pm.database.PmInstance
+import io.github.nekohasekai.pm.database.saveMessage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import td.TdApi
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.concurrent.timerTask
 
 class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
@@ -33,7 +39,18 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
     var currentChat = 0L
 
-    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
+    val albumMessages = HashMap<Long, AlbumMessages>()
+
+    class AlbumMessages(val albumId: Long) {
+
+        val messages = LinkedList<TdApi.Message>()
+        var task: TimerTask? = null
+
+    }
+
+    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) = onNewMessage(userId, chatId, message, null)
+
+    suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message, album: AlbumMessages?) {
 
         val integration = integration
 
@@ -41,43 +58,107 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         if (chatId != admin && !useIntegration) return
 
-        fun saveSent(targetChat: Long, sentMessageId: Long) {
+        val mediaAlbumId = message.mediaAlbumId
 
-            database.write {
+        suspend fun delayAlbum() {
 
-                MessageRecords.insert {
+            albumMessages.getOrPut(mediaAlbumId) { AlbumMessages(mediaAlbumId) }.apply {
 
-                    it[messageId] = message.id
+                messages.add(message)
 
-                    it[type] = MESSAGE_TYPE_OUTPUT_MESSAGE
+                task?.cancel()
 
-                    it[this.chatId] = targetChat
+                task = timerTask {
 
-                    it[targetId] = sentMessageId
+                    GlobalScope.launch(TdClient.eventsContext) {
 
-                    it[createAt] = (SystemClock.now() / 100L).toInt()
+                        albumMessages.remove(mediaAlbumId)
 
-                    it[botId] = me.id
+                        onNewMessage(userId, chatId, message, this@apply)
 
-                }
+                    }
 
-                MessageRecords.insert {
+                }.also {
 
-                    it[messageId] = sentMessageId
-
-                    it[type] = MESSAGE_TYPE_OUTPUT_FORWARDED
-
-                    it[this.chatId] = targetChat
-
-                    it[targetId] = message.id
-
-                    it[createAt] = (SystemClock.now() / 100L).toInt()
-
-                    it[botId] = me.id
+                    TdClient.timer.schedule(it, 1000L)
 
                 }
 
             }
+
+        }
+
+        suspend fun execMessages(targetChat: Long, replyTo: Long) {
+
+            val messages = if (album == null) {
+
+                try {
+
+                    val sentMessage = sudo make message.asInputOrForward replyAt replyTo syncTo targetChat
+
+                    saveMessage(MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE, targetChat, message.id, sentMessage.id)
+                    saveMessage(MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED, targetChat, sentMessage.id, message.id)
+
+                    userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
+
+                    arrayOf(sentMessage)
+
+                } catch (e: TdException) {
+
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
+
+                    return
+
+                }
+
+            } else {
+
+                try {
+
+                    val messages = sendMessageAlbum(targetChat, replyTo, TdApi.MessageSendOptions(), album.messages.map { it.asInputOrForward }.toTypedArray()).messages
+
+                    messages.forEachIndexed { index, sentMessage ->
+
+                        saveMessage(MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE, targetChat, album.messages[index].id, sentMessage.id)
+                        saveMessage(MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED, targetChat, sentMessage.id, album.messages[index].id)
+
+                    }
+
+                    userCalled(userId, "发出媒体组")
+
+                    messages
+
+                } catch (e: TdException) {
+
+                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
+
+                    return
+
+                }
+
+            }
+
+            (sudo make L.SENT).apply {
+
+                if (settings?.keepActionMessages == true) {
+
+                    if (settings.ignoreDeleteAction) {
+
+                        withMarkup(inlineButton {
+
+                            dataLine(L.DELETE, dataId, currentChat.toByteArray(), messages.map { it.id }.toLongArray().toByteArray())
+
+                        })
+
+                    }
+
+                } else {
+
+                    onSuccess = deleteDelay()
+
+                }
+
+            } replyTo if (album == null) message else album.messages[0]
 
         }
 
@@ -95,51 +176,29 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             }
 
-            if (useIntegration && integration!!.adminOnly && checkChatAdmin(message)) return
+            if (mediaAlbumId != 0L && album == null) {
 
-            val sentMessage = try {
-
-                sudo make message.asInputOrForward syncTo currentChat
-
-            } catch (e: TdException) {
-
-                sudo make L.failed { e.message } onSuccess deleteDelay(message) replyTo message
+                delayAlbum()
 
                 return
 
             }
 
-            userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
+            if (useIntegration && integration!!.adminOnly && checkChatAdmin(message)) return
 
-            saveSent(currentChat, sentMessage.id)
-
-            (sudo make L.SENT).apply {
-
-                if (settings?.keepActionMessages == true) {
-
-                    if (settings.ignoreDeleteAction) {
-
-                        withMarkup(inlineButton {
-
-                            dataLine(L.DELETE, dataId, sentMessage.chatId.toByteArray(), sentMessage.id.toByteArray())
-
-                        })
-
-                    }
-
-                } else {
-
-                    onSuccess = deleteDelay()
-
-                }
-
-            } replyTo message
+            execMessages(currentChat, 0L)
 
             return
 
         }
 
-        if (useIntegration && integration!!.adminOnly && checkChatAdmin(message)) return
+        if (mediaAlbumId != 0L && album == null) {
+
+            delayAlbum()
+
+            return
+
+        }
 
         val record = database {
 
@@ -185,50 +244,12 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             MessageRecords.MESSAGE_TYPE_INPUT_NOTICE -> {
 
-                val targetChat = getTargetChat() ?: return
-
-                val sentMessage = try {
-
-                    sudo make message.content.asInput!! syncTo targetChat
-
-                } catch (e: TdException) {
-
-                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
-
-                    return
-
-                }
-
-                userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
-
-                saveSent(targetChat, sentMessage.id)
-
-                (sudo make L.SENT).apply {
-
-                    if (settings?.keepActionMessages == true) {
-
-                        if (settings.ignoreDeleteAction) {
-
-                            withMarkup(inlineButton {
-
-                                dataLine(L.DELETE, dataId, sentMessage.chatId.toByteArray(), sentMessage.id.toByteArray())
-
-                            })
-
-                        }
-
-                    } else {
-
-                        onSuccess = deleteDelay()
-
-                    }
-
-                } replyTo message
+                execMessages(getTargetChat() ?: return, 0L)
 
             }
 
             MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
-            MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED -> {
+            MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE -> {
 
                 val targetChat = getTargetChat() ?: return
 
@@ -251,43 +272,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 }
 
-                val sentMessage = try {
-
-                    sudo make message.content.asInput!! replyAt targetMessage syncTo targetChat
-
-                } catch (e: TdException) {
-
-                    sudo make L.failed { e.message } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
-
-                    return
-
-                }
-
-                userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
-
-                saveSent(targetChat, sentMessage.id)
-
-                (sudo make if (targetMessage != 0L) L.REPLIED else L.SENT).apply {
-
-                    if (settings?.keepActionMessages == true) {
-
-                        if (settings.ignoreDeleteAction) {
-
-                            withMarkup(inlineButton {
-
-                                dataLine(L.DELETE, dataId, sentMessage.chatId.toByteArray(), sentMessage.id.toByteArray())
-
-                            })
-
-                        }
-
-                    } else {
-
-                        onSuccess = deleteDelay()
-
-                    }
-
-                } replyTo message
+                execMessages(targetChat, targetMessage)
 
             }
 
@@ -304,44 +289,66 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
         if (useIntegration && integration!!.adminOnly && checkChatAdmin(chatId, userId, queryId)) return
 
         val targetChat = data[0].toLong()
-        val targetMessage = data[1].toLong()
+
+        val targetMessages = try {
+
+            data[1].formByteArray()
+
+        } catch (e: KryoException) {
+
+            longArrayOf(data[1].toLong())
+
+            // TODO: Remove this
+
+        }
 
         database.write {
 
-            MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId inList listOf(messageId, targetMessage)) }
+            MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId inList listOf(messageId, * targetMessages.toTypedArray())) }
 
         }
 
-        getMessageWith(targetChat, targetMessage) {
+        targetMessages.forEachIndexed { index, targetMessage ->
 
-            onSuccess {
+            getMessageWith(targetChat, targetMessage) {
 
-                sudo makeAnswer L.DELETED answerTo queryId
+                onSuccess {
 
-                if (useIntegration) {
+                    if (index == 0) {
 
-                    sudo makeHtml L.MESSAGE_DELETED_BY.input(getUser(userId).asInlineMention) at messageId editTo chatId
+                        sudo makeAnswer L.DELETED answerTo queryId
 
-                } else {
+                        if (useIntegration) {
 
-                    sudo make L.MESSAGE_DELETED_BY_ME at messageId editTo chatId
+                            sudo makeHtml L.MESSAGE_DELETED_BY.input(getUser(userId).asInlineMention) at messageId editTo chatId
+
+                        } else {
+
+                            sudo make L.MESSAGE_DELETED_BY_ME at messageId editTo chatId
+
+                        }
+
+                    }
+
+                    sudo delete it
 
                 }
 
-                sudo delete it
+                onFailure {
 
-            }
+                    if (index == 0) {
 
-            onFailure {
+                        sudo makeAlert L.RECORD_NF answerTo queryId
 
-                sudo makeAlert L.RECORD_NF answerTo queryId
+                        editMessageReplyMarkup(chatId, messageId, null)
 
-                editMessageReplyMarkup(chatId, messageId, null)
+                    }
+
+                }
 
             }
 
         }
-
 
     }
 

@@ -100,7 +100,7 @@ class RecallHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInst
 
             sudo make L.MESSAGE_RECALLED_BY_ME
 
-        } onSuccess deleteDelayIf(settings?.keepActionMessages != true) replyTo message
+        } onSuccess deleteDelayIf(settings?.keepActionMessages != true, message) replyTo message
 
     }
 }

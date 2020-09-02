@@ -3,7 +3,7 @@ package io.github.nekohasekai.pm.instance
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.forwardMessages
-import io.github.nekohasekai.nekolib.core.raw.getMessage
+import io.github.nekohasekai.nekolib.core.raw.getMessageOrNull
 import io.github.nekohasekai.nekolib.core.utils.asInput
 import io.github.nekohasekai.nekolib.core.utils.deleteDelayIf
 import io.github.nekohasekai.nekolib.core.utils.make
@@ -32,7 +32,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
         } ?: return
 
-        if (getMessage(chatId, messageId).senderUserId == me.id) return
+        if (getMessageOrNull(chatId, messageId)?.senderUserId ?: me.id == me.id) return
 
         if ((chatId == admin || useIntegration) && record[MessageRecords.type] == MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE) {
 

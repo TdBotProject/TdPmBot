@@ -1,6 +1,8 @@
 package io.github.nekohasekai.pm.database
 
 import cn.hutool.core.date.DateUtil
+import cn.hutool.core.date.SystemClock
+import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.getChat
 import io.github.nekohasekai.nekolib.core.raw.getMessageOrNull
@@ -10,6 +12,7 @@ import io.github.nekohasekai.nekolib.i18n.LocaleController
 import io.github.nekohasekai.pm.instance.messagesForCurrentBot
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
 interface PmInstance {
@@ -19,6 +22,30 @@ interface PmInstance {
     val integration: BotIntegration?
     val settings: BotSetting?
     val blocks: UserBlocks.Cache
+
+}
+
+fun TdHandler.saveMessage(type: Int, chatId: Long, messageId: Long, targetId: Long? = null) {
+
+    database.write {
+
+        MessageRecords.insert {
+
+            it[MessageRecords.messageId] = messageId
+
+            it[MessageRecords.type] = type
+
+            it[MessageRecords.chatId] = chatId
+
+            if (targetId != null) it[MessageRecords.targetId] = targetId
+
+            it[createAt] = (SystemClock.now() / 100L).toInt()
+
+            it[botId] = me.id
+
+        }
+
+    }
 
 }
 
@@ -40,15 +67,22 @@ suspend fun TdHandler.gc(instance: PmInstance) {
 
                 val messageId = row[MessageRecords.messageId]
 
-                if (integration?.paused == false) {
+                try {
 
-                    getChat(integration.integration)
+                    if (integration?.paused == false) {
 
-                    if (getMessageOrNull(integration.integration, messageId) != null) continue
+                        getChat(integration.integration)
 
+                        if (getMessageOrNull(integration.integration, messageId) != null) continue
+
+                    }
+
+                    getChat(instance.admin)
+
+                    if (getMessageOrNull(instance.admin, messageId) != null) continue
+
+                } catch (ignored: TdException) {
                 }
-
-                if (getMessageOrNull(instance.admin, messageId) != null) continue
 
                 deleted++
 
