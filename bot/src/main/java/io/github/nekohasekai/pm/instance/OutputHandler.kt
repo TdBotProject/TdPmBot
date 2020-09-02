@@ -146,7 +146,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                         withMarkup(inlineButton {
 
-                            dataLine(L.DELETE, dataId, currentChat.toByteArray(), messages.map { it.id }.toLongArray().toByteArray())
+                            dataLine(L.DELETE, dataId, targetChat.toByteArray(), messages.map { it.id }.toLongArray().toByteArray())
 
                         })
 

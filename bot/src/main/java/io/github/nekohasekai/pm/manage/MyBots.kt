@@ -49,7 +49,7 @@ class MyBots : TdHandler() {
 
         if (!message.fromPrivate) {
 
-            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
+            sudo makeHtml LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return
 

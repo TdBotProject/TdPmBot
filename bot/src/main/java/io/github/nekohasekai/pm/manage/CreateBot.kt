@@ -42,9 +42,7 @@ class CreateBot : TdHandler() {
 
         if (!message.fromPrivate) {
 
-            userCalled(userId, "create in non-private chat")
-
-            sudo make LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
+            sudo makeHtml LocaleController.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
 
             return
 

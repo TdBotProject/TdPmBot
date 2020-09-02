@@ -1,11 +1,12 @@
 package io.github.nekohasekai.pm
 
 import cn.hutool.core.date.DateUtil
+import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
 import cn.hutool.log.level.Level
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
-import io.github.nekohasekai.nekolib.core.client.TdHandler
+import io.github.nekohasekai.nekolib.core.raw.getChatWith
 import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.i18n.*
 import io.github.nekohasekai.nekolib.utils.GetIdCommand
@@ -17,6 +18,7 @@ import io.github.nekohasekai.pm.manage.MyBots
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import td.TdApi
 import java.io.File
@@ -248,6 +250,39 @@ object Launcher : TdCli(), PmInstance {
 
         super.gc()
 
+        val time = (SystemClock.now() / 1000L).toInt() - 24 * 60 * 60
+
+        database {
+
+            val result = ActionMessages.select { ActionMessages.createAt less time }
+
+            result.forEach { row ->
+
+                val chatId = row[ActionMessages.userId].value.toLong()
+
+                getChatWith(chatId) {
+
+                    onSuccess {
+
+                        delete(chatId, row[ActionMessages.messageId])
+
+                    }
+
+                }
+
+
+            }
+
+        }
+
+        database.write {
+
+            ActionMessages.deleteWhere { ActionMessages.createAt less time }
+
+        }
+
+        findHandler<MyBots>().actionMessages.clear()
+
         defaultLog.debug(">> 其他缓存")
 
         BotIntegration.Cache.clear()
@@ -296,15 +331,13 @@ object Launcher : TdCli(), PmInstance {
 
         if (function == "cancel") {
 
-            if (chatId == admin) {
+            if (!message.fromPrivateOrDelete) return
 
-                super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+            if (!public) rejectFunction()
 
-            } else if (!public) {
+            super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
 
-                rejectFunction()
-
-            }
+            return
 
         }
 

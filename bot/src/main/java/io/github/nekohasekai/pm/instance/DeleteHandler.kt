@@ -117,6 +117,8 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                                 }
 
+                                onFailure = null
+
                             }
 
                         }
