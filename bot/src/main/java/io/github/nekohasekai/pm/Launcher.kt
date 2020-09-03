@@ -60,11 +60,7 @@ object Launcher : TdCli(), PmInstance {
 
         args.forEachIndexed { index, arg ->
 
-            if (arg == "--download-library") {
-
-                exitProcess(0)
-
-            } else if (arg == "--backup") {
+            if (arg == "--backup") {
 
                 var backupTo: File
 
@@ -131,7 +127,6 @@ object Launcher : TdCli(), PmInstance {
             }
 
         }
-
 
         if (admin == 0L) {
 
