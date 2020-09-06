@@ -30,9 +30,7 @@ BOT_TOKEN: 机器人令牌
 BOT_OWNER: 管理员ID
 PM_MODE: 运行模式
 PM_WHITE_LIST: 白名单列表
-
 LOG_LEVEL: 日志等级, 默认为 INFO
-BOT_LANG_LIST: 加载的语言列表
 ```
 
 ### 工作语言
@@ -70,17 +68,6 @@ PM_WHITE_LIST:
 运行模式值 `private`, 此模式下主实例作为私聊机器人.
 
 您仍可创建机器人, 但没有命令模板 (即补全).
-
-### 加载的语言列表
-
-```yaml
-BOT_LANG_LIST:
-  - en_US
-  - zh_CN
-  - zh_TW
-```
-
-您不能增加行, 因为每项目前对应三个翻译文件, 您可以联系 [@nekohasekai](https://t.me/nekohasekai) 贡献翻译或获取帮助.
 
 ## 管理
 

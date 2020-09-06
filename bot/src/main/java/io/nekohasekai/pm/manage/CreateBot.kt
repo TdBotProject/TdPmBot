@@ -36,8 +36,6 @@ class CreateBot : TdHandler() {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
-        if (!Launcher.public) rejectFunction()
-
         if (!message.fromPrivate) {
 
             sudo makeHtml localeFor(userId).FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
@@ -46,11 +44,17 @@ class CreateBot : TdHandler() {
 
         }
 
-        if (!Launcher.userAccessible(userId)) {
+        if (chatId != Launcher.admin) {
 
-            sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(Launcher.repoUrl) syncTo chatId
+            if (!Launcher.public) rejectFunction()
 
-            return
+            if (!Launcher.userAccessible(userId)) {
+
+                sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(Launcher.repoUrl) syncTo chatId
+
+                return
+
+            }
 
         }
 
