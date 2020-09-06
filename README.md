@@ -12,7 +12,7 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 
 注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.  
 
-如遇到找不到 LIBC 库, 请更新系统或编译安装.
+如遇到找不到 `LIBC` 库, 请更新系统或编译安装.
 
 ### 依赖 (Windows)
 
@@ -22,17 +22,94 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 
 ## 配置
 
-复制 `_pm.conf` 到 `pm.conf`
+复制 `_pm.yml` 到 `pm.yml`.
 
-```
-BOT_LANG: 工作语言, 暂仅支持 `zh_CN`, `zh_TW`, `en_US`.
-BOT_TOKEN: 机器人令牌.
-PUBLIC: 是否以公开模式运行.
-ADMIN: 管理员ID.
-LOG_LEVEL: 日志等级, 默认为 INFO.
+```yaml
+BOT_LANG: 工作语言
+BOT_TOKEN: 机器人令牌
+BOT_OWNER: 管理员ID
+PM_MODE: 运行模式
+PM_WHITE_LIST: 白名单列表
+
+LOG_LEVEL: 日志等级, 默认为 INFO
+BOT_LANG_LIST: 加载的语言列表
 ```
 
-### 其他
+### 工作语言
+
+机器人的默认语言, 以及非 `私有` 模式下命令模板的语言 ( 必须在 `BOT_LANG_LIST` 中 ).
+
+### 机器人令牌
+
+相当于账号与密码, 从 [@BotFather](https://t.me/BotFacher) 获取, 参见 https://core.telegram.org/bots#creating-a-new-bot .
+
+### 管理员与白名单 ID
+
+启动机器人后使用 `/id` 获取自己的 ID, 使用 `/id <回复消息 (群组中) / @用户名 / 引用>` 获取他人 ID.
+
+### 运行模式
+
+#### 公开
+
+运行模式值 `public`, 此模式下所有人都可创建机器人.
+
+#### 白名单
+
+运行模式值 `white-list`, 此模式下列表中的用户与您可以创建机器人.
+
+需配置白名单设置项: 
+```yaml
+PM_WHITE_LIST: 
+  - id1
+  - id2
+  - ...
+```
+
+#### 私有
+
+运行模式值 `private`, 此模式下主实例作为私聊机器人.
+
+您仍可创建机器人, 但没有命令模板 (即补全).
+
+### 加载的语言列表
+
+```yaml
+BOT_LANG_LIST:
+  - en_US
+  - zh_CN
+  - zh_TW
+```
+
+您不能增加行, 因为每项目前对应三个翻译文件, 您可以联系 [@nekohasekai](https://t.me/nekohasekai) 贡献翻译或获取帮助.
+
+## 管理
+
+```shell script
+echo "alias pm='bash $PWD/bot.sh'" >> $HOME/.bashrc
+source $HOME/.bashrc
+
+# 注册 ./bot.sh 的命令别名 ( pm )
+```
+
+```shell script
+pm run # 编译安装并进入交互式认证  
+pm init # 注册 systemd 服务  
+pm <start/stop/restart> # 启动停止  
+pm <enable/disable> # 启用禁用 (开机启动)  
+pm rebuild # 重新编译  
+pm update # 更新  
+pm force-update # 强制重新更新
+pm upgrade # 更新并重启服务  
+pm log # 实时日志  
+pm logs # 所有日志
+```
+
+`注: 重新编译前请停止服务以避免运行时 jar 文件覆盖导致的错误, 但不同版本之间不需要.`
+
+## 其他
+
+如需更改, 复制 `_bot.conf` 到 `bot.conf`.
+
 ```
 SERVICE_NAME: systemd 服务名称, 默认 `td-pm`, 修改如果您需要多个实例.
 MVN_ARGS: Maven 编译参数.
@@ -40,46 +117,33 @@ JAVA_ARGS: JVM 启动参数.
 ARGS: 启动参数.
 ```
 
-若您不知道账号ID, 可留空, 启动后发送 /id 到机器人获取.
+## 命令行命令
 
-`BINLOG`: 指定 UserBot 的 binlog, 跳过交互式认证. ( 仅用于环境变量 )
+#### 备份 & 迁移
 
-## 管理
-
-```shell script
-
-./bot.sh run # 编译安装并进入交互式认证  
-./bot.sh init # 注册 systemd 服务  
-./bot.sh <start/stop/restart> # 启动停止  
-./bot.sh <enable/disable> # 启用禁用 (开机启动)  
-./bot.sh rebuild # 重新编译  
-./bot.sh update # 更新  
-./bot.sh upgrade # 更新并重启服务  
-./bot.sh log # 实时日志  
-./bot.sh logs # 所有日志
-
-echo "alias pm='bash $PWD/bot.sh'" >> $HOME/.bashrc
-source $HOME/.bashrc
-
-# 注册 bot.sh 的命令别名 ( pm )
-```
-
-## 迁移
-
-`./bot.sh run --backup [fileName 可选]`
+`pm run --backup [fileName 可选]`
 
 备份所有迁移需要的文件到 tar.xz 包, 解压即可覆盖数据.
 
-注: 建议迁移后手动运行 `/gc` 命令拉取消息记录.
+您也可以直接打包 `data` 目录, 但包含无用的数据库与文件缓存.
+
+#### 指定配置文件
+
+`pm run --config /path/to/config.yml`
+
+不常用, 但您可以写入 `bot.conf` 的 `args` 中作为默认参数.
 
 ## Docker
+
+您可用环境变量 `-e <key>=<value>` 指定配置项, 列表格式为空格分隔.
 
 ```
 docker run -d --name td-pm \
   -v <数据目录>:/root/data \
   -e BOT_TOKEN=<机器人令牌> \
-  -e ADMIN=<管理员ID> \
-  -e PUBLIC=true \
+  -e BOT_LANG=zh_CN \
+  -e BOT_OWNER=<管理员ID> \
+  -e BOT_MODE=private \
   docker.pkg.github.com/tdbotproject/tdpmbot/td-pm
 
 docker logs td-pm -f -t

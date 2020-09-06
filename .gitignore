@@ -1,9 +1,11 @@
+*.iml
 .idea/
 target/
 /data/
 /cache/
 /libs/
-/pm.conf
-/*.iml
+/config.yml
 dependency-reduced-pom.xml
 /*.jar
+/bot.conf
+/pm.yml

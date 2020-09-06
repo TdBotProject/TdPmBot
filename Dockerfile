@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/tdbotproject/nekolib/td-base:latest
+FROM docker.pkg.github.com/nekohasekai/ktlib/td-base:latest
 
 WORKDIR /root
 

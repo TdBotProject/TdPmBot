@@ -17,6 +17,8 @@ PM_HELP: |-
   使用 /unblock <目標> 以解除屏蔽,
   使用 /recall <目標> 清空與目標的全部消息,
   使用 /exit 退出會話.
+PRIVATE_INSTANCE: |-
+  抱歉, 本實例不公開, 請參閱 [說明]({}).
 
 CREATE_BOT_DEF: 創建新機器人
 INPUT_BOT_TOKEN: |-
@@ -266,13 +268,13 @@ COMMAND_DESCRIPTION_INVALID: |-
 COMMAND_START: |-
   <code>/start</code> 命令由開始消息保留, 請使用另一個.
 COMMAND_HELP: |-
-  您正在編輯機器人: {} @{} 的命令 <b><code>/{}</code></b>.
+  您正在編輯機器人 `{}` @{} 的命令 **`/{}`**.
 
-  簡介: <code>{}</code>
+  簡介: `{}`
   消息: {}
   隱藏: {}
 
-  您也可從該 <b><a href="https://t.me/{}?start={}">鏈接</a></b> 訪問本命令.
+  您也可從該 **[鏈接](https://t.me/{}?start={})** 訪問本命令.
 COMMAND_RENAME: |-
   重命名
 COMMAND_EDIT_DESCRIPTION: |-

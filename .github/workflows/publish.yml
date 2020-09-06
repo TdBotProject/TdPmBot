@@ -22,7 +22,7 @@ jobs:
       - name: Build And Publish
         run: |
           bash mvnw -T 1C package
-          bash mvnw -T 1C -pl neko exec:java -Dexec.mainClass="io.github.nekohasekai.nekolib.cli.TdLoader"
+          java -cp bot/target/td-pm-bot.jar io.nekohasekai.ktlib.td.core.TdLoader
           docker login docker.pkg.github.com -u $GITHUB_ACTOR -p "${{ secrets.GITHUB_TOKEN }}"
           docker build -t td-pm .
           docker tag td-pm docker.pkg.github.com/tdbotproject/tdpmbot/td-pm:latest

@@ -10,7 +10,7 @@ MVN_ARGS=""
 JAVA_ARGS=""
 ARGS=""
 
-[ -f "pm.conf" ] && source "pm.conf"
+[ -f "bot.conf" ] && source "bot.conf"
 # --------------------------- #
 
 info() { echo "I: $*"; }
@@ -111,7 +111,7 @@ elif [ "$1" == "force-update" ]; then
 
 elif [ "$1" == "rebuild" ]; then
 
-  [ -f "neko/pom.xml" ] || git submodule update --init --force --recursive
+  [ -f "ktlib/pom.xml" ] || git submodule update --init --force --recursive
 
   shift
 

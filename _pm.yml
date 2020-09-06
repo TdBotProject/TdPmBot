@@ -1,0 +1,10 @@
+BOT_TOKEN:
+BOT_LANG: zh_CN
+B0T_OWNER:
+PM_MODE: private
+PM_WHITE_LIST:
+LOG_LEVEL: INFO
+BOT_LANG_LIST:
+  - en_US
+  - zh_CN
+  - zh_TW
