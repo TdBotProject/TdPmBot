@@ -33,7 +33,7 @@ ALREADY_EXISTS: |-
 FINISH_CREATION: |-
   点击该链接完成创建: https://t.me/{}?start=finish_creation
 
-  <b>如果您看见 "开始" 按钮, 请点击它.</b>
+  如果您看见 "开始" 按钮, 请点击它.
 CREATE_FINISHED: |-
   大功告成 !
 
