@@ -9,20 +9,14 @@ import io.nekohasekai.ktlib.td.core.extensions.displayName
 import io.nekohasekai.ktlib.td.core.extensions.fromPrivate
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
-import io.nekohasekai.ktlib.td.core.utils.make
-import io.nekohasekai.ktlib.td.core.utils.makeHtml
-import io.nekohasekai.ktlib.td.core.utils.upsertCommands
+import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.i18n.CANCELED
 import io.nekohasekai.ktlib.td.i18n.LICENSE
-import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.ktlib.td.utils.toLink
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.DEFAULT_WELCOME
-import io.nekohasekai.pm.POWERED_BY
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.*
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
@@ -262,6 +256,12 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
             sudo make L.CREATE_FINISHED sendTo chatId
 
         }
+
+    }
+
+    override suspend fun onSendCanceledMessage(userId: Int, chatId: Long) {
+
+        sudo make L.CANCELED withMarkup removeKeyboard() syncTo userId
 
     }
 

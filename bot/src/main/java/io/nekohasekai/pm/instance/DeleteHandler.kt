@@ -4,17 +4,11 @@ import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.raw.getMessageWith
-import io.nekohasekai.ktlib.td.core.utils.delete
-import io.nekohasekai.ktlib.td.core.utils.deleteDelayIf
-import io.nekohasekai.ktlib.td.core.utils.make
-import io.nekohasekai.ktlib.td.core.utils.syncDelete
+import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.MESSAGE_DELETED
 import io.nekohasekai.pm.MESSAGE_DELETED_BY_ME
 import io.nekohasekai.pm.database.*
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 
 class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
@@ -91,40 +85,27 @@ class DeleteHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
                         MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED
                 )
 
-            }.forEach { record ->
+            }.forEach { row ->
 
                 database.write {
 
-                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq record[MessageRecords.messageId]) }
+                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq row[MessageRecords.messageId]) }
 
-                    MessageRecords.select {
+                    if (twoWaySync) {
 
-                        messagesForCurrentBot and (
-                                ((MessageRecords.type eq MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED) or
-                                        (MessageRecords.type eq MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE)) and
-                                        (MessageRecords.targetId eq record[MessageRecords.messageId]))
+                        delete(if (integration?.paused == false) integration.integration else admin, row[MessageRecords.targetId]!!)
 
-                    }.forEach { row ->
+                    } else {
 
-                        MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq row[MessageRecords.messageId]) }
+                        getMessageWith(if (integration?.paused == false) integration.integration else admin, row[MessageRecords.targetId]!!) {
 
-                        if (twoWaySync) {
+                            onSuccess {
 
-                            delete(admin, row[MessageRecords.messageId])
-
-                        } else {
-
-                            getMessageWith(chatId, row[MessageRecords.messageId]) {
-
-                                onSuccess {
-
-                                    sudo make L.MESSAGE_DELETED replyTo it
-
-                                }
-
-                                onFailure = null
+                                sudo make L.MESSAGE_DELETED replyTo it
 
                             }
+
+                            onFailure = null
 
                         }
 

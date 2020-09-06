@@ -1,23 +1,12 @@
 package io.nekohasekai.pm.instance
 
-import io.nekohasekai.ktlib.core.defaultLog
-import io.nekohasekai.ktlib.core.getValue
-import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.core.setValue
-import io.nekohasekai.ktlib.td.core.TdClient
-import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.TdHandler
+import io.nekohasekai.ktlib.core.*
+import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.raw.*
-import io.nekohasekai.ktlib.td.core.utils.MessageFactory
-import io.nekohasekai.ktlib.td.core.utils.inputForward
-import io.nekohasekai.ktlib.td.core.utils.make
-import io.nekohasekai.ktlib.td.core.utils.makeHtml
-import io.nekohasekai.ktlib.td.i18n.LocaleController
+import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.ktlib.td.utils.asInlineMention
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.INPUT_FN_NOTICE
-import io.nekohasekai.pm.INTEGRATION_PAUSED_NOTICE
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.IntegrationMenu
 import kotlinx.coroutines.GlobalScope
@@ -124,12 +113,18 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     }
 
-                    Launcher make L.INTEGRATION_PAUSED_NOTICE.input(
-                            me.displayName,
-                            me.username
-                    ) syncTo admin
+                    val botUserId = me.id
+                    val userBot = (Launcher.sudo as? PmBot)?.userBot
 
-                    Launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, currentBot, admin.toInt(), admin, 0L, false)
+                    val owner = admin
+
+                    Launcher.apply {
+
+                        sudo make L.INTEGRATION_PAUSED_NOTICE.input(me.displayName, me.username) syncTo admin
+
+                        findHandler<IntegrationMenu>().integrationMenu(L, botUserId, userBot, owner.toInt(), owner, 0L, false)
+
+                    }
 
                 }
 

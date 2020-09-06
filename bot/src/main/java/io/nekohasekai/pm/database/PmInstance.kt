@@ -4,18 +4,16 @@ import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
 import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.receive
-import io.nekohasekai.ktlib.td.core.*
+import io.nekohasekai.ktlib.td.core.TdException
+import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.extensions.displayName
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getMessageOrNull
-import io.nekohasekai.ktlib.td.i18n.*
+import io.nekohasekai.ktlib.td.i18n.LocaleController
+import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.pm.Launcher
-import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.instance.messagesForCurrentBot
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 
 interface PmInstance {
 
@@ -26,8 +24,7 @@ interface PmInstance {
 
 }
 
-val PmInstance.L by receive<PmInstance,LocaleController> { Launcher.localeFor(admin) }
-val PmInstance.currentBot by receive<PmInstance, UserBot?> { (this as? PmBot)?.userBot }
+val PmInstance.L by receive<PmInstance, LocaleController> { Launcher.localeFor(admin) }
 
 fun TdHandler.saveMessage(type: Int, chatId: Long, messageId: Long, targetId: Long? = null) {
 

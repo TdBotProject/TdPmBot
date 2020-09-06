@@ -10,6 +10,7 @@ import io.nekohasekai.ktlib.td.utils.mkStartGroupPayloadUrl
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.BotIntegration
 import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
 import td.TdApi
@@ -269,13 +270,16 @@ class IntegrationMenu : BotHandler() {
 
         sudo make L.INTEGRATION_HAS_SET syncReplyTo message
 
+        val botUserId = me.id
+        val userBot = (sudo as? PmBot)?.userBot
+
         Launcher.apply {
 
             val actionMessage = findHandler<MyBots>().actionMessages.fetch(userId)
 
             if (actionMessage.value != null) {
 
-                findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, userId, userId.toLong(), actionMessage.value!!, true)
+                findHandler<IntegrationMenu>().integrationMenu(L, botUserId, userBot, userId, userId.toLong(), actionMessage.value!!, true)
 
             }
 
