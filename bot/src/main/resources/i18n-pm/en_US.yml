@@ -17,6 +17,8 @@ PM_HELP: |-
   Use /unblock <target> to unblock a chat,
   Use /recall <target> to delete all the messages in the target chat,
   Use /exit to exit a chat.
+PRIVATE_INSTANCE: |-
+  Sorry, this instance is not public, please refer to [Usage]({}).
 
 CREATE_BOT_DEF: |-
   create a new bot
@@ -39,7 +41,7 @@ ALREADY_EXISTS: |-
 FINISH_CREATION: |-
   Click this link to complete the creation: https://t.me/{}?start=finish_creation
 
-  <b>If you see the "Start" button, click it.</b>
+  If you see the "Start" button, click it.
 CREATE_FINISHED: |-
   Done! Congratulations on your new bot.
 
@@ -269,13 +271,13 @@ COMMAND_DESCRIPTION_INVALID: |-
 COMMAND_START: |-
   The <code>/start</code> command is reserved by start messages, please use another name.
 COMMAND_HELP: |-
-  You are editing the command <b><code>/{}</code></b> for {} @{}.
+  You are editing the command `/{}` for bot `{}` @{}.
 
-  Description: <code>{}</code>
+  Description: `{}`
   Messages: {}
   Hide: {}
 
-  You can also access the command from the <b><a href="https://t.me/{}?start={}">Link</a><b>.
+  You can also access the command from the **[Link](https://t.me/{}?start={})**.
 COMMAND_RENAME: |-
   Rename
 COMMAND_EDIT_DESCRIPTION: |-
