@@ -33,7 +33,7 @@ ALREADY_EXISTS: |-
 FINISH_CREATION: |-
   點擊該連結完成創建: https://t.me/{}?start=finish_creation
 
-  <b>如果您看見 "開始" 按鈕, 請點擊它.</b>
+  如果您看見 "開始" 按鈕, 請點擊它.
 CREATE_FINISHED: |-
   大功告成 !
 
