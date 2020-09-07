@@ -88,8 +88,12 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
         database.write {
 
             UserBlocks.deleteWhere { UserBlocks.botId eq botUserId }
+            BotSettings.deleteWhere { BotSettings.botId eq botUserId }
+            BotCommands.deleteWhere { BotCommands.botId eq botUserId }
+            BotIntegrations.deleteWhere { BotIntegrations.botId eq botUserId }
             StartMessages.deleteWhere { StartMessages.botId eq botUserId }
             MessageRecords.deleteWhere { messagesForCurrentBot }
+
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }
 

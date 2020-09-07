@@ -7,7 +7,12 @@ import org.jetbrains.exposed.dao.id.EntityID
 class UserBot(id: EntityID<Int>) : Entity<Int>(id) {
 
     var _botId by UserBots.botId
-    val botId get() = _botId.value
+    var botId
+        get() = _botId.value
+        set(value) {
+            _botId._value = value
+        }
+
     var username by UserBots.username
     var owner by UserBots.owner
     var botToken by UserBots.botToken

@@ -8,8 +8,7 @@ import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.utils.mkStartGroupPayloadUrl
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.database.BotIntegration
-import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
@@ -275,11 +274,11 @@ class IntegrationMenu : BotHandler() {
 
         Launcher.apply {
 
-            val actionMessage = findHandler<MyBots>().actionMessages.fetch(userId)
+            val actionMessage = ActionMessage.Cache.fetch(userId)
 
             if (actionMessage.value != null) {
 
-                findHandler<IntegrationMenu>().integrationMenu(L, botUserId, userBot, userId, userId.toLong(), actionMessage.value!!, true)
+                findHandler<IntegrationMenu>().integrationMenu(L, botUserId, userBot, userId, userId.toLong(), actionMessage.value!!.messageId, true)
 
             }
 

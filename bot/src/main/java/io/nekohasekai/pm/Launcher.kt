@@ -134,6 +134,7 @@ object Launcher : TdCli(), PmInstance {
 
             if (backupTo.isDirectory) {
 
+                @Suppress("SpellCheckingInspection")
                 backupTo = File(backupTo, "td-pm-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz")
 
             } else if (!backupTo.name.endsWith(".tar.xz")) {
@@ -290,48 +291,51 @@ object Launcher : TdCli(), PmInstance {
 
         defaultLog.debug(">> 执行垃圾回收")
 
-        defaultLog.debug(">> 实例缓存")
+        defaultLog.debug(">> 内存缓存")
 
         super.gc()
 
+        BotIntegration.Cache.clear()
+        BotSetting.Cache.clear()
+        ActionMessage.Cache.clear()
+        StartMessages.Cache.clear()
+
+        defaultLog.debug(">> 清理数据库")
+
         val time = (SystemClock.now() / 1000L).toInt() - 24 * 60 * 60
 
-        database {
+        database.write {
 
-            val result = ActionMessages.select { ActionMessages.createAt less time }
+            val result = ActionMessage.find { ActionMessages.createAt less time }
 
             result.forEach { row ->
 
-                val chatId = row[ActionMessages.userId].value.toLong()
+                val chatId = row.userId.toLong()
 
                 getChatWith(chatId) {
 
                     onSuccess {
 
-                        delete(chatId, row[ActionMessages.messageId])
+                        delete(chatId, row.messageId)
 
                     }
 
                 }
 
-
             }
-
-        }
-
-        database.write {
 
             ActionMessages.deleteWhere { ActionMessages.createAt less time }
 
+            val existsBots = UserBot.all().map { it.botId }
+
+            BotCommands.deleteWhere { BotCommands.botId notInList existsBots }
+            BotIntegrations.deleteWhere { BotIntegrations.botId notInList existsBots }
+            BotSettings.deleteWhere { BotSettings.botId notInList existsBots }
+            MessageRecords.deleteWhere { MessageRecords.botId notInList existsBots }
+            StartMessages.deleteWhere { StartMessages.botId notInList existsBots }
+            UserBlocks.deleteWhere { UserBlocks.botId notInList existsBots }
+
         }
-
-        defaultLog.debug(">> 其他缓存")
-
-        BotIntegration.Cache.clear()
-        BotSetting.Cache.clear()
-        StartMessages.Cache.clear()
-
-        defaultLog.debug(">> 消息数据库")
 
         defaultLog.trace(">> ${me.displayNameFormatted}")
 

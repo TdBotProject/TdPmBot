@@ -1,9 +1,9 @@
 package io.nekohasekai.pm.manage
 
-import io.nekohasekai.ktlib.db.KeyValueCacheMap
+import cn.hutool.core.date.SystemClock
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.core.extensions.fromPrivate
 import io.nekohasekai.ktlib.td.core.extensions.asByteArray
+import io.nekohasekai.ktlib.td.core.extensions.fromPrivate
 import io.nekohasekai.ktlib.td.core.raw.getMessage
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.ktlib.td.i18n.*
@@ -37,14 +37,6 @@ class MyBots : TdHandler() {
 
     }
 
-    val actionMessages by lazy { KeyValueCacheMap(database, ActionMessages) }
-
-    override suspend fun gc() {
-
-        actionMessages.gc()
-
-    }
-
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
         if (!message.fromPrivate) {
@@ -61,9 +53,9 @@ class MyBots : TdHandler() {
 
     suspend fun deleteActionMessage(userId: Int, chatId: Long, messageId: Long) {
 
-        val currentActionMessage = actionMessages.fetch(userId)
+        val currentActionMessage = ActionMessage.Cache.fetch(userId)
 
-        val currentActionMessageId = currentActionMessage.value
+        val currentActionMessageId = currentActionMessage.value?.messageId
 
         if (currentActionMessageId != null && currentActionMessageId != messageId) {
 
@@ -81,12 +73,33 @@ class MyBots : TdHandler() {
 
     fun saveActionMessage(userId: Int, messageId: Long) {
 
-        val currentActionMessage = actionMessages.fetch(userId)
+        val currentActionMessage = ActionMessage.Cache.fetch(userId)
 
         currentActionMessage.apply {
 
-            value = messageId
-            changed = true
+            val currentMessage = value
+
+            database.write {
+
+                if (currentMessage == null) {
+
+                    value = ActionMessage.new(userId) {
+
+                        this.messageId = messageId
+                        this.createAt = (SystemClock.now() / 1000L).toInt()
+
+                    }
+
+                } else {
+
+                    currentMessage.messageId = messageId
+                    currentMessage.createAt = (SystemClock.now() / 1000L).toInt()
+
+                    changed = true
+
+                }
+
+            }
 
         }
 
