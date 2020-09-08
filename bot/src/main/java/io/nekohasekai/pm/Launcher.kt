@@ -38,7 +38,7 @@ object Launcher : TdCli(), PmInstance {
 
         if (!public) return false
 
-        if (!::whiteList.isInitialized) return false
+        if (!::whiteList.isInitialized) return true
 
         return whiteList.contains(userId)
 
