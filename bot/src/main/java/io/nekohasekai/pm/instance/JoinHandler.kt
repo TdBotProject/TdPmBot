@@ -3,15 +3,12 @@ package io.nekohasekai.pm.instance
 import io.nekohasekai.ktlib.core.escapeHtmlTags
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.extensions.displayName
+import io.nekohasekai.ktlib.td.core.extensions.*
+import io.nekohasekai.ktlib.td.core.i18n.failed
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getUser
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.failed
-import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.PM_HELP
-import io.nekohasekai.pm.USER_NOT_FOUND
 import io.nekohasekai.pm.database.L
 import io.nekohasekai.pm.database.PmInstance
 import td.TdApi
@@ -110,7 +107,7 @@ class JoinHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInstan
 
         findHandler<OutputHandler>().currentChat = targetChat.id
 
-        sudo makeHtml L.JOINED_NOTICE.input(user.asIdMention, user.displayName.escapeHtmlTags().asCode) sendTo chatId
+        sudo makeHtml L.JOINED_NOTICE.input(user.htmlIdMention, user.displayName.escapeHtmlTags().htmlCode) sendTo chatId
 
     }
 

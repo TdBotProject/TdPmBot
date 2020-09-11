@@ -4,10 +4,11 @@ import cn.hutool.core.util.NumberUtil
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.extensions.entities
 import io.nekohasekai.ktlib.td.core.extensions.text
-import io.nekohasekai.ktlib.td.core.raw.*
-import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.failed
-import io.nekohasekai.ktlib.td.i18n.localeFor
+import io.nekohasekai.ktlib.td.core.i18n.failed
+import io.nekohasekai.ktlib.td.core.i18n.localeFor
+import io.nekohasekai.ktlib.td.core.raw.searchPublicChatOrNull
+import io.nekohasekai.ktlib.td.core.utils.deleteDelay
+import io.nekohasekai.ktlib.td.core.utils.make
 import io.nekohasekai.pm.RECORD_NF
 import io.nekohasekai.pm.database.MessageRecords
 import org.jetbrains.exposed.sql.and

@@ -2,9 +2,9 @@ package io.nekohasekai.pm.manage.menu
 
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.extensions.asByteArray
+import io.nekohasekai.ktlib.td.core.i18n.BACK_ARROW
+import io.nekohasekai.ktlib.td.core.i18n.localeFor
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.BACK_ARROW
-import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.instance.BotInstances

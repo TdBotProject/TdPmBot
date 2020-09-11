@@ -3,8 +3,8 @@ package io.nekohasekai.pm.manage.menu
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.extensions.*
+import io.nekohasekai.ktlib.td.core.i18n.*
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.StartMessages
 import io.nekohasekai.pm.database.UserBot
@@ -84,7 +84,7 @@ class StartMessagesMenu : BotHandler() {
 
             -1 -> {
 
-                if (sudo.persists.fetch(userId).tdPersist?.persistId == persistId) {
+                if (sudo.persists.read(userId)?.persistId == persistId) {
 
                     sudo removePersist userId
 

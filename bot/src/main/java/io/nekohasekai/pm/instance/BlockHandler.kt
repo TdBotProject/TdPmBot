@@ -2,15 +2,11 @@ package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.extensions.isAdmin
-import io.nekohasekai.ktlib.td.core.extensions.isMember
+import io.nekohasekai.ktlib.td.core.extensions.*
+import io.nekohasekai.ktlib.td.core.i18n.NO_PERMISSION
+import io.nekohasekai.ktlib.td.core.i18n.failed
 import io.nekohasekai.ktlib.td.core.raw.*
-import io.nekohasekai.ktlib.td.core.utils.make
-import io.nekohasekai.ktlib.td.core.utils.makeHtml
-import io.nekohasekai.ktlib.td.i18n.NO_PERMISSION
-import io.nekohasekai.ktlib.td.i18n.failed
-import io.nekohasekai.ktlib.td.utils.asInlineMention
-import io.nekohasekai.ktlib.td.utils.checkChatAdmin
+import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import td.TdApi
@@ -67,7 +63,7 @@ class BlockHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInsta
 
             if (chatType !is TdApi.ChatTypePrivate) throw TdException(L.USER_NOT_FOUND)
 
-            userHtml = getUser(chatType.userId).asInlineMention
+            userHtml = getUser(chatType.userId).htmlInlineMention
 
         } catch (e: TdException) {
 

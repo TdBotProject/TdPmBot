@@ -3,11 +3,11 @@ package io.nekohasekai.pm.instance
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.extensions.asInput
+import io.nekohasekai.ktlib.td.core.i18n.failed
 import io.nekohasekai.ktlib.td.core.raw.forwardMessages
 import io.nekohasekai.ktlib.td.core.raw.getMessageOrNull
 import io.nekohasekai.ktlib.td.core.utils.deleteDelayIf
 import io.nekohasekai.ktlib.td.core.utils.make
-import io.nekohasekai.ktlib.td.i18n.failed
 import io.nekohasekai.pm.EDITED
 import io.nekohasekai.pm.MESSAGE_EDITED
 import io.nekohasekai.pm.database.*

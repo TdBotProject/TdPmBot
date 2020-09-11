@@ -5,14 +5,12 @@ import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.extensions.displayName
-import io.nekohasekai.ktlib.td.core.extensions.fromPrivate
+import io.nekohasekai.ktlib.td.core.extensions.*
+import io.nekohasekai.ktlib.td.core.i18n.CANCELED
+import io.nekohasekai.ktlib.td.core.i18n.LICENSE
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.CANCELED
-import io.nekohasekai.ktlib.td.i18n.LICENSE
-import io.nekohasekai.ktlib.td.utils.toLink
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.*
@@ -227,7 +225,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
             if (Launcher.public) {
 
-                content += "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".toLink(Launcher.repoUrl)))
+                content += "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".htmlLink(Launcher.repoUrl)))
 
             }
 

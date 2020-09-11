@@ -6,16 +6,13 @@ import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.compress.*
 import io.nekohasekai.ktlib.core.*
 import io.nekohasekai.ktlib.td.cli.TdCli
-import io.nekohasekai.ktlib.td.cli.commands.GetIdCommand
-import io.nekohasekai.ktlib.td.core.extensions.displayNameFormatted
-import io.nekohasekai.ktlib.td.core.extensions.fromPrivate
+import io.nekohasekai.ktlib.td.core.extensions.*
+import io.nekohasekai.ktlib.td.core.i18n.*
+import io.nekohasekai.ktlib.td.core.i18n.store.*
+import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.*
-import io.nekohasekai.ktlib.td.i18n.store.DatabaseStore
-import io.nekohasekai.ktlib.td.i18n.store.LocaleStore
-import io.nekohasekai.ktlib.td.utils.nextDay
-import io.nekohasekai.ktlib.td.utils.toLink
+import io.nekohasekai.ktlib.td.core.utils.commands.GetIdCommand
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
 import io.nekohasekai.pm.manage.*
@@ -197,9 +194,13 @@ object Launcher : TdCli(), PmInstance {
 
         initDatabase("pm_data.db")
 
-        LocaleStore.setImplement(DatabaseStore(database))
+        if (LocaleStore.store is InMemoryLocaleStore) {
 
-        initPersistDatabase()
+            LocaleStore.setImplement(DatabaseLocaleStore(database))
+
+        }
+
+        persists.setImplement(DatabasePersistStore(database))
 
         database.write {
 
@@ -451,7 +452,7 @@ object Launcher : TdCli(), PmInstance {
 
         }
 
-        if (LocaleStore.getByChat(chatId) == null) {
+        if (LocaleStore.localeRead(chatId) == null) {
 
             findHandler<LocaleSwitcher>().startSelect(L, chatId, true)
 
@@ -459,7 +460,7 @@ object Launcher : TdCli(), PmInstance {
 
         }
 
-        sudo makeHtml L.LICENSE.input(repoName, licenseUrl, "Github Repo".toLink(repoUrl)) syncTo chatId
+        sudo makeHtml L.LICENSE.input(repoName, licenseUrl, "Github Repo".htmlLink(repoUrl)) syncTo chatId
 
         delay(600L)
 

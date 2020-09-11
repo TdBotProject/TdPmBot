@@ -5,7 +5,6 @@ import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.raw.*
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.utils.asInlineMention
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.IntegrationMenu
@@ -194,11 +193,11 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             val inputNotice = if (command != null) {
 
-                sudo makeHtml L.INPUT_FN_NOTICE.input(user.id, user.asInlineMention, command)
+                sudo makeHtml L.INPUT_FN_NOTICE.input(user.id, user.htmlInlineMention, command)
 
             } else {
 
-                sudo makeHtml L.INPUT_NOTICE.input(user.id, user.asInlineMention)
+                sudo makeHtml L.INPUT_NOTICE.input(user.id, user.htmlInlineMention)
 
             }.replyAt(replyTo).syncToTarget() ?: return
 

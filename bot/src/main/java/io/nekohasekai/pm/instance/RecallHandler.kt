@@ -1,14 +1,12 @@
 package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.input
+import io.nekohasekai.ktlib.td.core.extensions.htmlCode
+import io.nekohasekai.ktlib.td.core.extensions.htmlInlineMention
 import io.nekohasekai.ktlib.td.core.raw.getUser
 import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.LocaleController
-import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.MESSAGE_RECALLED_BY
-import io.nekohasekai.pm.RECORD_NF
 import io.nekohasekai.pm.database.*
 import org.jetbrains.exposed.sql.*
 import td.TdApi
@@ -94,9 +92,9 @@ class RecallHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInst
 
         if (integration?.paused == false) {
 
-            val targetMention = getUserOrNull(targetUser)?.asInlineMention ?: ""
+            val targetMention = getUserOrNull(targetUser)?.htmlInlineMention ?: ""
 
-            sudo makeHtml L.MESSAGE_RECALLED_BY.input(targetUser.asCode, targetMention, getUser(userId).asInlineMention)
+            sudo makeHtml L.MESSAGE_RECALLED_BY.input(targetUser.htmlCode, targetMention, getUser(userId).htmlInlineMention)
 
         } else {
 

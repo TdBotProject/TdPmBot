@@ -4,11 +4,9 @@ import cn.hutool.http.HtmlUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.extensions.*
+import io.nekohasekai.ktlib.td.core.i18n.*
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
-import io.nekohasekai.ktlib.td.i18n.*
-import io.nekohasekai.ktlib.td.utils.asCode
-import io.nekohasekai.ktlib.td.utils.asDelete
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.BotInstances
@@ -51,7 +49,7 @@ class CommandsMenu : BotHandler() {
                 if (commands.isEmpty()) L.EMPTY else
                     commands.joinToString("\n") { row ->
                         ("/" + row[BotCommands.command] + " - " + HtmlUtil.escape(row[BotCommands.description])).let {
-                            if (row[BotCommands.hide]) it.asDelete else it.asCode
+                            if (row[BotCommands.hide]) it.htmlDelete else it.htmlCode
                         }
                     }
         ) withMarkup inlineButton {
