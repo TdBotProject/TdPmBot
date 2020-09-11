@@ -4,7 +4,7 @@ import cn.hutool.http.HtmlUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.extensions.*
-import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkup
+import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.pm.*
@@ -326,7 +326,7 @@ class CommandMenu : BotHandler() {
 
                 if (!cache.edited) {
 
-                    editMessageReplyMarkup(chatId, cache.startsAt, null)
+                    editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
 
                     cache.edited = true
 
@@ -426,7 +426,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                Launcher.editMessageReplyMarkup(chatId, cache.startsAt, null)
+                Launcher.editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
 
                 cache.edited = true
 
@@ -458,7 +458,7 @@ class CommandMenu : BotHandler() {
 
         if (!cache.edited) {
 
-            editMessageReplyMarkup(chatId, cache.startsAt, null)
+            editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
 
             cache.edited = true
 
@@ -544,7 +544,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                editMessageReplyMarkup(chatId, cache.startsAt, null)
+                editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
 
                 cache.edited = true
 
@@ -558,7 +558,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                editMessageReplyMarkup(chatId, cache.startsAt, null)
+                editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
 
                 cache.edited = true
 

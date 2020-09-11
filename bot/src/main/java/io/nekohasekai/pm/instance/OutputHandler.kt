@@ -2,7 +2,6 @@ package io.nekohasekai.pm.instance
 
 import com.esotericsoftware.kryo.KryoException
 import io.nekohasekai.ktlib.core.*
-import io.nekohasekai.ktlib.core.toByteArray
 import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.raw.*
@@ -341,7 +340,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                         sudo makeAlert L.RECORD_NF answerTo queryId
 
-                        editMessageReplyMarkup(chatId, messageId, null)
+                        editMessageReplyMarkupOrNull(chatId, messageId, null)
 
                     }
 
