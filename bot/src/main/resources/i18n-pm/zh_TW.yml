@@ -234,9 +234,5 @@ COMMAND_EDIT_DESCRIPTION: |-
   編輯簡介
 COMMAND_EDIT_MESSAGES: |-
   重新設置消息
-COMMAND_HIDE: |-
-  隱藏
-COMMAND_SHOW: |-
-  顯示
 COMMAND_DELETE: |-
   刪除
