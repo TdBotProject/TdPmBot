@@ -255,6 +255,14 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
             if (chatId != admin) rejectFunction()
 
+            val botUserId = me.id
+
+            Launcher.apply {
+
+                findHandler<BotMenu>().botMenu(userId, chatId, 0L, false, botUserId, userBot)
+
+            }
+
             sudo make L.CREATE_FINISHED sendTo chatId
 
         }

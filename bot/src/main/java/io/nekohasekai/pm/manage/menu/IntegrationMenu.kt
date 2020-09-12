@@ -57,7 +57,7 @@ class IntegrationMenu : BotHandler() {
 
         sudo make content withMarkup inlineButton {
 
-            urlLine(L.INTEGRATION_SET, mkStartGroupPayloadUrl(botUserName, "set_integration"))
+            urlLine(L.INTEGRATION_SET, mkStartGroupPayloadUrl(botUserName, payload))
 
             val botId = botUserId.asByteArray()
 
