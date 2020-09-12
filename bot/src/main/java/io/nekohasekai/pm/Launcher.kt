@@ -358,13 +358,15 @@ object Launcher : TdCli(), PmInstance {
     const val repoUrl = "https://github.com/TdBotProject/TdPmBot"
     const val licenseUrl = "https://github.com/TdBotProject/TdPmBot/blob/master/LICENSE"
 
+    override suspend fun userBlocked(userId: Int) = blocks.fetch(userId).value == true
+
     override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
 
-        if (blocks.fetch(userId).value == true) finishEvent()
+        val integration = integration
 
-        super.onNewMessage(userId, chatId, message)
+        val useIntegration = chatId == integration?.integration
 
-        if (public) {
+        if (public && chatId != admin && !useIntegration) {
 
             onLaunch(userId, chatId, message)
 

@@ -153,13 +153,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     }
 
-    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
-
-        if (blocks.fetch(userId).value == true) finishEvent()
-
-        super.onNewMessage(userId, chatId, message)
-
-    }
+    override suspend fun userBlocked(userId: Int) = blocks.fetch(userId).value == true
 
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 

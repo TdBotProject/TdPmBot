@@ -56,7 +56,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val L = L
 
-        suspend fun delayAlbum() {
+        suspend fun delayAlbum(): Nothing {
 
             albumMessages.getOrPut(mediaAlbumId) { AlbumMessages(mediaAlbumId) }.apply {
 
@@ -81,6 +81,8 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
                 }
 
             }
+
+            finishEvent()
 
         }
 
@@ -156,13 +158,15 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             } replyTo if (album == null) message else album.messages[0]
 
+            finishWithDelay()
+
         }
 
         if (message.replyToMessageId == 0L) {
 
             if (currentChat == 0L) {
 
-                if (sudo is PmBot && chatId == admin) {
+                if (chatId == admin) {
 
                     sudo make L.PM_HELP syncReplyTo message
 
@@ -176,23 +180,17 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 delayAlbum()
 
-                return
-
             }
 
-            if (useIntegration && integration!!.adminOnly && checkChatAdmin(message)) return
+            if (useIntegration && integration!!.adminOnly && checkChatAdmin(message)) finishEvent()
 
             execMessages(currentChat, 0L)
-
-            return
 
         }
 
         if (mediaAlbumId != 0L && album == null) {
 
             delayAlbum()
-
-            return
 
         }
 
