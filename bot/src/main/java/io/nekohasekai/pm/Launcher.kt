@@ -360,27 +360,9 @@ object Launcher : TdCli(), PmInstance {
 
     override suspend fun userBlocked(userId: Int) = blocks.fetch(userId).value == true
 
-    override suspend fun onNewMessage(userId: Int, chatId: Long, message: TdApi.Message) {
-
-        val integration = integration
-
-        val useIntegration = chatId == integration?.integration
-
-        if (public && chatId != admin && !useIntegration) {
-
-            onLaunch(userId, chatId, message)
-
-            finishEvent()
-
-        }
-
-    }
-
     override suspend fun onUndefinedFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
         if (function == "cancel") {
-
-            if (!message.fromPrivateOrDelete) return
 
             if (!public) rejectFunction()
 
@@ -392,21 +374,28 @@ object Launcher : TdCli(), PmInstance {
 
         val command = BotCommands.Cache.fetch(me.id to function).value?.takeIf { !it.hide }
 
-        if (!message.fromPrivate) {
+        if (message.fromPrivate) {
 
-            if (command == null) return
+            if (command == null) {
+
+                if (chatId != admin) onLaunch(userId, chatId, message)
+
+                finishEvent()
+
+            }
 
             command.messages.forEach { sudo make it syncTo chatId }
+
+            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function, command.inputWhenPublic)
 
             return
 
         } else {
 
-            if (command == null) rejectFunction()
+            if (command == null) finishEvent()
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function, command.inputWhenPublic)
 
         }
 
