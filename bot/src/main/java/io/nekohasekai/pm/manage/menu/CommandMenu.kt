@@ -5,6 +5,7 @@ import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.i18n.*
+import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkup
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
@@ -34,20 +35,9 @@ class CommandMenu : BotHandler() {
 
     }
 
-    suspend fun commandMenu(botUserId: Int, userBot: UserBot?, command: BotCommand, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    fun commandButtons(L: LocaleController, botUserId: Int, userBot: UserBot?, command: BotCommand): TdApi.ReplyMarkupInlineKeyboard {
 
-        val L = localeFor(userId)
-
-        sudo makeMd L.COMMAND_HELP.input(
-                botNameHtml(botUserId, userBot),
-                botUserName(botUserId, userBot),
-                command.command,
-                HtmlUtil.escape(command.description),
-                if (command.messages.isEmpty()) L.EMPTY else L.MESSAGES_STATUS_COUNT.input(command.messages.size),
-                if (command.hide) L.ENABLED else L.DISABLED,
-                botUserName(botUserId, userBot),
-                command.command
-        ) withMarkup inlineButton {
+        return inlineButton {
 
             val botId = botUserId.asByteArray()
             val commandName = command.command.encodeToByteArray()
@@ -61,17 +51,29 @@ class CommandMenu : BotHandler() {
 
             dataLine(L.COMMAND_EDIT_MESSAGES, dataId, botId, commandName, byteArrayOf(2))
 
+            fun Boolean?.toBlock() = if (this == true) "■" else "□"
+
             newLine {
 
-                if (!command.hide) {
+                textButton(L.COMMAND_HIDE)
 
-                    dataButton(L.COMMAND_HIDE, dataId, botId, commandName, byteArrayOf(3))
+                dataButton(command.hide.toBlock(), dataId, botId, commandName, byteArrayOf(3))
 
-                } else {
+            }
 
-                    dataButton(L.COMMAND_SHOW, dataId, botId, commandName, byteArrayOf(4))
+            if (userBot == null && Launcher.public) {
+
+                newLine {
+
+                    textButton(L.COMMAND_INPUT_WHEN_PUBLIC)
+
+                    dataButton(command.inputWhenPublic.toBlock(), dataId, botId, commandName, byteArrayOf(4))
 
                 }
+
+            }
+
+            newLine {
 
                 dataButton(L.COMMAND_DELETE, dataId, botId, commandName, byteArrayOf(5))
 
@@ -79,7 +81,24 @@ class CommandMenu : BotHandler() {
 
             dataLine(L.BACK_ARROW, CommandsMenu.dataId, botUserId.asByteArray())
 
-        } onSuccess {
+        }
+
+    }
+
+    suspend fun commandMenu(botUserId: Int, userBot: UserBot?, command: BotCommand, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+
+        val L = localeFor(userId)
+
+        sudo makeMd L.COMMAND_HELP.input(
+                botNameHtml(botUserId, userBot),
+                botUserName(botUserId, userBot),
+                command.command,
+                HtmlUtil.escape(command.description),
+                if (command.messages.isEmpty()) L.EMPTY else L.MESSAGES_STATUS_COUNT.input(command.messages.size),
+                botUserName(botUserId, userBot),
+                command.command,
+                if (userBot == null && Launcher.public) L.COMMAND_INPUT_WHEN_PUBLIC_DEF else ""
+        ) withMarkup commandButtons(L, botUserId, userBot, command) onSuccess {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
@@ -125,7 +144,12 @@ class CommandMenu : BotHandler() {
         init {
 
             if (command != null) this.command = BotCommand(
-                    command.botId, command.command, command.description, command.hide, LinkedList()
+                    command.botId,
+                    command.command,
+                    command.description,
+                    command.hide,
+                    LinkedList(),
+                    command.inputWhenPublic
             )
 
         }
@@ -142,7 +166,7 @@ class CommandMenu : BotHandler() {
 
         if (data.size < 2) {
 
-            sudo confirmTo queryId
+            sudo syncConfirmTo queryId
 
             commandMenu(botUserId, userBot, command, userId, chatId, messageId, true)
 
@@ -152,7 +176,7 @@ class CommandMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        when (data[1][0].toInt()) {
+        when (val action = data[1][0].toInt()) {
 
             -1 -> {
 
@@ -220,68 +244,55 @@ class CommandMenu : BotHandler() {
 
             }
 
-            3 -> {
+            3, 4 -> {
+
+                val target: Boolean
 
                 BotCommands.Cache.fetch(botUserId to command.command).apply {
 
-                    if (value == null) {
+                    val currVal = value
+
+                    if (currVal == null) {
 
                         sudo confirmTo queryId
 
-                        findHandler<CommandsMenu>().commandsMenu(botUserId, userBot, userId, chatId, messageId, true)
+                        editMessageReplyMarkup(chatId, messageId, commandButtons(L, botUserId, userBot, command))
 
                         return
 
                     }
 
-                    if (!value!!.hide) {
+                    when (action) {
 
-                        value!!.hide = true
-                        changed = true
+                        3 -> {
 
-                        flush()
+                            target = !currVal.hide
+
+                            currVal.hide = target
+
+                        }
+
+                        //4 -> {
+
+                        else -> {
+
+                            target = !currVal.inputWhenPublic
+
+                            currVal.inputWhenPublic = target
+
+                        }
 
                     }
+
+                    changed = true
+
+                    flush()
 
                 }
 
-                sudo makeAnswer L.ENABLED answerTo queryId
+                sudo makeAnswer (if (!target) L.DISABLED else L.ENABLED) answerTo queryId
 
-                commandMenu(botUserId, userBot, command, userId, chatId, messageId, true)
-
-                if (userBot != null) BotInstances.initBot(userBot).updateCommands() else (sudo as Launcher).updateCommands()
-
-            }
-
-            4 -> {
-
-                BotCommands.Cache.fetch(botUserId to command.command).apply {
-
-                    if (value == null) {
-
-                        sudo confirmTo queryId
-
-                        findHandler<CommandsMenu>().commandsMenu(botUserId, userBot, userId, chatId, messageId, true)
-
-                        return
-
-                    }
-
-                    if (value!!.hide) {
-
-                        value!!.hide = false
-                        changed = true
-
-                        flush()
-
-                    }
-
-
-                }
-
-                sudo makeAnswer L.DISABLED answerTo queryId
-
-                commandMenu(botUserId, userBot, command, userId, chatId, messageId, true)
+                editMessageReplyMarkup(chatId, messageId, commandButtons(L, botUserId, userBot, command))
 
                 if (userBot != null) BotInstances.initBot(userBot).updateCommands() else (sudo as Launcher).updateCommands()
 

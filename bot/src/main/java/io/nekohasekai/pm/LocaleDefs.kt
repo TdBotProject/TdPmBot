@@ -116,5 +116,6 @@ internal val L.COMMAND_RENAME by string
 internal val L.COMMAND_EDIT_DESCRIPTION by string
 internal val L.COMMAND_EDIT_MESSAGES by string
 internal val L.COMMAND_HIDE by string
-internal val L.COMMAND_SHOW by string
+internal val L.COMMAND_INPUT_WHEN_PUBLIC by string
+internal val L.COMMAND_INPUT_WHEN_PUBLIC_DEF by string
 internal val L.COMMAND_DELETE by string

@@ -193,7 +193,7 @@ class CommandsMenu : BotHandler() {
 
             BotCommands.Cache.fetch(botUserId to cache.command).apply {
 
-                value = BotCommand(cache.botId, cache.command, cache.description, false, cache.messages)
+                value = BotCommand(cache.botId, cache.command, cache.description, false, cache.messages, false)
                 changed = true
 
                 flush()

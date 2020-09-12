@@ -404,7 +404,7 @@ object Launcher : TdCli(), PmInstance {
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if (chatId != admin && !public) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function)
+            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function, command.inputWhenPublic)
 
         }
 
@@ -418,7 +418,7 @@ object Launcher : TdCli(), PmInstance {
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if (!public && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, payload)
+            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, payload, command.inputWhenPublic)
 
         } else rejectFunction()
 

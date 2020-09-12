@@ -14,6 +14,7 @@ object BotCommands : Table("bot_commands") {
     val description = text("description")
     val hide = bool("hide").default(false)
     val messages = kryo<LinkedList<TdApi.InputMessageContent>>("messages")
+    val inputWhenPublic = bool("input").default(false)
 
     override val primaryKey = PrimaryKey(botId, command)
 

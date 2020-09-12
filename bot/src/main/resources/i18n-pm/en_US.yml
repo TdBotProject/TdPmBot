@@ -275,9 +275,10 @@ COMMAND_HELP: |-
 
   Description: `{}`
   Messages: {}
-  Hide: {}
 
   You can also access the command from the **[Link](https://t.me/{}?start={})**.
+
+  {}
 COMMAND_RENAME: |-
   Rename
 COMMAND_EDIT_DESCRIPTION: |-
@@ -285,8 +286,10 @@ COMMAND_EDIT_DESCRIPTION: |-
 COMMAND_EDIT_MESSAGES: |-
   Edit Messages
 COMMAND_HIDE: |-
-  Hide
-COMMAND_SHOW: |-
-  Disable Hide
+  Hide Command
+COMMAND_INPUT_WHEN_PUBLIC: |-
+  Chat Command
+COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
+  Chat Command: accepts PM messages after this command.
 COMMAND_DELETE: |-
   Delete Command

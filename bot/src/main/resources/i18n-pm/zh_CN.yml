@@ -273,10 +273,10 @@ COMMAND_HELP: |-
 
   简介: `{}`
   消息: {}
-  隐藏: {}
 
   您也可从该 **[链接](https://t.me/{}?start={})** 访问本命令.
 
+  {}
 COMMAND_RENAME: |-
   重命名
 COMMAND_EDIT_DESCRIPTION: |-
@@ -284,8 +284,10 @@ COMMAND_EDIT_DESCRIPTION: |-
 COMMAND_EDIT_MESSAGES: |-
   重新设置消息
 COMMAND_HIDE: |-
-  隐藏
-COMMAND_SHOW: |-
-  显示
+  隐藏命令
+COMMAND_INPUT_WHEN_PUBLIC: |-
+  私聊命令
+COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
+  私聊命令: 公开模式 (当前设置) 下使用该命令后机器人接受私聊消息.
 COMMAND_DELETE: |-
   删除

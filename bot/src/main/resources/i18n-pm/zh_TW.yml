@@ -272,9 +272,10 @@ COMMAND_HELP: |-
 
   簡介: `{}`
   消息: {}
-  隱藏: {}
 
   您也可從該 **[鏈接](https://t.me/{}?start={})** 訪問本命令.
+
+  {}
 COMMAND_RENAME: |-
   重命名
 COMMAND_EDIT_DESCRIPTION: |-
@@ -282,8 +283,10 @@ COMMAND_EDIT_DESCRIPTION: |-
 COMMAND_EDIT_MESSAGES: |-
   重新設置消息
 COMMAND_HIDE: |-
-  隱藏
-COMMAND_SHOW: |-
-  顯示
+  隱藏命令
+COMMAND_INPUT_WHEN_PUBLIC: |-
+  私聊命令
+COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
+  私聊命令: 公開模式 (當前設置) 下使用該命令后接受私聊消息.
 COMMAND_DELETE: |-
   刪除
