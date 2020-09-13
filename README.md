@@ -193,6 +193,8 @@ docker logs td-pm -f -t
      
 格式为 `https://t.me/<botUserName>?start=<command>` (参见 https://core.telegram.org/bots#deep-linking ).
 
+`私聊命令`: 仅公开模式主实例选项, 使用该命令后机器人接受私聊消息. ( 您可提示对方使用 /cancel 退出 ) .
+
 ### PM 操作
 
 #### 提示消息

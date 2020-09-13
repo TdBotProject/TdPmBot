@@ -35,7 +35,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         if (subId == 0L) {
 
-            val asInput = data[1] as Boolean
+            val asInput = data.getOrNull(1) as Boolean? == true
 
             if (asInput) {
 
