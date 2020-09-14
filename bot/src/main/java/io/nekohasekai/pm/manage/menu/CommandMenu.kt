@@ -349,7 +349,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.description) {
 
-                if (text == null || !text.contains("[a-z][a-z0-9_]{0,31}".toRegex())) {
+                if (text == null || !text.matches("[a-z][a-z0-9_]{0,31}".toRegex())) {
 
                     removeBack()
 
