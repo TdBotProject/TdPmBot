@@ -76,7 +76,7 @@ OPTIONS_HELP: |-
 
   <b>Two-way Sync</b>: Copy someone's message directly, instead of forwarding it each time, and synchronize their editing and deleting actions.
 
-  <b>Keep Reply</b>: Keep replying to messages without entering ( <code>/join</code> ) the target session.
+  <b>Keep Reply</b>: Keep replying to target message without entering ( <code>/join</code> ) the target session when reply.
 
   <b>Ignore Deletion</b>: Do not synchronize the deletion of a message with your own, and add a button to delete the message from the prompt when "Keep Prompts" is enabled.
 OPTION_KEEP_ACTION_MESSAGES: |-

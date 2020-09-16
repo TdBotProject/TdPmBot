@@ -327,7 +327,7 @@ object Launcher : TdCli(), PmInstance {
 
             ActionMessages.deleteWhere { ActionMessages.createAt less time }
 
-            val existsBots = UserBot.all().map { it.botId }
+            val existsBots = UserBot.all().map { it.botId }.toMutableLinkedList().apply { add(me.id) }
 
             BotCommands.deleteWhere { BotCommands.botId notInList existsBots }
             BotIntegrations.deleteWhere { BotIntegrations.botId notInList existsBots }

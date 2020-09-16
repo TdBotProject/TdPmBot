@@ -131,11 +131,11 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             val status = sudo make L.MESSAGE_EDITED replyAt targetMessage syncTo targetChat
 
-            saveMessage(MessageRecords.MESSAGE_TYPE_INPUT_OTHER, targetChat, status.id)
+            saveMessage(MessageRecords.MESSAGE_TYPE_INPUT_OTHER, chatId, status.id)
 
             val forwarded = forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.MessageSendOptions(), asAlbum = false, sendCopy = false, removeCaption = false).messages[0].id
 
-            saveMessage(MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED, targetChat, forwarded)
+            saveMessage(MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED, chatId, forwarded)
 
             finishEvent()
 
