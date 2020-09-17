@@ -1,8 +1,6 @@
 package io.nekohasekai.pm.database
 
-import io.nekohasekai.ktlib.db.DatabaseCacheMap
-import io.nekohasekai.ktlib.db.kryo
-import io.nekohasekai.pm.Launcher
+import io.nekohasekai.ktlib.db.*
 import org.jetbrains.exposed.sql.*
 import td.TdApi
 import java.util.*
@@ -10,6 +8,7 @@ import java.util.*
 object BotCommands : Table("bot_commands") {
 
     val botId = integer("bot_id").index()
+
     val command = text("command")
     val description = text("description")
     val hide = bool("hide").default(false)
@@ -18,7 +17,7 @@ object BotCommands : Table("bot_commands") {
 
     override val primaryKey = PrimaryKey(botId, command)
 
-    object Cache : DatabaseCacheMap<Pair<Int, String>, BotCommand>(Launcher.database) {
+    class Cache(database: DatabaseDispatcher) : DatabaseCacheMap<Pair<Int, String>, BotCommand>(database) {
 
         override fun read(id: Pair<Int, String>): BotCommand? {
 
@@ -37,6 +36,7 @@ object BotCommands : Table("bot_commands") {
                 it[description] = value.description
                 it[hide] = value.hide
                 it[messages] = value.messages
+                it[inputWhenPublic] = value.inputWhenPublic
 
             }
 

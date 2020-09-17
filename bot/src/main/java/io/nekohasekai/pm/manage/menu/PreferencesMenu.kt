@@ -73,7 +73,7 @@ class PreferencesMenu : BotHandler() {
 
     suspend fun optionsMenu(botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
-        val botSetting = BotSetting.Cache.fetch(botUserId).value
+        val botSetting = launcher.botSettings.fetch(botUserId).value
 
         val L = localeFor(userId)
 
@@ -100,7 +100,7 @@ class PreferencesMenu : BotHandler() {
 
         }
 
-        val botSettingCache = BotSetting.Cache.fetch(botUserId)
+        val botSettingCache = launcher.botSettings.fetch(botUserId)
         val botSetting = botSettingCache.value
 
         var target = false

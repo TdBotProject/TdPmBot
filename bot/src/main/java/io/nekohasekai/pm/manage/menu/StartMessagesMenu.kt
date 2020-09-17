@@ -6,9 +6,7 @@ import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.i18n.*
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.database.StartMessages
 import io.nekohasekai.pm.database.UserBot
-import io.nekohasekai.pm.instance.BotInstances
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
 import td.TdApi
@@ -26,7 +24,7 @@ class StartMessagesMenu : BotHandler() {
 
     override fun onLoad() {
 
-        if (sudo is Launcher) initData(dataId)
+        if (sudo is TdPmBot) initData(dataId)
 
         initPersist(persistId)
 
@@ -36,7 +34,7 @@ class StartMessagesMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        val startMessages = StartMessages.Cache.fetch(botUserId).value
+        val startMessages = launcher.startMessages.fetch(botUserId).value
 
         sudo make L.START_MESSAGES_STATUS.input(botName(botUserId, userBot), botUserName(botUserId, userBot), when {
 
@@ -112,7 +110,7 @@ class StartMessagesMenu : BotHandler() {
 
                 } else {
 
-                    BotInstances.initBot(userBot).apply {
+                    launcher.initBot(userBot).apply {
 
                         writePersist(userId, persistId, 0L, StartMessagesCache(me.id), allowFunction = true)
 
@@ -132,7 +130,7 @@ class StartMessagesMenu : BotHandler() {
 
             1 -> {
 
-                StartMessages.Cache.fetch(botUserId).apply {
+                launcher.startMessages.fetch(botUserId).apply {
 
                     value = null
                     changed = true
@@ -231,7 +229,7 @@ class StartMessagesMenu : BotHandler() {
 
             val botUserId = cache.botId
 
-            if (chatId != Launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
+            if (chatId != launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
 
                 // 权限检查
 
@@ -245,7 +243,7 @@ class StartMessagesMenu : BotHandler() {
 
             userCalled(userId, "submitted start messages to $botUserId")
 
-            StartMessages.Cache.fetch(botUserId).apply {
+            launcher.startMessages.fetch(botUserId).apply {
 
                 value = cache.messages
                 changed = true

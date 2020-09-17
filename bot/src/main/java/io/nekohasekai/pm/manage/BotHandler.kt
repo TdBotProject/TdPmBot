@@ -5,9 +5,8 @@ import io.nekohasekai.ktlib.core.shift
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.extensions.displayName
 import io.nekohasekai.ktlib.td.core.extensions.toInt
-import io.nekohasekai.pm.Launcher
 import io.nekohasekai.pm.database.UserBot
-import io.nekohasekai.pm.instance.BotInstances
+import io.nekohasekai.pm.launcher
 
 abstract class BotHandler : TdHandler() {
 
@@ -21,7 +20,7 @@ abstract class BotHandler : TdHandler() {
 
         return if (botUserId == me.id) me else {
 
-            BotInstances.initBot(userBot!!).me
+            launcher.initBot(userBot!!).me
 
         }.displayName
 
@@ -31,7 +30,7 @@ abstract class BotHandler : TdHandler() {
 
         return if (botUserId == me.id) me else {
 
-            BotInstances.initBot(userBot!!).me
+            launcher.initBot(userBot!!).me
 
         }.displayName.escapeHtmlTags()
 
@@ -41,7 +40,7 @@ abstract class BotHandler : TdHandler() {
 
         val botId = data[0].toInt()
 
-        val userBot = if (botId == me.id && chatId == Launcher.admin) {
+        val userBot = if (botId == me.id && chatId == launcher.admin) {
 
             null
 

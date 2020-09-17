@@ -30,7 +30,9 @@ BOT_TOKEN: 机器人令牌
 BOT_OWNER: 管理员ID
 PM_MODE: 运行模式
 PM_WHITE_LIST: 白名单列表
-LOG_LEVEL: 日志等级, 默认为 INFO
+LOG_LEVEL: 日志等级 - 默认为 INFO
+DATA_DIR: 数据存放目录 - 默认为当前目录下 data 文件夹
+CACHE_DIR: 缓存存放目录 - 默认为当前目录下 cache 文件夹
 ```
 
 ### 工作语言
@@ -98,7 +100,7 @@ pm logs # 所有日志
 如需更改, 复制 `_bot.conf` 到 `bot.conf`.
 
 ```
-SERVICE_NAME: systemd 服务名称, 默认 `td-pm`, 修改如果您需要多个实例.
+SERVICE_NAME: systemd 服务名称, 默认 `td-bots`, 修改如果您需要多个实例.
 MVN_ARGS: Maven 编译参数.
 JAVA_ARGS: JVM 启动参数.
 ARGS: 启动参数.

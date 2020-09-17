@@ -7,3 +7,4 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 val TdHandler.messagesForCurrentBot get() = (MessageRecords.botId eq me.id)
 val TdHandler.commandsForCurrentBot get() = (BotCommands.botId eq me.id)
+val TdHandler.userBot get() = (sudo as? PmBot)?.userBot

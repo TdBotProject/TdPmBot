@@ -16,7 +16,7 @@
 
     <properties>
 
-        <mainClass>io.nekohasekai.pm.Launcher</mainClass>
+        <mainClass>io.nekohasekai.pm.TdPmBot</mainClass>
 
     </properties>
 

@@ -7,8 +7,9 @@ import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getUser
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.database.*
-import io.nekohasekai.pm.instance.PmBot
+import io.nekohasekai.pm.database.BotIntegration
+import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.instance.userBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
 import td.TdApi
@@ -25,7 +26,7 @@ class IntegrationMenu : BotHandler() {
 
     override fun onLoad() {
 
-        if (sudo is Launcher) {
+        if (sudo is TdPmBot) {
 
             initData(dataId)
 
@@ -37,7 +38,7 @@ class IntegrationMenu : BotHandler() {
 
     suspend fun integrationMenu(L: LocaleController, botUserId: Int, userBot: UserBot?, userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
 
-        val integration = BotIntegration.Cache.fetch(botUserId).value
+        val integration = launcher.botIntegrations.fetch(botUserId).value
 
         val botUserName = botUserName(botUserId, userBot)
 
@@ -115,7 +116,7 @@ class IntegrationMenu : BotHandler() {
 
         val action = data[0][0].toInt()
 
-        val integration = BotIntegration.Cache.fetch(botUserId).value
+        val integration = launcher.botIntegrations.fetch(botUserId).value
 
         if (integration == null) {
 
@@ -199,7 +200,7 @@ class IntegrationMenu : BotHandler() {
 
         }
 
-        BotIntegration.Cache.fetch(botUserId).value = if (action < 4) integration else null
+        launcher.botIntegrations.fetch(botUserId).value = if (action < 4) integration else null
 
         integrationMenu(L, botUserId, userBot, userId, chatId, messageId, true)
 
@@ -209,7 +210,7 @@ class IntegrationMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        if (userId.toLong() != Launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
+        if (userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
 
             // 权限检查
 
@@ -228,13 +229,13 @@ class IntegrationMenu : BotHandler() {
 
         }
 
-        val integrationEntry = BotIntegration.Cache.fetch(me.id)
+        val integrationEntry = launcher.botIntegrations.fetch(me.id)
 
         val integration = integrationEntry.value
 
         if (integration == null) {
 
-            BotIntegration.Cache.remove(me.id)
+            launcher.botIntegrations.remove(me.id)
 
             database.write {
 
@@ -269,11 +270,11 @@ class IntegrationMenu : BotHandler() {
         sudo make L.INTEGRATION_HAS_SET syncReplyTo message
 
         val botUserId = me.id
-        val userBot = (sudo as? PmBot)?.userBot
+        val userBot = userBot
 
-        Launcher.apply {
+        launcher.apply {
 
-            val actionMessage = ActionMessage.Cache.fetch(userId)
+            val actionMessage = actionMessages.fetch(userId)
 
             if (actionMessage.value != null) {
 

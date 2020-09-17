@@ -9,7 +9,6 @@ import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
-import io.nekohasekai.pm.instance.BotInstances
 import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
@@ -29,7 +28,7 @@ class CommandsMenu : BotHandler() {
 
     override fun onLoad() {
 
-        if (sudo is Launcher) initData(dataId)
+        if (sudo is TdPmBot) initData(dataId)
 
         initPersist(persistId)
 
@@ -177,7 +176,7 @@ class CommandsMenu : BotHandler() {
 
             val botUserId = cache.botId
 
-            if (chatId != Launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
+            if (chatId != launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
 
                 // 权限检查
 
@@ -191,7 +190,7 @@ class CommandsMenu : BotHandler() {
 
             userCalled(userId, "submitted messages to function /${cache.command} for $botUserId")
 
-            BotCommands.Cache.fetch(botUserId to cache.command).apply {
+            launcher.botCommands.fetch(botUserId to cache.command).apply {
 
                 value = BotCommand(cache.botId, cache.command, cache.description, false, cache.messages, false)
                 changed = true
@@ -202,10 +201,10 @@ class CommandsMenu : BotHandler() {
 
             sudo make L.SETTING_SAVED sendTo chatId
 
-            (sudo as? Launcher)?.updateCommands()
+            (sudo as? TdPmBot)?.updateCommands()
             (sudo as? PmBot)?.updateCommands()
 
-            (if (cache.userBot != null) Launcher.findHandler() else this)
+            (if (cache.userBot != null) launcher.findHandler() else this)
                     .commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
 
 
@@ -293,7 +292,7 @@ class CommandsMenu : BotHandler() {
 
                     sudo removePersist userId
 
-                    BotInstances.initBot(cache.userBot!!).apply {
+                    launcher.initBot(cache.userBot!!).apply {
 
                         writePersist(userId, persistId, subId, * data, allowFunction = true)
 
@@ -348,7 +347,7 @@ class CommandsMenu : BotHandler() {
 
             }
 
-            Launcher.findHandler<CommandsMenu>().commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
+            launcher.findHandler<CommandsMenu>().commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
 
         }
 

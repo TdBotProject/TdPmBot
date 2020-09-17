@@ -13,7 +13,7 @@ import io.nekohasekai.pm.database.L
 import io.nekohasekai.pm.database.PmInstance
 import td.TdApi
 
-class JoinHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInstance by pmInstance {
+class JoinHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInstance by pmInstance {
 
     override fun onLoad() {
 

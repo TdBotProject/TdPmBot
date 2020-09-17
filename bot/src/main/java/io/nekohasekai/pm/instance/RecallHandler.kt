@@ -11,7 +11,7 @@ import io.nekohasekai.pm.database.*
 import org.jetbrains.exposed.sql.*
 import td.TdApi
 
-class RecallHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInstance by pmInstance {
+class RecallHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInstance by pmInstance {
 
     override fun onLoad() {
 

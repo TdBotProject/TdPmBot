@@ -53,7 +53,7 @@ class MyBots : TdHandler() {
 
     suspend fun deleteActionMessage(userId: Int, chatId: Long, messageId: Long) {
 
-        val currentActionMessage = ActionMessage.Cache.fetch(userId)
+        val currentActionMessage = launcher.actionMessages.fetch(userId)
 
         val currentActionMessageId = currentActionMessage.value?.messageId
 
@@ -73,7 +73,7 @@ class MyBots : TdHandler() {
 
     fun saveActionMessage(userId: Int, messageId: Long) {
 
-        val currentActionMessage = ActionMessage.Cache.fetch(userId)
+        val currentActionMessage = launcher.actionMessages.fetch(userId)
 
         currentActionMessage.apply {
 
@@ -111,7 +111,7 @@ class MyBots : TdHandler() {
 
         val bots = LinkedHashMap<String, Int>()
 
-        if (chatId == Launcher.admin) {
+        if (chatId == launcher.admin) {
 
             bots[me.username] = me.id
 

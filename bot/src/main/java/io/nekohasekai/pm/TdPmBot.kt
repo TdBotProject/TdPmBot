@@ -4,7 +4,10 @@ import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.compress.*
-import io.nekohasekai.ktlib.core.*
+import io.nekohasekai.ktlib.core.getValue
+import io.nekohasekai.ktlib.core.input
+import io.nekohasekai.ktlib.db.IdTableCacheMap
+import io.nekohasekai.ktlib.db.forceCreateTables
 import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.i18n.*
@@ -17,6 +20,7 @@ import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
 import io.nekohasekai.pm.manage.*
 import kotlinx.coroutines.*
+import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import td.TdApi
 import java.io.File
@@ -24,7 +28,26 @@ import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
 
-object Launcher : TdCli(), PmInstance {
+open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, name), PmInstance {
+
+    companion object : TdPmBot() {
+
+        const val repoName = "TdPmBot"
+        const val repoUrl = "https://github.com/TdBotProject/TdPmBot"
+        const val licenseUrl = "https://github.com/TdBotProject/TdPmBot/blob/master/LICENSE"
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+
+            launch(args)
+
+            loadConfig()
+
+            start()
+
+        }
+
+    }
 
     var public = false
     lateinit var whiteList: IntArray
@@ -43,39 +66,51 @@ object Launcher : TdCli(), PmInstance {
 
     @Suppress("ObjectPropertyName")
     private var _admin = 0L
-
     override val admin by ::_admin
 
     lateinit var users: Array<Long>
 
-    override val integration get() = BotIntegration.Cache.fetch(me.id).value
-    override val settings get() = BotSetting.Cache.fetch(me.id).value
-    override val blocks by lazy { UserBlocks.Cache(me.id) }
+    val botIntegrations by lazy { IdTableCacheMap(database, BotIntegration) }
+    val botSettings by lazy { IdTableCacheMap(database, BotSetting) }
+    val actionMessages by lazy { IdTableCacheMap(database, ActionMessage) }
+    val startMessages by lazy { StartMessages.Cache(database) }
+    val botCommands by lazy { BotCommands.Cache(database) }
 
-    override var configFile = File("pm.yml")
+    override val integration get() = botIntegrations.fetch(me.id).value
+    override val settings get() = botSettings.fetch(me.id).value
+    override val blocks by lazy { UserBlocks.Cache(database, me.id) }
 
-    @JvmStatic
-    fun main(args: Array<String>) {
+    val instanceMap = HashMap<Int, PmBot>()
 
-        launch(args)
+    fun initBot(userBot: UserBot): PmBot {
 
-        loadConfig()
+        return instanceMap[userBot.botId] ?: synchronized(instanceMap) {
 
-        start()
+            PmBot(userBot.botToken, userBot, this).apply {
 
-        if (admin == 0L) {
+                instanceMap[botUserId] = this
 
-            defaultLog.warn("Bot owner not specified, send /id to bot to get your userId.")
+                start()
+
+            }
 
         }
 
     }
+
+    override var configFile = File("pm.yml")
 
     override fun onLoadConfig() {
 
         super.onLoadConfig()
 
         _admin = intConfig("B0T_OWNER")?.toLong() ?: _admin
+
+        if (admin == 0L) {
+
+            clientLog.warn("Bot owner not specified, send /id to bot to get your userId.")
+
+        }
 
         when (val pmMode = stringConfig("PM_MODE")?.toLowerCase() ?: "public") {
 
@@ -95,7 +130,7 @@ object Launcher : TdCli(), PmInstance {
 
                     runCatching { item.toInt() }.onFailure {
 
-                        defaultLog.warn(">> Invalid white-list user-id item: $item", it)
+                        clientLog.warn(">> Invalid white-list user-id item: $item", it)
 
                     }.getOrNull()
 
@@ -111,7 +146,7 @@ object Launcher : TdCli(), PmInstance {
 
             else -> {
 
-                defaultLog.error(">> Invalid mode defined: $pmMode")
+                clientLog.error(">> Invalid mode defined: $pmMode")
 
                 exitProcess(100)
 
@@ -127,16 +162,22 @@ object Launcher : TdCli(), PmInstance {
 
             var backupTo: File
 
-            backupTo = File(value ?: ".")
+            backupTo = File(value?.replace("\$id",tag
+                    .replace("  ", " ")
+                    .replace(" ", "-")
+                    .replace("_", "-")) ?: ".")
 
             if (backupTo.isDirectory) {
 
                 @Suppress("SpellCheckingInspection")
-                backupTo = File(backupTo, "td-pm-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz")
+                backupTo = File(backupTo, "td-pm-${tag
+                        .replace("  ", " ")
+                        .replace(" ", "-")
+                        .replace("_", "-")}-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz")
 
             } else if (!backupTo.name.endsWith(".tar.xz")) {
 
-                defaultLog.error(">> File name must ends with .tar.xz")
+                clientLog.error(">> File name must ends with .tar.xz")
 
                 exitProcess(100)
 
@@ -150,25 +191,25 @@ object Launcher : TdCli(), PmInstance {
 
             // 数据目录
 
-            output.writeDirectory("data/")
+            output.writeDirectories(File(options.databaseDirectory))
 
             // 数据库
 
-            output.writeFile("data/pm_data.db")
+            output.writeFile("${options.databaseDirectory}/pm_data.db")
 
-            output.writeFile("data/td.binlog")
+            output.writeFile("${options.databaseDirectory}/td.binlog")
 
-            val pmBots = File("data/pm").listFiles()
+            val pmBots = File("${options.databaseDirectory}/pm").listFiles()
 
             if (!pmBots.isNullOrEmpty()) {
 
-                output.writeDirectory("data/pm/")
+                output.writeDirectory("${options.databaseDirectory}/pm/")
 
                 pmBots.forEach {
 
-                    output.writeDirectory("data/pm/${it.name}/")
+                    output.writeDirectory("${options.databaseDirectory}/pm/${it.name}/")
 
-                    output.writeFile("data/pm/${it.name}/td.binlog")
+                    output.writeFile("${options.databaseDirectory}/pm/${it.name}/td.binlog")
 
                 }
 
@@ -178,7 +219,7 @@ object Launcher : TdCli(), PmInstance {
 
             output.close()
 
-            defaultLog.info(">> Saved to ${backupTo.path}")
+            clientLog.info(">> Saved to ${backupTo.path}")
 
             exitProcess(0)
 
@@ -190,7 +231,7 @@ object Launcher : TdCli(), PmInstance {
 
         super.onLoad()
 
-        defaultLog.debug("Init databases")
+        clientLog.debug("Init databases")
 
         initDatabase("pm_data.db")
 
@@ -204,7 +245,7 @@ object Launcher : TdCli(), PmInstance {
 
         database.write {
 
-            SchemaUtils.createMissingTablesAndColumns(
+            forceCreateTables(
                     UserBots,
                     StartMessages,
                     ActionMessages,
@@ -276,7 +317,9 @@ object Launcher : TdCli(), PmInstance {
 
         database {
 
-            BotInstances.loadAll()
+            clientLog.trace("Loading PM Bots")
+
+            UserBot.all().forEach { initBot(it) }
 
         }
 
@@ -290,18 +333,19 @@ object Launcher : TdCli(), PmInstance {
 
     override suspend fun gc() {
 
-        defaultLog.debug(">> 执行垃圾回收")
+        clientLog.debug(">> 执行垃圾回收")
 
-        defaultLog.debug(">> 内存缓存")
+        clientLog.debug(">> 内存缓存")
 
         super.gc()
 
-        BotIntegration.Cache.clear()
-        BotSetting.Cache.clear()
-        ActionMessage.Cache.clear()
-        StartMessages.Cache.clear()
+        botIntegrations.gc()
+        botSettings.gc()
+        actionMessages.gc()
+        startMessages.gc()
+        botCommands.gc()
 
-        defaultLog.debug(">> 清理数据库")
+        clientLog.debug(">> 清理数据库")
 
         val time = (SystemClock.now() / 1000L).toInt() - 24 * 60 * 60
 
@@ -327,36 +371,50 @@ object Launcher : TdCli(), PmInstance {
 
             ActionMessages.deleteWhere { ActionMessages.createAt less time }
 
-            val existsBots = UserBot.all().map { it.botId }.toMutableLinkedList().apply { add(me.id) }
+            @Suppress("UNCHECKED_CAST")
+            fun deleteUnusedBotData(
+                    vararg tables: Table
+            ) {
 
-            BotCommands.deleteWhere { BotCommands.botId notInList existsBots }
-            BotIntegrations.deleteWhere { BotIntegrations.botId notInList existsBots }
-            BotSettings.deleteWhere { BotSettings.botId notInList existsBots }
-            MessageRecords.deleteWhere { MessageRecords.botId notInList existsBots }
-            StartMessages.deleteWhere { StartMessages.botId notInList existsBots }
-            UserBlocks.deleteWhere { UserBlocks.botId notInList existsBots }
+                for (table in tables) {
+
+                    val idColumn: Column<Int> = (table.indices
+                            .find { it.columns.size == 1 && it.columns[0].name == "bot_id" }
+                            ?.columns?.get(0)
+                            ?: ((table as? IdTable<Int>)!!.id.columnType as EntityIDColumnType<*>).idColumn) as Column<Int>
+
+                    table.deleteWhere { (idColumn neq me.id) and (idColumn notInSubQuery UserBots.selectAll().adjustSlice { slice(UserBots.botId) }) }
+
+                }
+
+            }
+
+            deleteUnusedBotData(
+                    BotCommands,
+                    BotIntegrations,
+                    BotSettings,
+                    MessageRecords,
+                    StartMessages,
+                    UserBlocks
+            )
 
         }
 
-        defaultLog.trace(">> ${me.displayNameFormatted}")
+        clientLog.trace(">> ${me.displayNameFormatted}")
 
         gc(this)
 
-        BotInstances.instanceMap.forEach {
+        instanceMap.forEach {
 
-            defaultLog.trace(">> ${it.value.me.displayNameFormatted}")
+            clientLog.trace(">> ${it.value.me.displayNameFormatted}")
 
             it.value.gc()
 
         }
 
-        defaultLog.debug("<< 执行垃圾回收")
+        clientLog.debug("<< 执行垃圾回收")
 
     }
-
-    const val repoName = "TdPmBot"
-    const val repoUrl = "https://github.com/TdBotProject/TdPmBot"
-    const val licenseUrl = "https://github.com/TdBotProject/TdPmBot/blob/master/LICENSE"
 
     override suspend fun userBlocked(userId: Int) = blocks.fetch(userId).value == true
 
@@ -372,13 +430,13 @@ object Launcher : TdCli(), PmInstance {
 
         }
 
-        val command = BotCommands.Cache.fetch(me.id to function).value?.takeIf { !it.hide }
+        val command = botCommands.fetch(me.id to function).value?.takeIf { !it.hide }
 
         if (message.fromPrivate) {
 
             if (command == null) {
 
-                if (chatId != admin) onLaunch(userId, chatId, message)
+                onLaunch(userId, chatId, message)
 
                 finishEvent()
 
@@ -405,7 +463,7 @@ object Launcher : TdCli(), PmInstance {
 
         if (message.fromPrivate) {
 
-            val command = BotCommands.Cache.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
+            val command = botCommands.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
 
             command.messages.forEach { sudo make it syncTo chatId }
 
@@ -421,7 +479,7 @@ object Launcher : TdCli(), PmInstance {
 
         val L = localeFor(userId)
 
-        val startMessages = StartMessages.Cache.fetch(me.id).value
+        val startMessages = startMessages.fetch(me.id).value
 
         if (!public && chatId != admin) {
 

@@ -11,7 +11,7 @@ import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import td.TdApi
 
-class BlockHandler(pmInstance: PmInstance) : AbstractUserInputHandler(), PmInstance by pmInstance {
+class BlockHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInstance by pmInstance {
 
     override fun onLoad() {
 

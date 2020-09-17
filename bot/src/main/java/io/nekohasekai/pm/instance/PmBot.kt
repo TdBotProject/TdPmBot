@@ -17,22 +17,22 @@ import io.nekohasekai.pm.manage.menu.*
 import org.jetbrains.exposed.sql.*
 import td.TdApi
 
-class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstance {
+class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdBot(botToken), PmInstance {
 
-    override val database = Launcher.database
+    override val database = launcher.database
 
     override val admin get() = userBot.owner.toLong()
 
-    override val integration get() = BotIntegration.Cache.fetch(botUserId).value
-    override val settings get() = BotSetting.Cache.fetch(botUserId).value
+    override val integration get() = launcher.botIntegrations.fetch(botUserId).value
+    override val settings get() = launcher.botSettings.fetch(botUserId).value
 
-    override val blocks by lazy { UserBlocks.Cache(botUserId) }
+    override val blocks by lazy { UserBlocks.Cache(database, botUserId) }
 
     override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
 
         if (auth && authorizationState is TdApi.AuthorizationStateClosed) {
 
-            defaultLog.info("${me.displayName} (@${me.username}): PmBot Closed")
+            defaultLog.debug("[${me.displayNameFormatted}] PmBot Closed")
 
         }
 
@@ -53,7 +53,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
     override suspend fun onLogin() {
 
-        defaultLog.info("${me.displayName} (@${me.username}): PmBot Loaded")
+        defaultLog.debug("[${me.displayNameFormatted}] PmBot Loaded")
 
         updateCommands()
 
@@ -85,19 +85,12 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         database.write {
 
-            UserBlocks.deleteWhere { UserBlocks.botId eq botUserId }
-            BotSettings.deleteWhere { BotSettings.botId eq botUserId }
-            BotCommands.deleteWhere { BotCommands.botId eq botUserId }
-            BotIntegrations.deleteWhere { BotIntegrations.botId eq botUserId }
-            StartMessages.deleteWhere { StartMessages.botId eq botUserId }
-            MessageRecords.deleteWhere { messagesForCurrentBot }
-
             UserBot.removeFromCache(userBot)
             UserBots.deleteWhere { UserBots.botId eq botUserId }
 
         }
 
-        BotInstances.instanceMap.remove(botUserId)
+        launcher.instanceMap.remove(botUserId)
 
     }
 
@@ -106,8 +99,9 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
         destroy()
 
         val owner = admin
+        val userBot = userBot
 
-        Launcher.apply {
+        launcher.apply {
 
             getChatOrNull(owner) ?: return
 
@@ -122,8 +116,9 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
         destroy()
 
         val owner = admin
+        val userBot = userBot
 
-        Launcher.apply {
+        launcher.apply {
 
             getChatOrNull(owner) ?: return
 
@@ -171,7 +166,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         }
 
-        val command = BotCommands.Cache.fetch(me.id to function).value?.takeIf { !it.hide }
+        val command = launcher.botCommands.fetch(me.id to function).value?.takeIf { !it.hide }
 
         if (!message.fromPrivate) {
 
@@ -197,7 +192,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         if (message.fromPrivate) {
 
-            val command = BotCommands.Cache.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
+            val command = launcher.botCommands.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
 
             command.messages.forEach { sudo make it syncTo chatId }
 
@@ -211,15 +206,15 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
         if (!message.fromPrivate) return
 
-        val startMessages = StartMessages.Cache.fetch(botUserId).value
+        val startMessages = launcher.startMessages.fetch(botUserId).value
 
         if (startMessages == null) {
 
             var content = L.DEFAULT_WELCOME
 
-            if (Launcher.public) {
+            if (launcher.public) {
 
-                content += "\n\n" + L.POWERED_BY.input(Launcher.me.username, L.LICENSE.input(Launcher.repoName, Launcher.licenseUrl, "Github Repo".htmlLink(Launcher.repoUrl)))
+                content += "\n\n" + L.POWERED_BY.input(launcher.me.username, L.LICENSE.input(TdPmBot.repoName, TdPmBot.licenseUrl, "Github Repo".htmlLink(TdPmBot.repoUrl)))
 
             }
 
@@ -249,13 +244,7 @@ class PmBot(botToken: String, val userBot: UserBot) : TdBot(botToken), PmInstanc
 
             if (chatId != admin) rejectFunction()
 
-            val botUserId = me.id
-
-            Launcher.apply {
-
-                findHandler<BotMenu>().botMenu(userId, chatId, 0L, false, botUserId, userBot)
-
-            }
+            launcher.findHandler<BotMenu>().botMenu(userId, chatId, 0L, false, me.id, userBot)
 
             sudo make L.CREATE_FINISHED sendTo chatId
 

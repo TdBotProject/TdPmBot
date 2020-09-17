@@ -5,6 +5,7 @@ import org.jetbrains.exposed.sql.Table
 object MessageRecords : Table("pm_message_records") {
 
     val messageId = long("message_id").index()
+
     val type = integer("type")
     val chatId = long("chat_id").index()
     val botId = integer("bot_id").index()

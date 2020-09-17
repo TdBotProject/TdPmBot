@@ -97,7 +97,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
                     saveMessage(MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE, targetChat, message.id, sentMessage.id)
                     saveMessage(MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED, targetChat, sentMessage.id, message.id)
 
-                    userCalled(userId, "发出消息: ${sentMessage.text ?: "<${sentMessage.content.javaClass.simpleName.substringAfter("Message")}>"}")
+                    userCalled(userId, ">> ${sentMessage.text ?: "[ ${sentMessage.content.javaClass.simpleName.substringAfter("Message")} ]"}")
 
                     arrayOf(sentMessage)
 
@@ -122,7 +122,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                     }
 
-                    userCalled(userId, "发出媒体组")
+                    userCalled(userId, ">> [ Media Group ]")
 
                     messages
 

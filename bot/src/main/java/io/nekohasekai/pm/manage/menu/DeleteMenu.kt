@@ -7,7 +7,6 @@ import io.nekohasekai.ktlib.td.core.i18n.localeFor
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
-import io.nekohasekai.pm.instance.BotInstances
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
 import java.util.*
@@ -85,7 +84,7 @@ class DeleteMenu : BotHandler() {
 
                 val status = sudo make L.STOPPING at messageId syncEditTo chatId
 
-                val bot = BotInstances.initBot(userBot!!)
+                val bot = launcher.initBot(userBot!!)
 
                 bot.waitForClose()
 

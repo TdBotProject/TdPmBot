@@ -11,8 +11,8 @@ import io.nekohasekai.ktlib.td.core.i18n.LocaleController
 import io.nekohasekai.ktlib.td.core.i18n.localeFor
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getMessageOrNull
-import io.nekohasekai.pm.Launcher
 import io.nekohasekai.pm.instance.messagesForCurrentBot
+import io.nekohasekai.pm.launcher
 import org.jetbrains.exposed.sql.*
 
 interface PmInstance {
@@ -24,7 +24,7 @@ interface PmInstance {
 
 }
 
-val PmInstance.L by receive<PmInstance, LocaleController> { Launcher.localeFor(admin) }
+val PmInstance.L by receive<PmInstance, LocaleController> { (this as TdHandler).launcher.localeFor(admin) }
 
 fun TdHandler.saveMessage(type: Int, chatId: Long, messageId: Long, targetId: Long? = null) {
 
@@ -51,6 +51,8 @@ fun TdHandler.saveMessage(type: Int, chatId: Long, messageId: Long, targetId: Lo
 }
 
 suspend fun TdHandler.gc(instance: PmInstance) {
+
+    instance.blocks.gc()
 
     var deleted = 0
 

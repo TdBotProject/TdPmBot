@@ -9,8 +9,8 @@ import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkup
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.database.*
-import io.nekohasekai.pm.instance.BotInstances
+import io.nekohasekai.pm.database.BotCommand
+import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
@@ -29,7 +29,7 @@ class CommandMenu : BotHandler() {
 
     override fun onLoad() {
 
-        if (sudo is Launcher) initData(dataId)
+        if (sudo is TdPmBot) initData(dataId)
 
         initPersist(persistId)
 
@@ -61,7 +61,7 @@ class CommandMenu : BotHandler() {
 
             }
 
-            if (userBot == null && Launcher.public) {
+            if (userBot == null && launcher.public) {
 
                 newLine {
 
@@ -97,7 +97,7 @@ class CommandMenu : BotHandler() {
                 if (command.messages.isEmpty()) L.EMPTY else L.MESSAGES_STATUS_COUNT.input(command.messages.size),
                 botUserName(botUserId, userBot),
                 command.command,
-                if (userBot == null && Launcher.public) L.COMMAND_INPUT_WHEN_PUBLIC_DEF else ""
+                if (userBot == null && launcher.public) L.COMMAND_INPUT_WHEN_PUBLIC_DEF else ""
         ) withMarkup commandButtons(L, botUserId, userBot, command) onSuccess {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
@@ -162,7 +162,7 @@ class CommandMenu : BotHandler() {
 
     override suspend fun onNewBotCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>, botUserId: Int, userBot: UserBot?) {
 
-        val command = BotCommands.Cache.fetch(botUserId to data[0].decodeToString()).value ?: return
+        val command = launcher.botCommands.fetch(botUserId to data[0].decodeToString()).value ?: return
 
         if (data.size < 2) {
 
@@ -218,7 +218,7 @@ class CommandMenu : BotHandler() {
 
             2 -> {
 
-                val self = if (userBot != null) BotInstances.initBot(userBot) else this
+                val self = if (userBot != null) launcher.initBot(userBot) else this
 
                 self.writePersist(userId, persistId, 1L, EditMessagesCache(botUserId, userBot, messageId, command), allowFunction = true)
 
@@ -248,7 +248,7 @@ class CommandMenu : BotHandler() {
 
                 val target: Boolean
 
-                BotCommands.Cache.fetch(botUserId to command.command).apply {
+                launcher.botCommands.fetch(botUserId to command.command).apply {
 
                     val currVal = value
 
@@ -294,13 +294,13 @@ class CommandMenu : BotHandler() {
 
                 editMessageReplyMarkup(chatId, messageId, commandButtons(L, botUserId, userBot, command))
 
-                if (userBot != null) BotInstances.initBot(userBot).updateCommands() else (sudo as Launcher).updateCommands()
+                if (userBot != null) launcher.initBot(userBot).updateCommands() else (sudo as TdPmBot).updateCommands()
 
             }
 
             5 -> {
 
-                BotCommands.Cache.fetch(botUserId to command.command).apply {
+                launcher.botCommands.fetch(botUserId to command.command).apply {
 
                     if (value != null) {
 
@@ -317,7 +317,7 @@ class CommandMenu : BotHandler() {
 
                 findHandler<CommandsMenu>().commandsMenu(botUserId, userBot, userId, chatId, messageId, true)
 
-                if (userBot != null) BotInstances.initBot(userBot).updateCommands() else (sudo as Launcher).updateCommands()
+                if (userBot != null) launcher.initBot(userBot).updateCommands() else (sudo as TdPmBot).updateCommands()
 
             }
 
@@ -388,7 +388,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.description) {
 
-                BotCommands.Cache.fetch(cache.botUserId to cache.command.command).apply {
+                launcher.botCommands.fetch(cache.botUserId to cache.command.command).apply {
 
                     value = null
                     changed = true
@@ -399,7 +399,7 @@ class CommandMenu : BotHandler() {
 
                 cache.command.command = text
 
-                BotCommands.Cache.fetch(cache.botUserId to cache.command.command).apply {
+                launcher.botCommands.fetch(cache.botUserId to cache.command.command).apply {
 
                     value = cache.command
                     changed = true
@@ -412,7 +412,7 @@ class CommandMenu : BotHandler() {
 
                 cache.command.description = text
 
-                BotCommands.Cache.fetch(cache.botUserId to cache.command.command).apply {
+                launcher.botCommands.fetch(cache.botUserId to cache.command.command).apply {
 
                     value = cache.command
                     changed = true
@@ -437,7 +437,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                Launcher.editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+                launcher.editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
 
                 cache.edited = true
 
@@ -507,7 +507,7 @@ class CommandMenu : BotHandler() {
 
             val botUserId = cache.botUserId
 
-            if (chatId != Launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
+            if (chatId != launcher.admin && database { UserBot.findById(botUserId)?.owner != userId }) {
 
                 // 权限检查
 
@@ -521,7 +521,7 @@ class CommandMenu : BotHandler() {
 
             userCalled(userId, "submitted messages to function /${cache.command} for $botUserId")
 
-            BotCommands.Cache.fetch(cache.botUserId to cache.command.command).apply {
+            launcher.botCommands.fetch(cache.botUserId to cache.command.command).apply {
 
                 value = cache.command
                 changed = true
@@ -532,10 +532,10 @@ class CommandMenu : BotHandler() {
 
             sudo make L.SETTING_SAVED sendTo chatId
 
-            (sudo as? Launcher)?.updateCommands()
+            (sudo as? TdPmBot)?.updateCommands()
             (sudo as? PmBot)?.updateCommands()
 
-            (if (cache.userBot != null) Launcher.findHandler() else this)
+            (if (cache.userBot != null) launcher.findHandler() else this)
                     .commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
 
 

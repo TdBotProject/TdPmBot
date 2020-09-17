@@ -10,7 +10,6 @@ import io.nekohasekai.ktlib.td.core.utils.*
 import io.nekohasekai.ktlib.td.http.httpSync
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
-import io.nekohasekai.pm.instance.BotInstances
 import td.TdApi
 
 class CreateBot : TdHandler() {
@@ -44,13 +43,13 @@ class CreateBot : TdHandler() {
 
         }
 
-        if (chatId != Launcher.admin) {
+        if (chatId != launcher.admin) {
 
-            if (!Launcher.public) rejectFunction()
+            if (!launcher.public) rejectFunction()
 
-            if (!Launcher.userAccessible(userId)) {
+            if (!launcher.userAccessible(userId)) {
 
-                sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(Launcher.repoUrl) syncTo chatId
+                sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(TdPmBot.repoUrl) syncTo chatId
 
                 return
 
@@ -158,7 +157,7 @@ class CreateBot : TdHandler() {
 
         }
 
-        if (BotInstances.initBot(userBot).waitForAuth()) {
+        if (launcher.initBot(userBot).waitForAuth()) {
 
             sudo makeHtml L.FINISH_CREATION.input(userBot.username) editTo status
 
@@ -167,7 +166,6 @@ class CreateBot : TdHandler() {
             warnUserCalled(userId, "start failed when created")
 
         }
-
 
     }
 

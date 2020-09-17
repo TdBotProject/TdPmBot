@@ -1,17 +1,18 @@
 package io.nekohasekai.pm.database
 
 import io.nekohasekai.ktlib.db.DatabaseCacheMap
-import io.nekohasekai.pm.Launcher
+import io.nekohasekai.ktlib.db.DatabaseDispatcher
 import org.jetbrains.exposed.sql.*
 
 object UserBlocks : Table("pm_blocks") {
 
     val botId = integer("bot_id").index()
+
     val blockedUser = integer("blocked_user")
 
     override val primaryKey = PrimaryKey(botId, blockedUser)
 
-    class Cache(val botUserId: Int) : DatabaseCacheMap<Int, Boolean>(Launcher.database) {
+    class Cache(database: DatabaseDispatcher, val botUserId: Int) : DatabaseCacheMap<Int, Boolean>(database) {
 
         override fun read(id: Int): Boolean {
 
@@ -43,6 +44,7 @@ object UserBlocks : Table("pm_blocks") {
             UserBlocks.deleteWhere { (botId eq botUserId) and (blockedUser eq id) }
 
         }
+
     }
 
 }

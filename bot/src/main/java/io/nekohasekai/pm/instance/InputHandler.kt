@@ -51,7 +51,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         } else {
 
-            onNewMessage(userId, chatId, message, null, null)
+            onNewMessage(userId, chatId, message, "", null)
 
         }
 
@@ -60,7 +60,6 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
     val albumMessages = HashMap<Long, AlbumMessages>()
 
     class AlbumMessages(
-            val albumId: Long,
             val command: String?
     ) {
 
@@ -83,7 +82,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         if (mediaAlbumId != 0L && album == null) {
 
-            albumMessages.getOrPut(mediaAlbumId) { AlbumMessages(mediaAlbumId, command) }.apply {
+            albumMessages.getOrPut(mediaAlbumId) { AlbumMessages(command) }.apply {
 
                 messages.add(message)
 
@@ -101,7 +100,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 }.also {
 
-                    TdClient.timer.schedule(it, 1000L)
+                    TdClient.timer.schedule(it, 300L)
 
                 }
 
@@ -130,18 +129,9 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     }
 
-                    val botUserId = me.id
-                    val userBot = (Launcher.sudo as? PmBot)?.userBot
-
-                    val owner = admin
-
-                    Launcher.apply {
-
-                        sudo make L.INTEGRATION_PAUSED_NOTICE.input(me.displayName, me.username) syncTo admin
-
-                        findHandler<IntegrationMenu>().integrationMenu(L, botUserId, userBot, owner.toInt(), owner, 0L, false)
-
-                    }
+                    launcher.getChatOrNull(admin) ?: return null
+                    launcher make L.INTEGRATION_PAUSED_NOTICE.input(me.displayName, me.username) syncTo admin
+                    launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, userBot, admin.toInt(), admin, 0L, false)
 
                 }
 
@@ -165,13 +155,23 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         }
 
+        val sudo = sudo
+
+        if (sudo is TdPmBot && sudo.public && command == null) {
+
+            sudo.onLaunch(userId, chatId, message)
+
+            finishEvent()
+
+        }
+
         if (album != null) {
 
-            userCalled(userId, "收到媒体组")
+            userCalled(userId, "<< [ Media Group ]")
 
         } else {
 
-            userCalled(userId, "收到消息: ${message.text ?: "<${message.content.javaClass.simpleName.substringAfter("Message")}>"}")
+            userCalled(userId, "<< ${message.text ?: "[ ${message.content.javaClass.simpleName.substringAfter("Message")} ]"}")
 
         }
 
@@ -199,7 +199,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
         // 单条消息回复时未启用双向同步或者媒体组为转发
 
-        if (userId != currentUser || times < 1 || (
+        if (userId != currentUser || times < 1 || !command.isNullOrBlank() || (
                         replyTo != 0L && (settings?.twoWaySync != true ||
                                 (album == null || album.messages[0].forwardInfo != null)))
         ) {
@@ -209,7 +209,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             val user = getUser(userId)
 
-            val inputNotice = if (command != null) {
+            val inputNotice = if (!command.isNullOrBlank()) {
 
                 sudo makeHtml L.INPUT_FN_NOTICE.input(user.id, user.htmlInlineMention, command)
 
@@ -278,12 +278,9 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     }
 
-                    Launcher make L.INTEGRATION_PAUSED_NOTICE.input(
-                            me.displayName,
-                            me.username
-                    ) syncTo admin
-
-                    Launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, null, admin.toInt(), admin, 0L, false)
+                    launcher.getChatOrNull(admin) ?: return
+                    launcher make L.INTEGRATION_PAUSED_NOTICE.input(me.displayName, me.username) syncTo admin
+                    launcher.findHandler<IntegrationMenu>().integrationMenu(L, me.id, userBot, admin.toInt(), admin, 0L, false)
 
                 }
 

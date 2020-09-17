@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import td.TdApi
 
-abstract class AbstractUserInputHandler : TdHandler() {
+abstract class AbstractInputUserFunction : TdHandler() {
 
     override suspend fun onFunction(userId: Int, chatId: Long, message: TdApi.Message, function: String, param: String, params: Array<String>, originParams: Array<String>) {
 
