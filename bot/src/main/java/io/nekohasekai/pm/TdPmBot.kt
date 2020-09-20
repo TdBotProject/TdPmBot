@@ -162,7 +162,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             var backupTo: File
 
-            backupTo = File(value?.replace("\$id",tag
+            backupTo = File(value?.replace("\$id", tag
                     .replace("  ", " ")
                     .replace(" ", "-")
                     .replace("_", "-")) ?: ".")
@@ -170,10 +170,12 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
             if (backupTo.isDirectory) {
 
                 @Suppress("SpellCheckingInspection")
-                backupTo = File(backupTo, "td-pm-${tag
-                        .replace("  ", " ")
-                        .replace(" ", "-")
-                        .replace("_", "-")}-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz")
+                backupTo = File(backupTo, "td-pm-${
+                    tag
+                            .replace("  ", " ")
+                            .replace(" ", "-")
+                            .replace("_", "-")
+                }-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz")
 
             } else if (!backupTo.name.endsWith(".tar.xz")) {
 
@@ -187,29 +189,31 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             val output = FileUtil.touch(backupTo).tarXz()
 
-            output.writeFile("pm.conf")
+            output.writeFile("pm.yml", configFile)
 
             // 数据目录
 
-            output.writeDirectories(File(options.databaseDirectory))
+            output.writeDirectory("data/")
 
             // 数据库
 
-            output.writeFile("${options.databaseDirectory}/pm_data.db")
+            val originDatabaseDirectory = File(options.databaseDirectory)
 
-            output.writeFile("${options.databaseDirectory}/td.binlog")
+            output.writeFile("data/pm_data.db", File(originDatabaseDirectory, "pm_data.db"))
 
-            val pmBots = File("${options.databaseDirectory}/pm").listFiles()
+            output.writeFile("data/td.binlog", File(originDatabaseDirectory, "td.binlog"))
+
+            val pmBots = File(originDatabaseDirectory, "pm").listFiles()
 
             if (!pmBots.isNullOrEmpty()) {
 
-                output.writeDirectory("${options.databaseDirectory}/pm/")
+                output.writeDirectory("data/pm/")
 
                 pmBots.forEach {
 
-                    output.writeDirectory("${options.databaseDirectory}/pm/${it.name}/")
+                    output.writeDirectory("data/pm/${it.name}/")
 
-                    output.writeFile("${options.databaseDirectory}/pm/${it.name}/td.binlog")
+                    output.writeFile("data/pm/${it.name}/td.binlog", File(it, "td.binlog"))
 
                 }
 
