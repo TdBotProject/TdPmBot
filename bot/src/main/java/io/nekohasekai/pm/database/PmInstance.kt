@@ -68,6 +68,7 @@ suspend fun TdHandler.gc(instance: PmInstance) {
             MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED,
             MessageRecords.MESSAGE_TYPE_OUTPUT_MESSAGE -> {
 
+                val chatId = row[MessageRecords.chatId]
                 val messageId = row[MessageRecords.messageId]
 
                 try {
@@ -91,7 +92,7 @@ suspend fun TdHandler.gc(instance: PmInstance) {
 
                 database.write {
 
-                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq messageId) }
+                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.chatId eq chatId) and (MessageRecords.messageId eq messageId) }
 
                 }
 
@@ -108,9 +109,10 @@ suspend fun TdHandler.gc(instance: PmInstance) {
             MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE,
             MessageRecords.MESSAGE_TYPE_OUTPUT_FORWARDED -> {
 
+                val chatId = row[MessageRecords.chatId]
                 val messageId = row[MessageRecords.messageId]
 
-                if (database { MessageRecords.select { messagesForCurrentBot and (MessageRecords.targetId eq messageId) }.firstOrNull() } != null) {
+                if (database { MessageRecords.select { messagesForCurrentBot and (MessageRecords.chatId eq chatId) and (MessageRecords.targetId eq messageId) }.firstOrNull() } != null) {
 
                     if (getMessageOrNull(row[MessageRecords.chatId], messageId) != null) continue
 
@@ -120,7 +122,7 @@ suspend fun TdHandler.gc(instance: PmInstance) {
 
                 database.write {
 
-                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId eq messageId) }
+                    MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.chatId eq chatId) and (MessageRecords.messageId eq messageId) }
 
                 }
 

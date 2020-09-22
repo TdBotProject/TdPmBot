@@ -9,10 +9,10 @@ object MessageRecords : Table("pm_message_records") {
     val type = integer("type")
     val chatId = long("chat_id").index()
     val botId = integer("bot_id").index()
-    val targetId = long("target_id").index().nullable()
+    val targetId = long("target_id").nullable()
     val createAt = integer("create_at")
 
-    override val primaryKey = PrimaryKey(messageId, botId)
+    override val primaryKey = PrimaryKey(botId, chatId, messageId)
 
     // 输入消息 (chatId: 用户, targetId: 0)
     const val MESSAGE_TYPE_INPUT_MESSAGE = 1

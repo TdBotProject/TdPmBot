@@ -300,7 +300,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         database.write {
 
-            MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.messageId inList listOf(messageId, * targetMessages.toTypedArray())) }
+            MessageRecords.deleteWhere { messagesForCurrentBot and (MessageRecords.chatId eq targetChat) and (MessageRecords.messageId inList listOf(messageId, * targetMessages.toTypedArray())) }
 
         }
 

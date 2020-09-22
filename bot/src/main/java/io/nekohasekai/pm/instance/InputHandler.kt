@@ -183,7 +183,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 MessageRecords.select {
 
-                    messagesForCurrentBot and (MessageRecords.messageId eq message.replyToMessageId) and MessageRecords.targetId.isNotNull()
+                    messagesForCurrentBot and (MessageRecords.chatId eq chatId) and (MessageRecords.messageId eq message.replyToMessageId) and MessageRecords.targetId.isNotNull()
 
                 }.firstOrNull()
 
