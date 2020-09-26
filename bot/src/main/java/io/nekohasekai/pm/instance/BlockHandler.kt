@@ -2,11 +2,11 @@ package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.extensions.*
-import io.nekohasekai.ktlib.td.core.i18n.NO_PERMISSION
-import io.nekohasekai.ktlib.td.core.i18n.failed
 import io.nekohasekai.ktlib.td.core.raw.*
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.i18n.NO_PERMISSION
+import io.nekohasekai.ktlib.td.i18n.failed
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import td.TdApi

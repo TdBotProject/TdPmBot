@@ -2,9 +2,9 @@ package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.*
 import io.nekohasekai.ktlib.td.core.*
-import io.nekohasekai.ktlib.td.core.extensions.*
 import io.nekohasekai.ktlib.td.core.raw.*
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.IntegrationMenu

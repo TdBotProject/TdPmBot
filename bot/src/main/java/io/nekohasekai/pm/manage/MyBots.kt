@@ -2,11 +2,11 @@ package io.nekohasekai.pm.manage
 
 import cn.hutool.core.date.SystemClock
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.core.extensions.asByteArray
-import io.nekohasekai.ktlib.td.core.extensions.fromPrivate
-import io.nekohasekai.ktlib.td.core.i18n.*
 import io.nekohasekai.ktlib.td.core.raw.getMessage
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.asByteArray
+import io.nekohasekai.ktlib.td.extensions.fromPrivate
+import io.nekohasekai.ktlib.td.i18n.*
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.BotMenu

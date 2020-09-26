@@ -1,6 +1,6 @@
 package io.nekohasekai.pm
 
-import io.nekohasekai.ktlib.td.core.i18n.LocaleController
+import io.nekohasekai.ktlib.td.i18n.LocaleController
 
 private typealias L = LocaleController
 

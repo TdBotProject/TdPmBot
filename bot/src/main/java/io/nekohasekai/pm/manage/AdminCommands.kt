@@ -1,7 +1,7 @@
 package io.nekohasekai.pm.manage
 
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.core.utils.make
+import io.nekohasekai.ktlib.td.utils.make
 import io.nekohasekai.pm.launcher
 import kotlinx.coroutines.*
 import td.TdApi

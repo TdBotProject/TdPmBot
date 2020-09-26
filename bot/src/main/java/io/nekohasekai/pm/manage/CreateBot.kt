@@ -4,10 +4,10 @@ import cn.hutool.core.util.NumberUtil
 import com.pengrad.telegrambot.request.GetMe
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.*
-import io.nekohasekai.ktlib.td.core.extensions.*
-import io.nekohasekai.ktlib.td.core.i18n.*
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.http.httpSync
+import io.nekohasekai.ktlib.td.i18n.*
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
 import td.TdApi

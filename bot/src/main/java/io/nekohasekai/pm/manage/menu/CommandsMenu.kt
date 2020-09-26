@@ -3,10 +3,10 @@ package io.nekohasekai.pm.manage.menu
 import cn.hutool.http.HtmlUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.extensions.*
-import io.nekohasekai.ktlib.td.core.i18n.*
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.i18n.*
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.PmBot

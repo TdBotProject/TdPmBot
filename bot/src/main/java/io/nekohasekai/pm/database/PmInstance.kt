@@ -6,9 +6,9 @@ import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.receive
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.core.extensions.displayName
-import io.nekohasekai.ktlib.td.core.i18n.LocaleController
-import io.nekohasekai.ktlib.td.core.i18n.localeFor
+import io.nekohasekai.ktlib.td.extensions.displayName
+import io.nekohasekai.ktlib.td.i18n.LocaleController
+import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getMessageOrNull
 import io.nekohasekai.pm.instance.messagesForCurrentBot

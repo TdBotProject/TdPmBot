@@ -5,12 +5,12 @@ import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.core.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.extensions.*
-import io.nekohasekai.ktlib.td.core.i18n.CANCELED
-import io.nekohasekai.ktlib.td.core.i18n.LICENSE
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.i18n.CANCELED
+import io.nekohasekai.ktlib.td.i18n.LICENSE
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.manage.menu.*

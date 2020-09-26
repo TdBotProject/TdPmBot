@@ -1,11 +1,11 @@
 package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.td.core.extensions.htmlCode
-import io.nekohasekai.ktlib.td.core.extensions.htmlInlineMention
 import io.nekohasekai.ktlib.td.core.raw.getUser
 import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
-import io.nekohasekai.ktlib.td.core.utils.*
+import io.nekohasekai.ktlib.td.extensions.htmlCode
+import io.nekohasekai.ktlib.td.extensions.htmlInlineMention
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import org.jetbrains.exposed.sql.*
