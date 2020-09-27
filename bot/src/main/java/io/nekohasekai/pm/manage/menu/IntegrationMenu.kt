@@ -9,7 +9,6 @@ import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.BotIntegration
 import io.nekohasekai.pm.database.UserBot
-import io.nekohasekai.pm.instance.userBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
 import td.TdApi

@@ -130,7 +130,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     override fun onLoad() {
 
-        options databaseDirectory "data/pm/$botUserId"
+        options databaseDirectory "${launcher.dataDir}/pm/$botUserId"
 
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))
@@ -139,6 +139,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
         addHandler(JoinHandler(this))
         addHandler(BlockHandler(this))
         addHandler(RecallHandler(this))
+        addHandler(UpgradeHandler(this))
 
         addHandler(StartMessagesMenu())
         addHandler(IntegrationMenu())

@@ -279,6 +279,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         addHandler(DeleteHandler(this))
         addHandler(JoinHandler(this))
         addHandler(RecallHandler(this))
+        addHandler(UpgradeHandler(this))
 
         addHandler(GetIdCommand())
         addHandler(AdminCommands())

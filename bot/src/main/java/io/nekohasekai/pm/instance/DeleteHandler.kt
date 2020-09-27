@@ -5,8 +5,7 @@ import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.raw.getMessageWith
 import io.nekohasekai.ktlib.td.utils.*
-import io.nekohasekai.pm.MESSAGE_DELETED
-import io.nekohasekai.pm.MESSAGE_DELETED_BY_ME
+import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
 import org.jetbrains.exposed.sql.*
 
