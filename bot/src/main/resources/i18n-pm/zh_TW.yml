@@ -155,6 +155,8 @@ SET_INTEGRATION: |-
   您可以將 PM 機器人 {} @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
 
   接入狀態: {}
+INTEGRATION_CONFIRM: |-
+  由於您為此群的匿名管理員, 請點擊下方按鈕再次確認.
 INTEGRATION_HAS_SET: |-
   成功, 所有消息將被發往本群.
 INTEGRATION_STATUS: |-

@@ -65,6 +65,7 @@ internal val L.MESSAGES_RESET by string
 internal val L.ERROR_IN_PREVIEW by string
 
 internal val L.SET_INTEGRATION by string
+internal val L.INTEGRATION_CONFIRM by string
 internal val L.INTEGRATION_HAS_SET by string
 internal val L.INTEGRATION_STATUS by string
 internal val L.INTEGRATION_UNDEF by string

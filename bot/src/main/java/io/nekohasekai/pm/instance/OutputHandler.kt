@@ -113,7 +113,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 try {
 
-                    val messages = sendMessageAlbum(targetChat, replyTo, TdApi.MessageSendOptions(), album.messages.map { it.asInputOrForward }.toTypedArray()).messages
+                    val messages = sendMessageAlbum(targetChat, replyTo, 0L, TdApi.MessageSendOptions(), album.messages.map { it.asInputOrForward }.toTypedArray()).messages
 
                     messages.forEachIndexed { index, sentMessage ->
 

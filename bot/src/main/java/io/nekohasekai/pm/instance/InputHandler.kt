@@ -259,11 +259,11 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     messages = if (settings?.twoWaySync == true && album.messages[0].forwardInfo == null) {
 
-                        sendMessageAlbum(integration.integration, replyTo, TdApi.MessageSendOptions(), content).messages
+                        sendMessageAlbum(integration.integration, replyTo, 0L, TdApi.MessageSendOptions(), content).messages
 
                     } else {
 
-                        forwardMessages(integration.integration, chatId, ids, TdApi.MessageSendOptions(), asAlbum = true, sendCopy = false, removeCaption = false).messages
+                        forwardMessages(integration.integration, chatId, ids, TdApi.MessageSendOptions(), sendCopy = false, removeCaption = false).messages
 
                     }
 
@@ -294,11 +294,11 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                     messages = if (settings?.twoWaySync == true && album.messages[0].forwardInfo == null) {
 
-                        sendMessageAlbum(admin, replyTo, TdApi.MessageSendOptions(), content).messages
+                        sendMessageAlbum(admin, replyTo, 0L, TdApi.MessageSendOptions(), content).messages
 
                     } else {
 
-                        forwardMessages(admin, chatId, ids, TdApi.MessageSendOptions(), asAlbum = true, sendCopy = false, removeCaption = false).messages
+                        forwardMessages(admin, chatId, ids, TdApi.MessageSendOptions(), sendCopy = false, removeCaption = false).messages
 
                     }
 

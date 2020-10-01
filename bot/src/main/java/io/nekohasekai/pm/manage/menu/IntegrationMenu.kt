@@ -209,9 +209,7 @@ class IntegrationMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        if (userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
-
-            // 权限检查
+        if (userId !in arrayOf(0, 777000) && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
 
             warnUserCalled(userId, """
                 Illegal access to set integration payload
@@ -222,52 +220,107 @@ class IntegrationMenu : BotHandler() {
                 UserId: $userId
             """.trimIndent())
 
-            sudo make L.NO_PERMISSION syncReplyTo message
+            sudo make L.NO_PERMISSION onSuccess deleteDelay(message) replyTo message
 
             return
 
         }
 
+        if (userId !in arrayOf(0, 777000)) {
+
+            confirmSet(chatId)
+
+            sudo make L.INTEGRATION_HAS_SET syncReplyTo message
+
+        } else {
+
+            sudo make L.INTEGRATION_CONFIRM withMarkup inlineButton {
+
+                dataLine(L.INTEGRATION_SET, dataId)
+
+            } replyTo message
+
+        }
+
+    }
+
+    override suspend fun onNewCallbackQuery(userId: Int, chatId: Long, messageId: Long, queryId: Long, data: Array<ByteArray>) {
+
+        if (data.isNotEmpty()) {
+
+            super.onNewCallbackQuery(userId, chatId, messageId, queryId, data)
+
+            return
+
+        }
+
+        val L = localeFor(userId)
+
+        if (userId !in arrayOf(0, 777000) && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
+
+            sudo makeAlert L.NO_PERMISSION cacheTime 114 syncAnswerTo queryId
+
+            return
+
+        }
+
+        confirmSet(chatId)
+
+        sudo syncConfirmTo queryId
+
+        sudo make L.INTEGRATION_HAS_SET at messageId syncEditTo chatId
+
+    }
+
+    suspend fun confirmSet(chatId: Long) {
+
         val integrationEntry = launcher.botIntegrations.fetch(me.id)
 
         val integration = integrationEntry.value
 
-        if (integration == null) {
+        when {
 
-            launcher.botIntegrations.remove(me.id)
+            integration == null -> {
 
-            database.write {
+                launcher.botIntegrations.remove(me.id)
 
-                BotIntegration.new(me.id) {
+                database.write {
 
-                    this.integration = chatId
+                    BotIntegration.new(me.id) {
+
+                        this.integration = chatId
+
+                    }
 
                 }
 
             }
 
-        } else if (integration.integration != chatId) {
+            integration.integration != chatId -> {
 
-            database.write {
+                database.write {
 
-                integration.integration = chatId
-                integration.flush()
+                    integration.integration = chatId
+                    integration.flush()
+
+                }
 
             }
 
-        } else if (integration.paused) {
+            integration.paused -> {
 
-            database.write {
+                database.write {
 
-                integration.paused = false
-                integration.flush()
+                    integration.paused = false
+                    integration.flush()
+
+                }
 
             }
 
         }
 
-        sudo make L.INTEGRATION_HAS_SET syncReplyTo message
-
+        val userId = ((sudo as? TdPmBot)?.admin ?: launcher.admin).toInt()
         val botUserId = me.id
         val userBot = userBot
 
@@ -277,7 +330,7 @@ class IntegrationMenu : BotHandler() {
 
             if (actionMessage.value != null) {
 
-                findHandler<IntegrationMenu>().integrationMenu(L, botUserId, userBot, userId, userId.toLong(), actionMessage.value!!.messageId, true)
+                findHandler<IntegrationMenu>().integrationMenu(localeFor(userId), botUserId, userBot, userId, userId.toLong(), actionMessage.value!!.messageId, true)
 
             }
 

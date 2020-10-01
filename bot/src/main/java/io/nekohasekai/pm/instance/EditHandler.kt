@@ -132,7 +132,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             saveMessage(MessageRecords.MESSAGE_TYPE_INPUT_OTHER, chatId, status.id)
 
-            val forwarded = forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.MessageSendOptions(), asAlbum = false, sendCopy = false, removeCaption = false).messages[0].id
+            val forwarded = forwardMessages(targetChat, chatId, longArrayOf(messageId), TdApi.MessageSendOptions(), sendCopy = false, removeCaption = false).messages[0].id
 
             saveMessage(MessageRecords.MESSAGE_TYPE_INPUT_FORWARDED, chatId, forwarded)
 
