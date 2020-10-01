@@ -1,3 +1,4 @@
+---
 HELP_MSG: |-
   本機器人能幫助您創建和管理 Telegram 私聊機器人.
 
@@ -17,16 +18,8 @@ PM_HELP: |-
   使用 /unblock <目標> 以解除屏蔽,
   使用 /recall <目標> 清空與目標的全部消息,
   使用 /exit 退出會話.
-PRIVATE_INSTANCE: |-
-  抱歉, 本實例不公開, 請參閱 [說明]({}).
-
-CREATE_BOT_DEF: 創建新機器人
-INPUT_BOT_TOKEN: |-
-  輸入從 @BotFather 獲取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
-
-  您也可以使用該 Token 作為命令參數傳入直接創建 ( <code>/new_bot BotToken</code> ),
-
-  創建完成後您需要根據提示啟動該機器人並保持不禁用, 否則將無法收到消息.
+CREATE_BOT_DEF: |-
+  創建新機器人
 INVALID_BOT_TOKEN: |-
   無效的 Bot Token{}.
 
@@ -40,12 +33,11 @@ ALREADY_EXISTS: |-
 FINISH_CREATION: |-
   點擊該連結完成創建: https://t.me/{}?start=finish_creation
 
-  <b>如果您看見 "開始" 按鈕, 請點擊它.</b>
+  如果您看見 "開始" 按鈕, 請點擊它.
 CREATE_FINISHED: |-
   大功告成 !
 
   現在您可以返回繼續設置您的機器人, 或者到 @BotFather 為它設置簡介, 關於行和頭像.
-
 EDIT_BOTS_DEF: |-
   編輯您的機器人
 BOT_EDITS: |-
@@ -59,34 +51,16 @@ MENU_INTEGRATION: |-
   🌐  接入群組
 MENU_BOT_DELETE: |-
   🔳  刪除機器人
-START_MESSAGES_STATUS: |-
-  您正在編輯機器人 {} @{} 的歡迎消息, 即任何人對機器人發送 /start 時回复的消息.
-
-  當前歡迎消息: {}.
 MENU_OPTIONS: |-
   📅  行為選項
 MENU_COMMANDS: |-
   📘  命令管理
-
-OPTIONS_HELP: |-
-  這裡是您的機器人: {} @{}, 以下是機器人的可選行為選項.
-
-  <b>保留提示</b>: 不要自動刪除操作提示消息.
-
-  <b>雙向同步</b>: 直接複製對方的消息, 而不是每次都轉發, 並同步對方的編輯, 刪除操作.
-
-  <b>保持回复</b>: 沒有進入 ( <code>/join</code> ) 對應會話的情況下回復消息時保持對目標消息的回复.
-
-  <b>忽略刪除</b>: 不要同步本方的消息刪除, 當同時開啟 "保留提示" 時在提示中增加一個刪除該消息的按鈕.
 OPTION_KEEP_ACTION_MESSAGES: |-
   保留提示
 OPTION_TWO_WAY_SYNC: |-
   雙向同步
-OPTION_KEEP_REPLY: |-
-  保持回复
 OPTION_IGNORE_DELETE_ACTION: |-
   忽略刪除
-
 NO_BOTS: |-
   無事可做, 請首先使用 /new_bot 命令創建新機器人.
 MENU_BOT_DELETE_CONFIRM: |-
@@ -105,7 +79,6 @@ MENU_BOT_DEL_YES_1: |-
   是的, 刪除這個機器人
 MENU_BOT_DEL_YES_2: |-
   是的, 我 100% 確定!
-
 STOPPING: |-
   停止機器人...
 DELETING: |-
@@ -116,7 +89,6 @@ BOT_AUTH_FAILED: |-
   您的機器人 @{} 無法認證 ( 已重設 Token / 被刪除 ), 已移除.
 BOT_LOGOUT: |-
   您的機器人 @{} 被登出, ( 已重設 Token / 被刪除 ), 已移除.
-
 SELECT_TO_SET: |-
   選擇要設置的機器人.
 JUMP_TO_SET: |-
@@ -150,11 +122,6 @@ MESSAGES_RESET: |-
   已重設.
 ERROR_IN_PREVIEW: |-
   出錯: {}, 請重新設置: 注意設置完成後不要刪除其中包含文件的消息 (包括 貼紙, 影片等媒體).
-
-SET_INTEGRATION: |-
-  您可以將 PM 機器人 {} @{} 接入到群組, 所有消息將被發往目標群組而不是您的私聊.
-
-  接入狀態: {}
 INTEGRATION_HAS_SET: |-
   成功, 所有消息將被發往本群.
 INTEGRATION_STATUS: |-
@@ -165,8 +132,6 @@ INTEGRATION_OK: |-
   已接入
 INTEGRATION_PAUSED: |-
   已暫停
-INTEGRATION_PAUSED_NOTICE: |-
-  機器人 {} @{} 無法訪問接入的群組, 故接入被暫停, 請檢查並執行恢復.
 INTEGRATION_SET: |-
   接入群組
 INTEGRATION_PAUSE: |-
@@ -179,14 +144,12 @@ INTEGRATION_ENABLE_ADMIN_ONLY: |-
   設為僅管理員可操作
 INTEGRATION_DISABLE_ADMIN_ONLY: |-
   設為所有成員都可操作
-
 DEFAULT_WELCOME: |-
   您好!
 
   您可以在此留言聯繫我(們).
 POWERED_BY: |-
   本機器人使用 @{} 創建, {}
-
 INPUT_NOTICE: |-
   來自: <code>{}</code>
   名稱: {}
@@ -213,15 +176,15 @@ MESSAGE_DELETED_BY_ME: |-
   已刪除.
 MESSAGE_RECALLED_BY_ME: |-
   已批次刪除.
-MESSAGE_DELETED_BY: |-
-  已刪除.
-
-  操作者: {}
 MESSAGE_RECALLED_BY: |-
   已批次刪除.
 
   目標會話: {}
   名稱: {}
+  操作者: {}
+MESSAGE_DELETED_BY: |-
+  已刪除.
+
   操作者: {}
 RECORD_NF: |-
   找不到對應記錄.
@@ -231,7 +194,6 @@ MESSAGE_DELETED: |-
   這條消息被對方刪除了.
 MESSAGE_EDITED: |-
   這條消息被對方更改了.
-
 BLOCKED: |-
   已屏蔽 {}.
 BLOCK_EXISTS: |-
@@ -242,7 +204,6 @@ UNBLOCKED: |-
   已取消屏蔽.
 CANNOT_BLOCK_SELF: |-
   不能屏蔽自己.
-
 COMMANDS_HELP: |-
   這裡是您的機器人: {} @{}, 請在下方列表中選擇您要編輯的命令.
 
@@ -267,26 +228,11 @@ COMMAND_DESCRIPTION_INVALID: |-
   {}
 COMMAND_START: |-
   <code>/start</code> 命令由開始消息保留, 請使用另一個.
-COMMAND_HELP: |-
-  您正在編輯機器人 `{}` @{} 的命令 **`/{}`**.
-
-  簡介: `{}`
-  消息: {}
-
-  您也可從該 **[鏈接](https://t.me/{}?start={})** 訪問本命令.
-
-  {}
 COMMAND_RENAME: |-
   重命名
 COMMAND_EDIT_DESCRIPTION: |-
   編輯簡介
 COMMAND_EDIT_MESSAGES: |-
   重新設置消息
-COMMAND_HIDE: |-
-  隱藏命令
-COMMAND_INPUT_WHEN_PUBLIC: |-
-  私聊命令
-COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
-  私聊命令: 公開模式 (當前設置) 下使用該命令后接受私聊消息.
 COMMAND_DELETE: |-
   刪除
