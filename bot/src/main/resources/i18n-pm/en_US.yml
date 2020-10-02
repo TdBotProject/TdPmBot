@@ -155,6 +155,8 @@ SET_INTEGRATION: |-
   You can integration your PM bot {} @{} to a group, and all messages will be sent to the group instead of your private chat.
 
   Integration status: {}
+INTEGRATION_CONFIRM: |-
+  As you are an anonymous administrator of this group, please click the button below to confirm.
 INTEGRATION_HAS_SET: |-
   Done, all messages will be sent to here.
 INTEGRATION_STATUS: |-
