@@ -9,6 +9,7 @@ import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.BotIntegration
 import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
 import td.TdApi
@@ -209,7 +210,7 @@ class IntegrationMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        if (userId !in arrayOf(0, 777000) && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
+        if (message.senderChatId != 0L && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
 
             warnUserCalled(userId, """
                 Illegal access to set integration payload
@@ -226,7 +227,7 @@ class IntegrationMenu : BotHandler() {
 
         }
 
-        if (userId !in arrayOf(0, 777000)) {
+        if (message.senderChatId == 0L) {
 
             confirmSet(chatId)
 
@@ -256,7 +257,7 @@ class IntegrationMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        if (userId !in arrayOf(0, 777000) && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
+        if (userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
 
             sudo makeAlert L.NO_PERMISSION cacheTime 114 syncAnswerTo queryId
 
@@ -320,7 +321,7 @@ class IntegrationMenu : BotHandler() {
 
         }
 
-        val userId = ((sudo as? TdPmBot)?.admin ?: launcher.admin).toInt()
+        val userId = ((sudo as? PmBot)?.admin ?: launcher.admin).toInt()
         val botUserId = me.id
         val userBot = userBot
 
