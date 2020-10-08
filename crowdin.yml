@@ -1,3 +1,0 @@
-files:
-  - source: /bot/src/main/resources/i18n-pm/en_US.yml
-    translation: /bot/src/main/resources/i18n-pm/%locale_with_underscore%.yml

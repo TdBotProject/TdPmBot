@@ -210,7 +210,7 @@ class IntegrationMenu : BotHandler() {
 
         val L = localeFor(userId)
 
-        if (message.senderChatId != 0L && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
+        if (message.senderChatId == 0L && userId.toLong() != launcher.admin && database { UserBot.findById(me.id)?.owner != userId }) {
 
             warnUserCalled(userId, """
                 Illegal access to set integration payload
