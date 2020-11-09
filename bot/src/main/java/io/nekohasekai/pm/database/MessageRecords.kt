@@ -2,7 +2,7 @@ package io.nekohasekai.pm.database
 
 import org.jetbrains.exposed.sql.Table
 
-object MessageRecords : Table("pm_message_records") {
+open class MessageRecords(override val tableName: String = "pm_message_records") : Table(tableName) {
 
     val messageId = long("message_id").index()
 
@@ -14,20 +14,24 @@ object MessageRecords : Table("pm_message_records") {
 
     override val primaryKey = PrimaryKey(botId, chatId, messageId)
 
-    // 输入消息 (chatId: 用户, targetId: 0)
-    const val MESSAGE_TYPE_INPUT_MESSAGE = 1
+    companion object : MessageRecords() {
 
-    // 收入提示 (chatId: 用户, targetId: 0)
-    const val MESSAGE_TYPE_INPUT_OTHER = 2
+        // 输入消息 (chatId: 用户, targetId: 0)
+        const val MESSAGE_TYPE_INPUT_MESSAGE = 1
 
-    // 收入消息 (chatId: 用户, targetId: 消息 ID)
-    const val MESSAGE_TYPE_INPUT_FORWARDED = 3
+        // 收入提示 (chatId: 用户, targetId: 0)
+        const val MESSAGE_TYPE_INPUT_OTHER = 2
 
-    // 输出消息 (chatId: 用户, targetId: 消息 ID)
-    const val MESSAGE_TYPE_OUTPUT_FORWARDED = 4
+        // 收入消息 (chatId: 用户, targetId: 消息 ID)
+        const val MESSAGE_TYPE_INPUT_FORWARDED = 3
 
-    // 发送消息 (chatId: 用户, targetId: 消息 ID)
-    const val MESSAGE_TYPE_OUTPUT_MESSAGE = 5
+        // 输出消息 (chatId: 用户, targetId: 消息 ID)
+        const val MESSAGE_TYPE_OUTPUT_FORWARDED = 4
+
+        // 发送消息 (chatId: 用户, targetId: 消息 ID)
+        const val MESSAGE_TYPE_OUTPUT_MESSAGE = 5
+
+    }
 
 
 }

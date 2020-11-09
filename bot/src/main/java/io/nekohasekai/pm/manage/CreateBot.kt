@@ -3,6 +3,7 @@ package io.nekohasekai.pm.manage
 import cn.hutool.core.util.NumberUtil
 import com.pengrad.telegrambot.request.GetMe
 import io.nekohasekai.ktlib.core.input
+import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.http.httpSync

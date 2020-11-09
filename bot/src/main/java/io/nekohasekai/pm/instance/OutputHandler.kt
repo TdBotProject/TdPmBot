@@ -2,6 +2,7 @@ package io.nekohasekai.pm.instance
 
 import com.esotericsoftware.kryo.KryoException
 import io.nekohasekai.ktlib.core.*
+import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.core.raw.*
 import io.nekohasekai.ktlib.td.extensions.*
@@ -288,7 +289,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val targetMessages = try {
 
-            data[1].formByteArray()
+            data[1].fromByteArray()
 
         } catch (e: KryoException) {
 

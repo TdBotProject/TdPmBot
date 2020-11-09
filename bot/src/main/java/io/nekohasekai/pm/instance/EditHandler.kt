@@ -1,10 +1,12 @@
 package io.nekohasekai.pm.instance
 
+import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.raw.forwardMessages
 import io.nekohasekai.ktlib.td.core.raw.getMessageOrNull
 import io.nekohasekai.ktlib.td.extensions.asInput
+import io.nekohasekai.ktlib.td.extensions.senderUserId
 import io.nekohasekai.ktlib.td.i18n.failed
 import io.nekohasekai.ktlib.td.utils.deleteDelayIf
 import io.nekohasekai.ktlib.td.utils.make
@@ -55,7 +57,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             } else if (newContent is TdApi.MessageLocation) {
 
-                TdApi.EditMessageLiveLocation(targetChat, targetMessage, null, newContent.location)
+                TdApi.EditMessageLiveLocation(targetChat, targetMessage, null, newContent.location, newContent.heading, newContent.proximityAlertRadius)
 
             } else {
 
@@ -95,6 +97,8 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
             if (settings?.twoWaySync == true) {
 
+                newContent.asInput
+
                 val edit = if (newContent is TdApi.MessageText) {
 
                     sudo make newContent.text to targetChat mkEditAt targetMessage
@@ -109,7 +113,7 @@ class EditHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstanc
 
                 } else if (newContent is TdApi.MessageLocation) {
 
-                    TdApi.EditMessageLiveLocation(targetChat, targetMessage, null, newContent.location)
+                    TdApi.EditMessageLiveLocation(targetChat, targetMessage, null, newContent.location, newContent.heading, newContent.proximityAlertRadius)
 
                 } else {
 

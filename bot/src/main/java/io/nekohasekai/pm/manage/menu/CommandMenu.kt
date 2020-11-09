@@ -2,6 +2,7 @@ package io.nekohasekai.pm.manage.menu
 
 import cn.hutool.http.HtmlUtil
 import io.nekohasekai.ktlib.core.input
+import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkup
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull

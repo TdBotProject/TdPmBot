@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
 import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.receive
+import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.raw.getChat
@@ -51,8 +52,6 @@ fun TdHandler.saveMessage(type: Int, chatId: Long, messageId: Long, targetId: Lo
 }
 
 suspend fun TdHandler.gc(instance: PmInstance) {
-
-    instance.blocks.gc()
 
     var deleted = 0
 

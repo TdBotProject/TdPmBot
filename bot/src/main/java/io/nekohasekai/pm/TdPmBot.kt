@@ -6,8 +6,8 @@ import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.compress.*
 import io.nekohasekai.ktlib.core.getValue
 import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.db.IdTableCacheMap
-import io.nekohasekai.ktlib.db.forceCreateTables
+import io.nekohasekai.ktlib.db.*
+import io.nekohasekai.ktlib.db.pair.*
 import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
@@ -22,6 +22,7 @@ import io.nekohasekai.pm.manage.*
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.vendors.currentDialect
 import td.TdApi
 import java.io.File
 import java.util.*
@@ -70,6 +71,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
     lateinit var users: Array<Long>
 
+    val schemes = SchemeTable("scheme_$tag")
     val botIntegrations by lazy { IdTableCacheMap(database, BotIntegration) }
     val botSettings by lazy { IdTableCacheMap(database, BotSetting) }
     val actionMessages by lazy { IdTableCacheMap(database, ActionMessage) }
@@ -235,7 +237,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         super.onLoad()
 
-        clientLog.debug("Init databases")
+        clientLog.debug("Init database")
 
         initDatabase("pm_data.db")
 
@@ -250,6 +252,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         database.write {
 
             forceCreateTables(
+                    schemes,
                     UserBots,
                     StartMessages,
                     ActionMessages,
@@ -259,6 +262,24 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
                     MessageRecords,
                     UserBlocks
             )
+
+            migrateDatabase(schemes, 1) { fromVersion ->
+
+                if (fromVersion == 0) {
+
+                    if (currentDialect.existingIndices(MessageRecords).values.firstOrNull()!!.find { it.unique }!!.columns.size == 2) {
+
+                        clientLog.info("Migrate database")
+
+                        addLogger(DefaultLogSqlLogger)
+
+                        recreateTable(MessageRecords) { tableName -> MessageRecords(tableName) }
+
+                    }
+
+                }
+
+            }
 
         }
 
@@ -343,12 +364,6 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         clientLog.debug(">> 内存缓存")
 
         super.gc()
-
-        botIntegrations.gc()
-        botSettings.gc()
-        actionMessages.gc()
-        startMessages.gc()
-        botCommands.gc()
 
         clientLog.debug(">> 清理数据库")
 

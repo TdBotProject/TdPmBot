@@ -3,7 +3,7 @@ package io.nekohasekai.pm.instance
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.td.core.TdBot
+import io.nekohasekai.ktlib.td.cli.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
