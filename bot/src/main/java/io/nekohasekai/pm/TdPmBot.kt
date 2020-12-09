@@ -3,23 +3,42 @@ package io.nekohasekai.pm
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
-import io.nekohasekai.ktlib.compress.*
+import io.nekohasekai.ktlib.compress.tarXz
+import io.nekohasekai.ktlib.compress.writeDirectory
+import io.nekohasekai.ktlib.compress.writeFile
 import io.nekohasekai.ktlib.core.getValue
 import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.db.*
-import io.nekohasekai.ktlib.db.pair.*
+import io.nekohasekai.ktlib.db.DefaultLogSqlLogger
+import io.nekohasekai.ktlib.db.IdTableCacheMap
+import io.nekohasekai.ktlib.db.forceCreateTables
+import io.nekohasekai.ktlib.db.pair.SchemeTable
+import io.nekohasekai.ktlib.db.pair.migrateDatabase
+import io.nekohasekai.ktlib.db.pair.recreateTable
 import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
-import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.extensions.displayNameFormatted
+import io.nekohasekai.ktlib.td.extensions.fromPrivate
+import io.nekohasekai.ktlib.td.extensions.htmlLink
+import io.nekohasekai.ktlib.td.extensions.nextDay
 import io.nekohasekai.ktlib.td.i18n.*
-import io.nekohasekai.ktlib.td.i18n.store.*
-import io.nekohasekai.ktlib.td.utils.*
+import io.nekohasekai.ktlib.td.i18n.store.DatabaseLocaleStore
+import io.nekohasekai.ktlib.td.i18n.store.InMemoryLocaleStore
+import io.nekohasekai.ktlib.td.i18n.store.LocaleStore
 import io.nekohasekai.ktlib.td.utils.commands.GetIdCommand
+import io.nekohasekai.ktlib.td.utils.delete
+import io.nekohasekai.ktlib.td.utils.make
+import io.nekohasekai.ktlib.td.utils.makeHtml
+import io.nekohasekai.ktlib.td.utils.upsertCommands
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
-import io.nekohasekai.pm.manage.*
-import kotlinx.coroutines.*
+import io.nekohasekai.pm.manage.AdminCommands
+import io.nekohasekai.pm.manage.CreateBot
+import io.nekohasekai.pm.manage.MyBots
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.vendors.currentDialect
@@ -464,7 +483,13 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function, command.inputWhenPublic)
+            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(
+                userId,
+                PERSIST_UNDER_FUNCTION,
+                0,
+                function,
+                command.inputWhenPublic
+            )
 
             return
 
@@ -487,7 +512,13 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, payload, command.inputWhenPublic)
+            if ((!public || command.inputWhenPublic) && chatId != admin) writePersist(
+                userId,
+                PERSIST_UNDER_FUNCTION,
+                0,
+                payload,
+                command.inputWhenPublic
+            )
 
         } else rejectFunction()
 

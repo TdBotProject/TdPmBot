@@ -3,7 +3,9 @@ package io.nekohasekai.pm.manage.menu
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.extensions.asByteArray
+import io.nekohasekai.ktlib.td.extensions.asInputOrForward
+import io.nekohasekai.ktlib.td.extensions.userCalled
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
@@ -105,7 +107,7 @@ class StartMessagesMenu : BotHandler() {
 
                     } onSuccess {
 
-                        writePersist(userId, persistId, 0L, StartMessagesCache(me.id), it.id, allowFunction = true)
+                        writePersist(userId, persistId, 0, StartMessagesCache(me.id), it.id, allowFunction = true)
 
                     } at messageId editTo chatId
 
@@ -113,7 +115,7 @@ class StartMessagesMenu : BotHandler() {
 
                     launcher.initBot(userBot).apply {
 
-                        writePersist(userId, persistId, 0L, StartMessagesCache(me.id), allowFunction = true)
+                        writePersist(userId, persistId, 0, StartMessagesCache(me.id), allowFunction = true)
 
                         sudo make L.INPUT_MESSAGES sendTo chatId
 
@@ -150,9 +152,15 @@ class StartMessagesMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistMessage(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
-        if (subId == 0L) {
+        if (subId == 0) {
 
             val L = localeFor(userId)
 
@@ -176,7 +184,13 @@ class StartMessagesMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistCancel(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistCancel(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
         if (data.size > 1) {
 
@@ -190,7 +204,17 @@ class StartMessagesMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistFunction(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+    override suspend fun onPersistFunction(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>,
+        function: String,
+        param: String,
+        params: Array<String>,
+        originParams: Array<String>
+    ) {
 
         if (function == "preview") {
 

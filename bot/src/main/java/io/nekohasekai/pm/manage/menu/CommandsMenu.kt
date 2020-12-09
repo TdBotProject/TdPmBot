@@ -7,9 +7,14 @@ import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.i18n.*
-import io.nekohasekai.ktlib.td.utils.*
+import io.nekohasekai.ktlib.td.utils.confirmTo
+import io.nekohasekai.ktlib.td.utils.inlineButton
+import io.nekohasekai.ktlib.td.utils.make
+import io.nekohasekai.ktlib.td.utils.makeHtml
 import io.nekohasekai.pm.*
-import io.nekohasekai.pm.database.*
+import io.nekohasekai.pm.database.BotCommand
+import io.nekohasekai.pm.database.BotCommands
+import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
@@ -117,7 +122,13 @@ class CommandsMenu : BotHandler() {
 
             0 -> {
 
-                writePersist(userId, persistId, 0L, CreateBotCommandCache(botUserId, userBot, messageId), allowFunction = true)
+                writePersist(
+                    userId,
+                    persistId,
+                    0,
+                    CreateBotCommandCache(botUserId, userBot, messageId),
+                    allowFunction = true
+                )
 
                 sudo make L.COMMAND_INPUT_NAME at messageId withMarkup inlineButton {
 
@@ -131,7 +142,17 @@ class CommandsMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistFunction(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+    override suspend fun onPersistFunction(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>,
+        function: String,
+        param: String,
+        params: Array<String>,
+        originParams: Array<String>
+    ) {
 
         val cache = data[0] as CreateBotCommandCache
 
@@ -217,7 +238,13 @@ class CommandsMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistMessage(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
         val cache = data[0] as CreateBotCommandCache
 
@@ -334,9 +361,15 @@ class CommandsMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistCancel(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistCancel(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
-        if (subId == 0L) {
+        if (subId == 0) {
 
             val cache = data[0] as CreateBotCommandCache
 

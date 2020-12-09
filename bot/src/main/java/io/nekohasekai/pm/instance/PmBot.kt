@@ -7,14 +7,24 @@ import io.nekohasekai.ktlib.td.cli.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
-import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.extensions.displayNameFormatted
+import io.nekohasekai.ktlib.td.extensions.fromPrivate
+import io.nekohasekai.ktlib.td.extensions.htmlLink
 import io.nekohasekai.ktlib.td.i18n.CANCELED
 import io.nekohasekai.ktlib.td.i18n.LICENSE
-import io.nekohasekai.ktlib.td.utils.*
+import io.nekohasekai.ktlib.td.utils.make
+import io.nekohasekai.ktlib.td.utils.makeHtml
+import io.nekohasekai.ktlib.td.utils.removeKeyboard
+import io.nekohasekai.ktlib.td.utils.upsertCommands
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
-import io.nekohasekai.pm.manage.menu.*
-import org.jetbrains.exposed.sql.*
+import io.nekohasekai.pm.manage.menu.BotMenu
+import io.nekohasekai.pm.manage.menu.CommandsMenu
+import io.nekohasekai.pm.manage.menu.IntegrationMenu
+import io.nekohasekai.pm.manage.menu.StartMessagesMenu
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdBot(botToken), PmInstance {
@@ -183,7 +193,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if (chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, function)
+            if (chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0, function)
 
         }
 
@@ -197,7 +207,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
             command.messages.forEach { sudo make it syncTo chatId }
 
-            if (chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0L, payload)
+            if (chatId != admin) writePersist(userId, PERSIST_UNDER_FUNCTION, 0, payload)
 
         } else rejectFunction()
 

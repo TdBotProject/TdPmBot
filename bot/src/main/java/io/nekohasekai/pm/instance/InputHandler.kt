@@ -32,9 +32,15 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistMessage(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
-        if (subId == 0L) {
+        if (subId == 0) {
 
             val asInput = data.getOrNull(1) as Boolean? == true
 

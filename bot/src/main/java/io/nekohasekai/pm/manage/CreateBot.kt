@@ -4,10 +4,18 @@ import cn.hutool.core.util.NumberUtil
 import com.pengrad.telegrambot.request.GetMe
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.database
-import io.nekohasekai.ktlib.td.core.*
-import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.core.TdClient
+import io.nekohasekai.ktlib.td.core.TdException
+import io.nekohasekai.ktlib.td.core.TdHandler
+import io.nekohasekai.ktlib.td.extensions.fromPrivate
+import io.nekohasekai.ktlib.td.extensions.text
+import io.nekohasekai.ktlib.td.extensions.userCalled
+import io.nekohasekai.ktlib.td.extensions.warnUserCalled
 import io.nekohasekai.ktlib.td.http.httpSync
-import io.nekohasekai.ktlib.td.i18n.*
+import io.nekohasekai.ktlib.td.i18n.FN_PRIVATE_ONLY
+import io.nekohasekai.ktlib.td.i18n.clientLocale
+import io.nekohasekai.ktlib.td.i18n.failed
+import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
@@ -80,11 +88,17 @@ class CreateBot : TdHandler() {
 
         sudo makeHtml L.INPUT_BOT_TOKEN sendTo chatId
 
-        writePersist(userId, persistId, 0L)
+        writePersist(userId, persistId, 0)
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistMessage(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
         userCalled(userId, "inputted token: ${message.text}")
 
@@ -128,7 +142,8 @@ class CreateBot : TdHandler() {
 
         }
 
-        val exists = TdClient.clients.any { botMe.id() == it.me.id } || database { UserBot.findById(botMe.id()) } != null
+        val exists =
+            TdClient.clients.any { botMe.id() == it.value.me.id } || database { UserBot.findById(botMe.id()) } != null
 
         if (exists) {
 

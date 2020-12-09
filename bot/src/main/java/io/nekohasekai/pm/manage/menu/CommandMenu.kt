@@ -6,7 +6,10 @@ import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkup
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
-import io.nekohasekai.ktlib.td.extensions.*
+import io.nekohasekai.ktlib.td.extensions.asByteArray
+import io.nekohasekai.ktlib.td.extensions.asInputOrForward
+import io.nekohasekai.ktlib.td.extensions.text
+import io.nekohasekai.ktlib.td.extensions.userCalled
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
@@ -221,7 +224,13 @@ class CommandMenu : BotHandler() {
 
                 val self = if (userBot != null) launcher.initBot(userBot) else this
 
-                self.writePersist(userId, persistId, 1L, EditMessagesCache(botUserId, userBot, messageId, command), allowFunction = true)
+                self.writePersist(
+                    userId,
+                    persistId,
+                    1,
+                    EditMessagesCache(botUserId, userBot, messageId, command),
+                    allowFunction = true
+                )
 
                 if (userBot != null) {
 
@@ -326,11 +335,17 @@ class CommandMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistMessage(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistMessage(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
         val L = localeFor(userId)
 
-        if (subId == 0L) {
+        if (subId == 0) {
 
             val cache = data[0] as RenameCache
 
@@ -432,7 +447,7 @@ class CommandMenu : BotHandler() {
 
             commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
 
-        } else if (subId == 1L) {
+        } else if (subId == 1) {
 
             val cache = data[0] as EditMessagesCache
 
@@ -462,9 +477,19 @@ class CommandMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistFunction(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>, function: String, param: String, params: Array<String>, originParams: Array<String>) {
+    override suspend fun onPersistFunction(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>,
+        function: String,
+        param: String,
+        params: Array<String>,
+        originParams: Array<String>
+    ) {
 
-        if (subId != 1L) rejectFunction()
+        if (subId != 1) rejectFunction()
 
         val cache = data[0] as EditMessagesCache
 
@@ -548,9 +573,15 @@ class CommandMenu : BotHandler() {
 
     }
 
-    override suspend fun onPersistCancel(userId: Int, chatId: Long, message: TdApi.Message, subId: Long, data: Array<Any?>) {
+    override suspend fun onPersistCancel(
+        userId: Int,
+        chatId: Long,
+        message: TdApi.Message,
+        subId: Int,
+        data: Array<Any?>
+    ) {
 
-        if (subId == 0L) {
+        if (subId == 0) {
 
             val cache = data[0] as RenameCache
 
@@ -564,7 +595,7 @@ class CommandMenu : BotHandler() {
 
             commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
 
-        } else if (subId == 1L) {
+        } else if (subId == 1) {
 
             val cache = data[0] as EditMessagesCache
 
