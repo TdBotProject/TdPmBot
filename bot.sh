@@ -6,7 +6,6 @@ cd $(dirname "$(readlink -f "$0")")
 ARTIFACT="td-pm-bot"
 MODULE="bot"
 SERVICE_NAME="td-pm"
-MVN_ARGS=""
 JAVA_ARGS=""
 ARGS=""
 
@@ -63,29 +62,15 @@ EOF
 
 elif [ "$1" == "run" ]; then
 
-  target="$ARTIFACT-$(git rev-parse --short HEAD).jar"
-
-  #  if [ ! -x "$(find . -maxdepth 1 -name ${artifact}-*))" ]; then
-  #    for oldTarget in ./${artifact}-*; do
-  if [ ! -x "$(find . -maxdepth 1 -type f -name '*.jar'))" ]; then
-    for oldTarget in ./*.jar; do
-      if [ ! $oldTarget -ef $target ]; then
-        rm $oldTarget
-      fi
-    done
-  fi
-
-  [ -f "$target" ] || bash $0 rebuild || exit 1
-
   shift
 
   if [ ! -x "$*" ]; then
 
-    exec java $JAVA_ARGS -jar $target $@
+    exec ./gradlew run $@
 
   else
 
-    exec java $JAVA_ARGS -jar $target $ARGS
+    exec ./gradlew run $ARGS
 
   fi
 
@@ -107,17 +92,9 @@ elif [ "$1" == "force-update" ]; then
   git reset --hard FETCH_HEAD
   git submodule update --init --force --recursive
 
-  bash $0 rebuild
-
 elif [ "$1" == "rebuild" ]; then
 
-  [ -f "ktlib/pom.xml" ] || git submodule update --init --force --recursive
-
-  shift
-
-  target="$ARTIFACT-$(git rev-parse --short HEAD).jar"
-
-  bash mvnw $MVN_ARGS -T 1C clean package && cp -f $MODULE/target/$ARTIFACT.jar $target
+  ./gradlew classes
 
 elif [ "$1" == "update" ]; then
 

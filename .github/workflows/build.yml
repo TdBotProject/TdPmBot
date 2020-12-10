@@ -9,23 +9,23 @@ on:
       - dev
 
 jobs:
-  mvnBuild:
-    name: Maven Build
+  gradleBuild:
+    name: Gradle Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run:  git submodule update --init --force --recursive
+      - run: git submodule update --init --force --recursive
       - uses: actions/cache@v1
         with:
-          path: ~/.m2
-          key: m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/build.gradle.kts') }}
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Run Maven Build
+      - name: Run Gradle Build
         run: |
-          ./bot.sh rebuild
-          echo ::set-env name=JAR_FILE::$(find . -maxdepth 1 -name *.jar)
+          ./gradlew proguardJar
+          echo ::set-env name=JAR_FILE::$(find build/proguardJar -maxdepth 1 -name *.jar)
       - name: Upload Jar
         uses: actions/upload-artifact@master
         with:

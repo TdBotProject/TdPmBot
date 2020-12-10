@@ -1,3 +1,6 @@
 [submodule "ktlib"]
 	path = ktlib
 	url = https://github.com/nekohasekai/ktlib
+[submodule "proguard"]
+	path = proguard
+	url = https://github.com/nekohasekai/gradle-proguard-jar-plugin
