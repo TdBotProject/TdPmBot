@@ -122,26 +122,6 @@ ARGS: 启动参数.
 
 不常用, 但您可以写入 `bot.conf` 的 `args` 中作为默认参数.
 
-## Docker
-
-您可用环境变量 `-e <key>=<value>` 指定配置项, 列表格式为空格分隔.
-
-```
-docker run -d --name td-pm \
-  -v <数据目录>:/root/data \
-  -e BOT_TOKEN=<机器人令牌> \
-  -e BOT_LANG=zh_CN \
-  -e BOT_OWNER=<管理员ID> \
-  -e BOT_MODE=private \
-  docker.pkg.github.com/tdbotproject/tdpmbot/td-pm
-
-docker logs td-pm -f -t
-```
-
-注: 需要使用 Github 账号登录 
-
-`docker login docker.pkg.github.com -u <您的 Github 用户名> -p <您的 Github AccessToken>`
-
 ## 公开实例
 
 [@TdPmBot](https://t.me/TdPmBot)
