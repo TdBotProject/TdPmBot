@@ -91,11 +91,10 @@ class CommandsMenu : BotHandler() {
 
     class CreateBotCommandCache(
         var botId: Int,
-        var userBot: UserBot?,
         var startsAt: Long
     ) {
 
-        constructor() : this(0, null, 0L)
+        constructor() : this(0, 0L)
 
         var edited = false
         var step = 0
@@ -146,7 +145,7 @@ class CommandsMenu : BotHandler() {
                     userId,
                     persistId,
                     0,
-                    CreateBotCommandCache(botUserId, userBot, messageId),
+                    CreateBotCommandCache(botUserId, messageId),
                     allowFunction = true
                 )
 
@@ -246,9 +245,8 @@ class CommandsMenu : BotHandler() {
             (sudo as? TdPmBot)?.updateCommands()
             (sudo as? PmBot)?.updateCommands()
 
-            (if (cache.userBot != null) launcher.findHandler() else this)
-                .commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
-
+            launcher.findHandler<CommandsMenu>()
+                .commandsMenu(cache.botId, findUserBot(cache.botId), userId, chatId, 0L, false)
 
         } else {
 
@@ -340,7 +338,9 @@ class CommandsMenu : BotHandler() {
 
                     sudo removePersist userId
 
-                    launcher.initBot(cache.userBot!!).apply {
+                    val userBot = findUserBot(cache.botId)!!
+
+                    launcher.initBot(userBot).apply {
 
                         writePersist(userId, persistId, subId, * data, allowFunction = true)
 
@@ -348,7 +348,7 @@ class CommandsMenu : BotHandler() {
 
                     }
 
-                    sudo make L.JUMP_TO_SET.input(cache.userBot!!.username) sendTo chatId
+                    sudo make L.JUMP_TO_SET.input(userBot.username) sendTo chatId
 
                 } else {
 
@@ -401,7 +401,8 @@ class CommandsMenu : BotHandler() {
 
             }
 
-            launcher.findHandler<CommandsMenu>().commandsMenu(cache.botId, cache.userBot, userId, chatId, 0L, false)
+            launcher.findHandler<CommandsMenu>()
+                .commandsMenu(cache.botId, findUserBot(cache.botId), userId, chatId, 0L, false)
 
         }
 

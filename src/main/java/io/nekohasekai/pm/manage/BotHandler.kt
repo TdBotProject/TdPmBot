@@ -37,6 +37,15 @@ abstract class BotHandler : TdHandler() {
 
     }
 
+    fun findUserBot(botId: Int): UserBot? {
+
+        return if (botId == me.id) null else database {
+
+            UserBot.findById(botId)
+
+        }
+    }
+
     override suspend fun onNewCallbackQuery(
         userId: Int,
         chatId: Long,
@@ -51,11 +60,7 @@ abstract class BotHandler : TdHandler() {
 
             null
 
-        } else database {
-
-            UserBot.findById(botId)
-
-        }
+        } else findUserBot(botId)
 
         if (userBot != null && userBot.owner != userId || botId != me.id && userBot == null) {
 
