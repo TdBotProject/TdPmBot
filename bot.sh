@@ -90,10 +90,10 @@ elif [ "$1" == "force-update" ]; then
 
   git fetch &>/dev/null
   git reset --hard FETCH_HEAD
-  git submodule update --init --force --recursive
 
 elif [ "$1" == "rebuild" ]; then
 
+  git submodule update --init --force --recursive
   ./gradlew classes
 
 elif [ "$1" == "update" ]; then
@@ -111,7 +111,6 @@ elif [ "$1" == "update" ]; then
   echo ">> 检出更新 $(git rev-parse FETCH_HEAD)"
 
   git reset --hard FETCH_HEAD
-  git submodule update --init --force --recursive
 
   shift
 
@@ -134,7 +133,6 @@ elif [ "$1" == "upgrade" ]; then
   echo ">> 检出更新 $(git rev-parse FETCH_HEAD)"
 
   git reset --hard FETCH_HEAD
-  git submodule update --init --force --recursive
 
   shift
 
