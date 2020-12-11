@@ -25,7 +25,7 @@ jobs:
       - name: Run Gradle Build
         run: |
           ./gradlew proguardJar
-          echo ::set-env name=JAR_FILE::$(find build/proguardJar -maxdepth 1 -name *.jar)
+          echo "JAR_FILE=$(find build/proguardJar -maxdepth 1 -name *.jar)" >> $GITHUB_ENV
       - name: Upload Jar
         uses: actions/upload-artifact@master
         with:
