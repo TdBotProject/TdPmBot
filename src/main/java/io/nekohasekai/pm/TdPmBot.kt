@@ -58,13 +58,9 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         @JvmStatic
         fun main(args: Array<String>) {
-
             launch(args)
-
             loadConfig()
-
             start()
-
         }
 
     }
@@ -73,22 +69,15 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
     lateinit var whiteList: IntArray
 
     fun userAccessible(userId: Int): Boolean {
-
         if (userId == admin.toInt()) return true
-
         if (!public) return false
-
         if (!::whiteList.isInitialized) return true
-
         return whiteList.contains(userId)
-
     }
 
     @Suppress("ObjectPropertyName")
     private var _admin = 0L
     override val admin by ::_admin
-
-    lateinit var users: Array<Long>
 
     val schemes = SchemeTable("scheme_$tag")
     val botIntegrations by lazy { IdTableCacheMap(database, BotIntegration) }

@@ -9,9 +9,3 @@ includeBuild("ktlib") {
         include("ktlib-td-http-api")
     }
 }
-
-includeBuild("proguard") {
-    dependencySubstitution {
-        substitute(module("io.nekohasekai:proguard")).with(project(":"))
-    }
-}

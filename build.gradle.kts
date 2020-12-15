@@ -7,17 +7,6 @@ plugins {
     id("com.github.ben-manes.versions") version "0.36.0"
 }
 
-apply(plugin = "io.nekohasekai.proguard-jar")
-
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("io.nekohasekai:proguard:1.0-SNAPSHOT")
-    }
-}
 
 repositories {
     mavenCentral()
@@ -39,14 +28,13 @@ tasks.withType<Jar> {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    jvmTarget = "11"
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
     val vKtLib = "1.0-SNAPSHOT"

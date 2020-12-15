@@ -18,16 +18,10 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/build.gradle.kts') }}
+          key: gradle-${{ hashFiles('**/build.gradle.kts', '**/gradle-wrapper.properties') }}
       - uses: actions/setup-java@v1
         with:
           java-version: 11
       - name: Run Gradle Build
         run: |
-          ./gradlew proguardJar
-          echo "JAR_FILE=$(find build/proguardJar -maxdepth 1 -name *.jar)" >> $GITHUB_ENV
-      - name: Upload Jar
-        uses: actions/upload-artifact@master
-        with:
-          name: td-pm-bot
-          path: ${{ env.JAR_FILE }}
+          ./gradlew classes
