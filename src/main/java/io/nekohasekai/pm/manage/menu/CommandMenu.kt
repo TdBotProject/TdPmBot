@@ -70,6 +70,14 @@ class CommandMenu : BotHandler() {
 
             }
 
+            newLine {
+
+                textButton(L.COMMAND_DISABLE)
+
+                dataButton(command.disable.toBlock(), dataId, botId, commandName, byteArrayOf(6))
+
+            }
+
             if (userBot == null && launcher.public) {
 
                 newLine {
@@ -165,6 +173,7 @@ class CommandMenu : BotHandler() {
                 command.command,
                 command.description,
                 command.hide,
+                command.disable,
                 LinkedList(),
                 command.inputWhenPublic
             )
@@ -282,7 +291,21 @@ class CommandMenu : BotHandler() {
                     } at messageId editTo chatId
 
                 } else {
+                    {
 
+                        sudo make L.INPUT_MESSAGES withMarkup inlineButton {
+
+                            dataLine(
+                                L.BACK_ARROW,
+                                dataId,
+                                botUserId.asByteArray(),
+                                command.command.encodeToByteArray(),
+                                byteArrayOf(-1)
+                            )
+
+                        } at messageId editTo chatId
+
+                    }
                     sudo make L.INPUT_MESSAGES withMarkup inlineButton {
 
                         dataLine(
@@ -299,7 +322,7 @@ class CommandMenu : BotHandler() {
 
             }
 
-            3, 4 -> {
+            3, 4, 6 -> {
 
                 val target: Boolean
 
@@ -322,18 +345,22 @@ class CommandMenu : BotHandler() {
                         3 -> {
 
                             target = !currVal.hide
-
                             currVal.hide = target
 
                         }
 
-                        //4 -> {
-
-                        else -> {
+                        4 -> {
 
                             target = !currVal.inputWhenPublic
-
                             currVal.inputWhenPublic = target
+
+                        }
+
+                        // 6
+                        else -> {
+
+                            target = !currVal.disable
+                            currVal.disable = target
 
                         }
 

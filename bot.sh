@@ -64,13 +64,17 @@ elif [ "$1" == "run" ]; then
 
   shift
 
+  EXEC="build/install/main/bin/main"
+
+  [ -x "$EXEC" ] || bash $0 rebuild || exit 1
+
   if [ ! -x "$*" ]; then
 
-    exec ./gradlew run $@
+    exec $EXEC $@
 
   else
 
-    exec ./gradlew run $ARGS
+    exec $EXEC $ARGS
 
   fi
 
@@ -94,7 +98,7 @@ elif [ "$1" == "force-update" ]; then
 elif [ "$1" == "rebuild" ]; then
 
   git submodule update --init --force --recursive
-  ./gradlew classes
+  ./gradlew :installDist
 
 elif [ "$1" == "update" ]; then
 
@@ -113,6 +117,8 @@ elif [ "$1" == "update" ]; then
   git reset --hard FETCH_HEAD
 
   shift
+
+  ./gradlew :clean
 
   bash $0 rebuild $@
 
@@ -142,9 +148,7 @@ elif [ "$1" == "log" ]; then
 
   exec journalctl -u $SERVICE_NAME -o short --no-hostname -f -n 40
 
-elif
-  [ "$1" == "logs" ]
-then
+elif [ "$1" == "logs" ]; then
 
   exec journalctl -u $SERVICE_NAME -o short --no-hostname --no-tail -e
 

@@ -327,7 +327,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         val commands = database {
             BotCommands
-                .select { commandsForCurrentBot and (BotCommands.hide eq false) }
+                .select { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
                 .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
                 .toTypedArray()
         }
@@ -477,7 +477,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         }
 
-        val command = botCommands.fetch(me.id to function).value?.takeIf { !it.hide }
+        val command = botCommands.fetch(me.id to function).value?.takeIf { !it.disable }
 
         if (message.fromPrivate) {
 
@@ -522,7 +522,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         if (message.fromPrivate) {
 
-            val command = botCommands.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
+            val command = botCommands.fetch(me.id to payload).value?.takeIf { !it.disable } ?: rejectFunction()
 
             command.messages.forEach { sudo make it syncTo chatId }
 

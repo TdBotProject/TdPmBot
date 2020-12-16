@@ -10,6 +10,7 @@ class BotCommand(
     var command: String,
     var description: String,
     var hide: Boolean,
+    var disable: Boolean,
     var messages: LinkedList<TdApi.InputMessageContent>,
     var inputWhenPublic: Boolean
 
@@ -20,6 +21,7 @@ class BotCommand(
         row[BotCommands.command],
         row[BotCommands.description],
         row[BotCommands.hide],
+        row[BotCommands.disable],
         row[BotCommands.messages],
         row[BotCommands.inputWhenPublic]
     )

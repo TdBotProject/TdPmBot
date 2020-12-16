@@ -34,6 +34,17 @@ compileKotlin.kotlinOptions {
     jvmTarget = "11"
 }
 
+distributions {
+    main {
+        distributionBaseName.set("main")
+        contents.rename {
+            if (it == project.name ||
+                it.startsWith(project.name) && it.endsWith("bat")
+            ) it.replace(project.name, "main") else it
+        }
+    }
+}
+
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 

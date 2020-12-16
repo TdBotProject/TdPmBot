@@ -54,7 +54,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
         upsertCommands(* database {
             BotCommands
-                .select { commandsForCurrentBot and (BotCommands.hide eq false) }
+                .select { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
                 .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
                 .toTypedArray()
         })
@@ -185,7 +185,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
         }
 
-        val command = launcher.botCommands.fetch(me.id to function).value?.takeIf { !it.hide }
+        val command = launcher.botCommands.fetch(me.id to function).value?.takeIf { !it.disable }
 
         if (!message.fromPrivate) {
 
@@ -217,7 +217,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
         if (message.fromPrivate) {
 
-            val command = launcher.botCommands.fetch(me.id to payload).value?.takeIf { !it.hide } ?: rejectFunction()
+            val command = launcher.botCommands.fetch(me.id to payload).value?.takeIf { !it.disable } ?: rejectFunction()
 
             command.messages.forEach { sudo make it syncTo chatId }
 

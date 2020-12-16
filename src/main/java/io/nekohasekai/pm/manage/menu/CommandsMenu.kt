@@ -233,7 +233,13 @@ class CommandsMenu : BotHandler() {
 
             launcher.botCommands.fetch(botUserId to cache.command).apply {
 
-                value = BotCommand(cache.botId, cache.command, cache.description, false, cache.messages, false)
+                value = BotCommand(
+                    cache.botId, cache.command, cache.description,
+                    hide = false,
+                    disable = false,
+                    messages = cache.messages,
+                    inputWhenPublic = false
+                )
                 changed = true
 
                 flush()

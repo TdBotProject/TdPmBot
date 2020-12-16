@@ -14,6 +14,7 @@ object BotCommands : Table("bot_commands") {
     val command = text("command")
     val description = text("description")
     val hide = bool("hide").default(false)
+    val disable = bool("disable").default(false)
     val messages = kryo<LinkedList<TdApi.InputMessageContent>>("messages")
     val inputWhenPublic = bool("input").default(false)
 
@@ -38,6 +39,7 @@ object BotCommands : Table("bot_commands") {
                 it[command] = id.second
                 it[description] = value.description
                 it[hide] = value.hide
+                it[disable] = value.disable
                 it[messages] = value.messages
                 it[inputWhenPublic] = value.inputWhenPublic
 
