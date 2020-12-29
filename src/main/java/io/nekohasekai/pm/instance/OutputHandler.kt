@@ -2,7 +2,6 @@ package io.nekohasekai.pm.instance
 
 import com.esotericsoftware.kryo.KryoException
 import io.nekohasekai.ktlib.core.*
-import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.core.raw.*
 import io.nekohasekai.ktlib.td.extensions.*
@@ -264,7 +263,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
             MessageRecords.MESSAGE_TYPE_INPUT_MESSAGE -> {
 
-                defaultLog.warn("Please delete the data after changing the bot admin.")
+                clientLog.warn("Please delete the data after changing the bot admin.")
 
             }
 

@@ -1,7 +1,6 @@
 package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.*
-import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.*
 import io.nekohasekai.ktlib.td.core.raw.*
 import io.nekohasekai.ktlib.td.extensions.*
@@ -343,7 +342,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 } catch (e: TdException) {
 
-                    defaultLog.warn(e, "banned by owner")
+                    clientLog.warn(e, "banned by owner")
 
                     // TODO: PROCESS BOT BANNED BY OWNER
 

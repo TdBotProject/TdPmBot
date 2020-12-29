@@ -1,13 +1,11 @@
 package io.nekohasekai.pm.instance
 
 import cn.hutool.core.io.FileUtil
-import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
-import io.nekohasekai.ktlib.td.extensions.displayNameFormatted
 import io.nekohasekai.ktlib.td.extensions.fromPrivate
 import io.nekohasekai.ktlib.td.extensions.htmlLink
 import io.nekohasekai.ktlib.td.i18n.CANCELED
@@ -39,13 +37,13 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
 
-        if (auth && authorizationState is TdApi.AuthorizationStateClosed) {
-
-            defaultLog.debug("[${me.displayNameFormatted}] PmBot Closed")
-
-        }
-
         super.onAuthorizationState(authorizationState)
+
+        if (authorizationState is TdApi.AuthorizationStateReady) {
+            clientLog.info("PmBot Loaded")
+        } else if (auth && authorizationState is TdApi.AuthorizationStateClosed) {
+            clientLog.debug("PmBot Closed")
+        }
 
     }
 
@@ -73,8 +71,6 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
             if (integration != null) getChat(integration)
 
         }
-
-        clientLog.info("PmBot Loaded")
 
     }
 
