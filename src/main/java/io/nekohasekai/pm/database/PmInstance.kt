@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
 import io.nekohasekai.ktlib.core.defaultLog
 import io.nekohasekai.ktlib.core.receive
+import io.nekohasekai.ktlib.db.DatabaseDispatcher
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
@@ -21,6 +22,7 @@ import org.jetbrains.exposed.sql.select
 
 interface PmInstance {
 
+    val database: DatabaseDispatcher
     val admin: Long
     val integration: BotIntegration?
     val settings: BotSetting?

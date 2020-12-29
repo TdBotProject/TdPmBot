@@ -30,7 +30,6 @@ import td.TdApi
 class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdBot(botToken), PmInstance {
 
     override val database = launcher.database
-
     override val admin get() = userBot.owner.toLong()
 
     override val integration get() = launcher.botIntegrations.fetch(botUserId).value
@@ -74,6 +73,8 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
             if (integration != null) getChat(integration)
 
         }
+
+        clientLog.info("PmBot Loaded")
 
     }
 
