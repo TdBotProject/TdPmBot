@@ -322,7 +322,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         val L = L
 
-        val targetChat = data[0].toLong()
+        val targetChat = data[0].asLong()
 
         val targetMessages = try {
 
@@ -330,7 +330,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
         } catch (e: KryoException) {
 
-            longArrayOf(data[1].toLong())
+            longArrayOf(data[1].asLong())
 
             // TODO: Remove this
 

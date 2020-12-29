@@ -3,9 +3,10 @@ package io.nekohasekai.pm
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
-import io.nekohasekai.ktlib.compress.tarXz
+import io.nekohasekai.ktlib.compress.tar
 import io.nekohasekai.ktlib.compress.writeDirectory
 import io.nekohasekai.ktlib.compress.writeFile
+import io.nekohasekai.ktlib.compress.xz
 import io.nekohasekai.ktlib.core.getValue
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.db.DefaultLogSqlLogger
@@ -203,7 +204,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             backupTo = backupTo.canonicalFile
 
-            val output = FileUtil.touch(backupTo).tarXz()
+            val output = FileUtil.touch(backupTo).outputStream().xz().tar()
 
             output.writeFile("pm.yml", configFile)
 

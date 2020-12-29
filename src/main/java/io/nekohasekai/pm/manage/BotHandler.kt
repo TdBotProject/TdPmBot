@@ -4,8 +4,8 @@ import io.nekohasekai.ktlib.core.escapeHtmlTags
 import io.nekohasekai.ktlib.core.shift
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdHandler
+import io.nekohasekai.ktlib.td.extensions.asInt
 import io.nekohasekai.ktlib.td.extensions.displayName
-import io.nekohasekai.ktlib.td.extensions.toInt
 import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.launcher
 
@@ -54,7 +54,7 @@ abstract class BotHandler : TdHandler() {
         data: Array<ByteArray>
     ) {
 
-        val botId = data[0].toInt()
+        val botId = data[0].asInt()
 
         val userBot = if (botId == me.id && chatId == launcher.admin) {
 

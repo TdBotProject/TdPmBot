@@ -20,7 +20,6 @@ class StartMessagesMenu : BotHandler() {
     companion object {
 
         const val dataId = DATA_EDIT_STARTS_MESSAGES
-
         const val persistId = PERSIST_SET_START_MESSAGES
 
     }
@@ -64,7 +63,7 @@ class StartMessagesMenu : BotHandler() {
 
                 if (startMessages != null) {
 
-                    dataButton(L.RESET, dataId, byteArrayOf(1))
+                    dataButton(L.RESET, dataId, botId, byteArrayOf(1))
 
                 }
 

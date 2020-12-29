@@ -61,7 +61,7 @@ class CommandsMenu : BotHandler() {
             if (commands.isEmpty()) L.EMPTY else
                 commands.joinToString("\n") { row ->
                     ("/" + row[BotCommands.command] + " - " + HtmlUtil.escape(row[BotCommands.description])).let {
-                        if (row[BotCommands.hide]) it.htmlDelete else it.htmlCode
+                        if (row[BotCommands.disable]) it.htmlDelete else it.htmlCode
                     }
                 }
         ) withMarkup inlineButton {
@@ -252,7 +252,7 @@ class CommandsMenu : BotHandler() {
             (sudo as? PmBot)?.updateCommands()
 
             launcher.findHandler<CommandsMenu>()
-                .commandsMenu(cache.botId, findUserBot(cache.botId), userId, chatId, 0L, false)
+                .commandsMenu(botUserId, findUserBot(botUserId), userId, chatId, 0L, false)
 
         } else {
 
