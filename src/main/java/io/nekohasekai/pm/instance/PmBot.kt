@@ -63,8 +63,6 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     override suspend fun onLogin() {
 
-        defaultLog.debug("[${me.displayNameFormatted}] PmBot Loaded")
-
         updateCommands()
 
         runCatching {
