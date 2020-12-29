@@ -40,8 +40,7 @@ class BlockHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInst
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         val integration = integration
@@ -54,7 +53,7 @@ class BlockHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInst
 
         }
 
-        super.onFunction(userId, chatId, message, function, param, params, originParams)
+        super.onFunction(userId, chatId, message, function, param, params)
 
     }
 

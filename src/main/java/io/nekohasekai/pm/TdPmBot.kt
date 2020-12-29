@@ -464,15 +464,14 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         if (function == "cancel") {
 
             if (!public) rejectFunction()
 
-            super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+            super.onUndefinedFunction(userId, chatId, message, function, param, params)
 
             return
 
@@ -518,6 +517,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         chatId: Long,
         message: TdApi.Message,
         payload: String,
+        param: String,
         params: Array<String>
     ) {
 
@@ -601,8 +601,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         sudo make localeFor(chatId, userId).HELP_MSG sendTo chatId

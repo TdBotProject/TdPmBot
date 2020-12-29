@@ -557,8 +557,7 @@ class CommandMenu : BotHandler() {
         data: Array<Any?>,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         if (subId != 1) rejectFunction()

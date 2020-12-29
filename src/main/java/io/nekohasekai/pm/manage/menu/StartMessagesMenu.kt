@@ -228,8 +228,7 @@ class StartMessagesMenu : BotHandler() {
         data: Array<Any?>,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         if (function == "preview") {

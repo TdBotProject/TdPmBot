@@ -32,8 +32,7 @@ class JoinHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInsta
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         val integration = integration
@@ -50,7 +49,7 @@ class JoinHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmInsta
 
         if (function == "join") {
 
-            super.onFunction(userId, chatId, message, function, param, params, originParams)
+            super.onFunction(userId, chatId, message, function, param, params)
 
         } else {
 

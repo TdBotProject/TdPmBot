@@ -33,8 +33,7 @@ class RecallHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmIns
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         val integration = integration
@@ -47,7 +46,7 @@ class RecallHandler(pmInstance: PmInstance) : AbstractInputUserFunction(), PmIns
 
         }
 
-        super.onFunction(userId, chatId, message, function, param, params, originParams)
+        super.onFunction(userId, chatId, message, function, param, params)
 
     }
 

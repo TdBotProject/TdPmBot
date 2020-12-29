@@ -229,6 +229,7 @@ class IntegrationMenu : BotHandler() {
         chatId: Long,
         message: TdApi.Message,
         payload: String,
+        param: String,
         params: Array<String>
     ) {
 

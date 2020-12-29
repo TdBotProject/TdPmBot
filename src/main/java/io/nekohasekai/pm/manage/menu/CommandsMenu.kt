@@ -169,8 +169,7 @@ class CommandsMenu : BotHandler() {
         data: Array<Any?>,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         val cache = data[0] as CreateBotCommandCache

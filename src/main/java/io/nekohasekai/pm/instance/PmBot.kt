@@ -165,15 +165,14 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         if (function == "cancel") {
 
             if (chatId == admin) {
 
-                super.onUndefinedFunction(userId, chatId, message, function, param, params, originParams)
+                super.onUndefinedFunction(userId, chatId, message, function, param, params)
 
             } else {
 
@@ -210,6 +209,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
         chatId: Long,
         message: TdApi.Message,
         payload: String,
+        param: String,
         params: Array<String>
     ) {
 
@@ -269,6 +269,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
         chatId: Long,
         message: TdApi.Message,
         payload: String,
+        param: String,
         params: Array<String>
     ) {
 

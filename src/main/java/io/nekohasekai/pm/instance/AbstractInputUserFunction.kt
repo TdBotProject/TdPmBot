@@ -25,8 +25,7 @@ abstract class AbstractInputUserFunction : TdHandler() {
         message: TdApi.Message,
         function: String,
         param: String,
-        params: Array<String>,
-        originParams: Array<String>
+        params: Array<String>
     ) {
 
         val L = localeFor(userId)
