@@ -10,19 +10,43 @@
 apt install -y openssl git zlib1g libc++-dev default-jdk
 ```
 
-注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.  
+注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.
 
 如遇到找不到 `LIBC` 库, 请更新系统或编译安装.
 
 ### 依赖 (Windows)
 
-需要安装 [Git for Windows](https://gitforwindows.org/) 与 [VC++ 2015](https://github.com/abbodi1406/vcredist/releases) 与 [OpenJDK 11](https://github.com/ojdkbuild/ojdkbuild)
+需要安装 [Git for Windows](https://gitforwindows.org/) 与 [VC++ 2015](https://github.com/abbodi1406/vcredist/releases)
+与 [OpenJDK 11](https://github.com/ojdkbuild/ojdkbuild)
 
 您也可使用 `vcpkg` 编译安装 `openssl` 与 `zlib`
 
+## 管理
+
+```shell script
+echo "alias pm='bash $PWD/bot.sh'" >> $HOME/.bashrc
+source $HOME/.bashrc
+
+# 注册 ./bot.sh 的命令别名 ( pm )
+```
+
+```shell script
+pm config # 编辑配置文件
+pm run # 编译安装并进入交互式认证  
+pm init # 注册 systemd 服务  
+pm <start/stop/restart> # 启动停止  
+pm <enable/disable> # 启用禁用 (开机启动)  
+pm rebuild # 重新编译  
+pm update # 更新  
+pm force-update # 强制重新更新
+pm upgrade # 更新并重启服务  
+pm log # 实时日志  
+pm logs # 所有日志
+```
+
 ## 配置
 
-复制 `_pm.yml` 到 `pm.yml`.
+`pm config`
 
 ```yaml
 BOT_LANG: 工作语言
@@ -70,30 +94,6 @@ PM_WHITE_LIST:
 运行模式值 `private`, 此模式下主实例作为私聊机器人.
 
 您仍可创建机器人, 但没有命令模板 (即补全).
-
-## 管理
-
-```shell script
-echo "alias pm='bash $PWD/bot.sh'" >> $HOME/.bashrc
-source $HOME/.bashrc
-
-# 注册 ./bot.sh 的命令别名 ( pm )
-```
-
-```shell script
-pm run # 编译安装并进入交互式认证  
-pm init # 注册 systemd 服务  
-pm <start/stop/restart> # 启动停止  
-pm <enable/disable> # 启用禁用 (开机启动)  
-pm rebuild # 重新编译  
-pm update # 更新  
-pm force-update # 强制重新更新
-pm upgrade # 更新并重启服务  
-pm log # 实时日志  
-pm logs # 所有日志
-```
-
-`注: 重新编译前请停止服务以避免运行时 jar 文件覆盖导致的错误, 但不同版本之间不需要.`
 
 ## 其他
 
