@@ -7,6 +7,7 @@ import io.nekohasekai.ktlib.compress.writeFile
 import io.nekohasekai.ktlib.compress.xz
 import io.nekohasekai.ktlib.td.core.TdClient
 import io.nekohasekai.ktlib.td.core.TdHandler
+import io.nekohasekai.ktlib.td.extensions.Minutes
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.database.PmInstance
 import td.TdApi
@@ -29,11 +30,11 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
     ) {
         if (chatId != admin && (chatId != integration?.integration || !isChatAdmin(chatId, userId))) rejectFunction()
 
-        val status = sudo make "Backup... (${global.backupOverwrite})" syncTo chatId
+        val status = sudo make "Backup..." syncTo chatId
 
         scheduleBackup()
 
-        sudo make "Finished" onSuccess deleteDelay(message) editTo status
+        sudo make "Finished" onSuccess deleteDelay(message, timeMs = 1 * Minutes) editTo status
 
     }
 
@@ -56,8 +57,6 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
             if (lastBackup != null && System.currentTimeMillis() - lastBackup < global.backupOverwrite) runCatching {
                 sudo make backupTo at lastBackupId!! syncEditTo global.autoBackup
                 return@backup
-            }.onFailure {
-                it.printStackTrace()
             }
             val message = sudo make backupTo syncTo global.autoBackup
             database.write {
