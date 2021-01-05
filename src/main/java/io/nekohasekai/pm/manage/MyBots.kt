@@ -22,7 +22,6 @@ class MyBots : TdHandler() {
     companion object {
 
         const val command = "my_bots"
-
         const val dataId = DATA_EDIT_BOTS
 
     }
@@ -35,6 +34,7 @@ class MyBots : TdHandler() {
     override fun onLoad() {
 
         initFunction(command)
+        initFunction("all_bots")
 
         initData(dataId)
 
@@ -51,6 +51,8 @@ class MyBots : TdHandler() {
         params: Array<String>
     ) {
 
+        if (function != command && userId != global.admin.toInt()) rejectFunction()
+
         if (!message.fromPrivate) {
 
             sudo makeHtml clientLocale.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
@@ -59,7 +61,7 @@ class MyBots : TdHandler() {
 
         }
 
-        rootMenu(userId, chatId, 0L, false)
+        rootMenu(userId, chatId, 0L, false, function != command)
 
     }
 
@@ -117,7 +119,7 @@ class MyBots : TdHandler() {
 
     }
 
-    suspend fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean) {
+    suspend fun rootMenu(userId: Int, chatId: Long, messageId: Long, isEdit: Boolean, listAll: Boolean = false) {
 
         deleteActionMessage(userId, chatId, messageId)
 
@@ -131,7 +133,7 @@ class MyBots : TdHandler() {
 
         database {
 
-            UserBot.find { UserBots.owner eq userId }.forEach {
+            if (listAll) UserBot.all() else UserBot.find { UserBots.owner eq userId }.forEach {
 
                 bots[it.username] = it.botId
 

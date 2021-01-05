@@ -2,11 +2,7 @@ package io.nekohasekai.pm
 
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
-import cn.hutool.core.io.FileUtil
-import io.nekohasekai.ktlib.compress.tar
-import io.nekohasekai.ktlib.compress.writeDirectory
-import io.nekohasekai.ktlib.compress.writeFile
-import io.nekohasekai.ktlib.compress.xz
+import cn.hutool.core.util.NumberUtil
 import io.nekohasekai.ktlib.core.getValue
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.db.DefaultLogSqlLogger
@@ -18,10 +14,7 @@ import io.nekohasekai.ktlib.db.pair.recreateTable
 import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
-import io.nekohasekai.ktlib.td.extensions.displayNameFormatted
-import io.nekohasekai.ktlib.td.extensions.fromPrivate
-import io.nekohasekai.ktlib.td.extensions.htmlLink
-import io.nekohasekai.ktlib.td.extensions.nextDay
+import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.i18n.store.DatabaseLocaleStore
 import io.nekohasekai.ktlib.td.i18n.store.InMemoryLocaleStore
@@ -33,9 +26,7 @@ import io.nekohasekai.ktlib.td.utils.makeHtml
 import io.nekohasekai.ktlib.td.utils.upsertCommands
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
-import io.nekohasekai.pm.manage.AdminCommands
-import io.nekohasekai.pm.manage.CreateBot
-import io.nekohasekai.pm.manage.MyBots
+import io.nekohasekai.pm.manage.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -80,6 +71,9 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
     private var _admin = 0L
     override val admin by ::_admin
 
+    var autoBackup = 0L
+    var backupOverwrite = 0L
+
     val schemes = SchemeTable("scheme_$tag")
     val botIntegrations by lazy { IdTableCacheMap(database, BotIntegration) }
     val botSettings by lazy { IdTableCacheMap(database, BotSetting) }
@@ -114,6 +108,54 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
     override fun onLoadConfig() {
 
         super.onLoadConfig()
+
+        clientLog.debug("Init database")
+
+        initDatabase("pm_data.db")
+
+        if (LocaleStore.store is InMemoryLocaleStore) {
+
+            LocaleStore.setImplement(DatabaseLocaleStore(database))
+
+        }
+
+        persists.setImplement(DatabasePersistStore(database))
+
+        database.write {
+
+            forceCreateTables(
+                schemes,
+                UserBots,
+                StartMessages,
+                ActionMessages,
+                BotIntegrations,
+                BotSettings,
+                BotCommands,
+                MessageRecords,
+                UserBlocks
+            )
+
+            migrateDatabase(schemes, 1) { fromVersion ->
+
+                if (fromVersion == 0) {
+
+                    if (currentDialect.existingIndices(MessageRecords).values.firstOrNull()!!
+                            .find { it.unique }!!.columns.size == 2
+                    ) {
+
+                        clientLog.info("Migrate database")
+
+                        addLogger(DefaultLogSqlLogger)
+
+                        recreateTable(MessageRecords) { tableName -> MessageRecords(tableName) }
+
+                    }
+
+                }
+
+            }
+
+        }
 
         _admin = intConfig("B0T_OWNER")?.toLong() ?: _admin
 
@@ -165,6 +207,38 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         }
 
+        val errorReport = stringConfig("ERROR_REPORT") ?: "disable"
+
+        if (errorReport != "disable") registerErrorReport(
+            if (errorReport == "owner") {
+                admin
+            } else if (errorReport == "group") {
+                integration?.integration ?: admin
+            } else if (!NumberUtil.isLong(errorReport)) {
+                clientLog.warn("Invalid error report chat specified: chatId required, but $errorReport")
+                exitProcess(100)
+            } else errorReport.toLong()
+        )
+
+        val autoBackup = stringConfig("AUTO_BACKUP") ?: "disable"
+
+        if (autoBackup != "disable") {
+            this.autoBackup = if (autoBackup == "owner") {
+                admin
+            } else if (autoBackup == "group") {
+                integration?.integration ?: admin
+            } else if (!NumberUtil.isLong(autoBackup)) {
+                clientLog.warn("Invalid auto backup chat specified: chatId required, but $autoBackup")
+                exitProcess(100)
+            } else errorReport.toLong()
+            runCatching {
+                backupOverwrite = (stringConfig("BACKUP_OVERWRITE") ?: "-1").parseTime(true)
+            }.onFailure {
+                clientLog.warn("Invalid backup overwrite specified: time required, but $backupOverwrite")
+                exitProcess(100)
+            }
+        }
+
     }
 
     override fun onArgument(argument: String, value: String?) {
@@ -204,41 +278,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             backupTo = backupTo.canonicalFile
 
-            val output = FileUtil.touch(backupTo).outputStream().xz().tar()
-
-            output.writeFile("pm.yml", configFile)
-
-            // 数据目录
-
-            output.writeDirectory("data/")
-
-            // 数据库
-
-            val originDatabaseDirectory = File(options.databaseDirectory)
-
-            output.writeFile("data/pm_data.db", File(originDatabaseDirectory, "pm_data.db"))
-
-            output.writeFile("data/td.binlog", File(originDatabaseDirectory, "td.binlog"))
-
-            val pmBots = File(originDatabaseDirectory, "pm").listFiles()
-
-            if (!pmBots.isNullOrEmpty()) {
-
-                output.writeDirectory("data/pm/")
-
-                pmBots.forEach {
-
-                    output.writeDirectory("data/pm/${it.name}/")
-
-                    output.writeFile("data/pm/${it.name}/td.binlog", File(it, "td.binlog"))
-
-                }
-
-            }
-
-            output.finish()
-
-            output.close()
+            createBackup(backupTo)
 
             clientLog.info(">> Saved to ${backupTo.path}")
 
@@ -251,54 +291,6 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
     override fun onLoad() {
 
         super.onLoad()
-
-        clientLog.debug("Init database")
-
-        initDatabase("pm_data.db")
-
-        if (LocaleStore.store is InMemoryLocaleStore) {
-
-            LocaleStore.setImplement(DatabaseLocaleStore(database))
-
-        }
-
-        persists.setImplement(DatabasePersistStore(database))
-
-        database.write {
-
-            forceCreateTables(
-                schemes,
-                UserBots,
-                StartMessages,
-                ActionMessages,
-                BotIntegrations,
-                BotSettings,
-                BotCommands,
-                MessageRecords,
-                UserBlocks
-            )
-
-            migrateDatabase(schemes, 1) { fromVersion ->
-
-                if (fromVersion == 0) {
-
-                    if (currentDialect.existingIndices(MessageRecords).values.firstOrNull()!!
-                            .find { it.unique }!!.columns.size == 2
-                    ) {
-
-                        clientLog.info("Migrate database")
-
-                        addLogger(DefaultLogSqlLogger)
-
-                        recreateTable(MessageRecords) { tableName -> MessageRecords(tableName) }
-
-                    }
-
-                }
-
-            }
-
-        }
 
         if (public) initFunction("help")
 
@@ -321,6 +313,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         addHandler(GetIdCommand())
         addHandler(AdminCommands())
+        addHandler(Backup(this))
 
     }
 
@@ -370,6 +363,12 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
             GlobalScope.launch(Dispatchers.IO) { gc() }
 
+        }
+
+        if (autoBackup != 0L) timer.schedule(Date(nextHour()), 1 * Hours) {
+            GlobalScope.launch(Dispatchers.IO) {
+                findHandler<Backup>().scheduleBackup()
+            }
         }
 
     }

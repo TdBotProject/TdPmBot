@@ -291,21 +291,7 @@ class CommandMenu : BotHandler() {
                     } at messageId editTo chatId
 
                 } else {
-                    {
 
-                        sudo make L.INPUT_MESSAGES withMarkup inlineButton {
-
-                            dataLine(
-                                L.BACK_ARROW,
-                                dataId,
-                                botUserId.asByteArray(),
-                                command.command.encodeToByteArray(),
-                                byteArrayOf(-1)
-                            )
-
-                        } at messageId editTo chatId
-
-                    }
                     sudo make L.INPUT_MESSAGES withMarkup inlineButton {
 
                         dataLine(

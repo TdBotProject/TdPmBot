@@ -11,7 +11,6 @@ apt install -y openssl git zlib1g libc++-dev default-jdk
 ```
 
 注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.
-
 如遇到找不到 `LIBC` 库, 请更新系统或编译安装.
 
 ### 依赖 (Windows)
@@ -57,6 +56,9 @@ PM_WHITE_LIST: 白名单列表
 LOG_LEVEL: 日志等级 - 默认为 INFO
 DATA_DIR: 数据存放目录 - 默认为当前目录下 data 文件夹
 CACHE_DIR: 缓存存放目录 - 默认为当前目录下 cache 文件夹
+ERROR_REPORT: 错误报告 - 默认禁用
+AUTO_BACKUP: 自动备份 - 默认禁用
+BACKUP_OVERWRITE: 备份覆盖间隔 - 默认持续
 ```
 
 ### 工作语言
@@ -95,13 +97,39 @@ PM_WHITE_LIST:
 
 您仍可创建机器人, 但没有命令模板 (即补全).
 
+#### 错误报告
+
+当机器人出错时, 通常能够处理并继续运行, 您可将错误信息提交与我们以改进此程序.
+
+默认禁用, 仅在标准输出流打印错误.
+
+格式:
+`disable`: 禁用
+`owner`: 发送到与与您的私聊
+`group`: 机器人接入的群组
+
+或填写会话ID, 注意: **与永不离线的 telegram-http-api 服务器不同, 使用低层协议的机器人只能访问本地有记录的会话.**
+
+#### 自动备份
+
+默认禁用, 格式同上, 使用见下 `迁移` 节.
+
+#### 备份覆盖间隔
+
+通常情况下您只需要最新的备份文件以免托管服务终止, 所以此项默认设为持续覆盖值 `-1`, 以避免浪费空间.
+
+否则, 在超过指定间隔后, 将另重新发送备份文件而不是覆盖 (在 Telegram 中表现为编辑文件).
+
+时间格式: `1d2h3m4s` 或 `秒数`
+例子: `2m30s` ( 两分钟三十秒 )
+或者: `180` ( 三分钟 )
+
 ## 其他
 
 如需更改, 复制 `_bot.conf` 到 `bot.conf`.
 
 ```
 SERVICE_NAME: systemd 服务名称, 默认 `td-bots`, 修改如果您需要多个实例.
-MVN_ARGS: Maven 编译参数.
 JAVA_ARGS: JVM 启动参数.
 ARGS: 启动参数.
 ```
@@ -175,8 +203,9 @@ ARGS: 启动参数.
      
 格式为 `https://t.me/<botUserName>?start=<command>` (参见 https://core.telegram.org/bots#deep-linking ).
 
-`私聊命令`: 仅公开模式主实例选项, 使用该命令后机器人接受私聊消息. ( 您可提示对方使用 /cancel 退出 ) .
-
+`私聊命令`: 仅公开模式主实例选项, 使用该命令后机器人接受私聊消息. ( 您可提示对方使用 /cancel 退出 ).
+`隐藏命令`: 不将命令显示在命令列表中.
+`禁用命令`: 禁用但不删除.
 ### PM 操作
 
 #### 提示消息

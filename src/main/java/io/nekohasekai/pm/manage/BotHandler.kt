@@ -6,7 +6,9 @@ import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.extensions.asInt
 import io.nekohasekai.ktlib.td.extensions.displayName
+import io.nekohasekai.pm.TdPmBot
 import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.launcher
 
 abstract class BotHandler : TdHandler() {
@@ -85,3 +87,5 @@ abstract class BotHandler : TdHandler() {
     )
 
 }
+
+val TdHandler.global get() = sudo as TdPmBot
