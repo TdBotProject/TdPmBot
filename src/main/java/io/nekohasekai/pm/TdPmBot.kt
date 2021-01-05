@@ -608,4 +608,6 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
     }
 
+    override suspend fun onNewMessageLast(userId: Int, chatId: Long, message: TdApi.Message) = Unit
+
 }

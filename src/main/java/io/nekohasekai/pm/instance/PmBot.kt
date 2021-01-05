@@ -288,4 +288,6 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     }
 
+    override suspend fun onNewMessageLast(userId: Int, chatId: Long, message: TdApi.Message) = Unit
+
 }
