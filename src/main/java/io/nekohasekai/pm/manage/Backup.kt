@@ -12,6 +12,7 @@ import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.database.PmInstance
 import td.TdApi
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
@@ -75,27 +76,34 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
 fun TdHandler.createBackup(backupTo: File) {
 
-    val output = FileUtil.touch(backupTo).outputStream().xz().tar()
+    while (true) try {
 
-    output.writeFile("pm.yml", global.configFile)
-    output.writeDirectory("data/")
-    output.writeFile("data/pm_data.db", File(global.dataDir, "pm_data.db"))
-    output.writeFile("data/td.binlog", File(global.dataDir, "td.binlog"))
+        val output = FileUtil.touch(backupTo).outputStream().xz().tar()
 
-    val pmBots = File(global.dataDir, "pm").listFiles()
+        output.writeFile("pm.yml", global.configFile)
+        output.writeDirectory("data/")
+        output.writeFile("data/pm_data.db", File(global.dataDir, "pm_data.db"))
+        output.writeFile("data/td.binlog", File(global.dataDir, "td.binlog"))
 
-    if (!pmBots.isNullOrEmpty()) {
+        val pmBots = File(global.dataDir, "pm").listFiles()
 
-        output.writeDirectory("data/pm/")
+        if (!pmBots.isNullOrEmpty()) {
 
-        pmBots.forEach {
-            output.writeDirectory("data/pm/${it.name}/")
-            output.writeFile("data/pm/${it.name}/td.binlog", File(it, "td.binlog"))
+            output.writeDirectory("data/pm/")
+
+            pmBots.forEach {
+                output.writeDirectory("data/pm/${it.name}/")
+                output.writeFile("data/pm/${it.name}/td.binlog", File(it, "td.binlog"))
+            }
+
         }
 
-    }
+        output.finish()
+        output.close()
 
-    output.finish()
-    output.close()
+        break
+
+    } catch (ignored: IOException) {
+    }
 
 }
