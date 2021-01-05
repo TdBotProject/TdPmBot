@@ -31,7 +31,7 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
     ) {
         if (chatId != admin && (chatId != integration?.integration || !isChatAdmin(chatId, userId))) rejectFunction()
 
-        val status = sudo make "Backup..." syncTo chatId
+        val status = sudo make "Backup... (${global.backupOverwrite})" syncTo chatId
 
         scheduleBackup()
 
@@ -55,9 +55,12 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
         createBackup(backupTo)
 
         runCatching backup@{
+            println(lastBackup)
             if (lastBackup != null && System.currentTimeMillis() - lastBackup < global.backupOverwrite) runCatching {
                 sudo makeFile backupTo at lastBackupId!! syncEditTo global.autoBackup
                 return@backup
+            }.onFailure {
+                it.printStackTrace()
             }
             val message = sudo makeFile backupTo syncTo global.autoBackup
             database.write {
