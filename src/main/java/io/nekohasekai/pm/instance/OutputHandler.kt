@@ -377,8 +377,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
                     if (index == 0) {
 
                         sudo makeAlert L.RECORD_NF answerTo queryId
-
-                        editMessageReplyMarkupOrNull(chatId, messageId, null)
+                        sudo makeInlineButton null at messageId editTo chatId
 
                     }
 

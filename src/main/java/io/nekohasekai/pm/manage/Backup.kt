@@ -1,6 +1,5 @@
 package io.nekohasekai.pm.manage
 
-import cn.hutool.core.date.DateUtil
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.compress.tar
 import io.nekohasekai.ktlib.compress.writeDirectory
@@ -10,7 +9,6 @@ import io.nekohasekai.ktlib.td.core.TdClient
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.database.PmInstance
-import kotlinx.coroutines.runBlocking
 import td.TdApi
 import java.io.File
 import java.util.*
@@ -55,14 +53,13 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
         createBackup(backupTo)
 
         runCatching backup@{
-            println(lastBackup)
             if (lastBackup != null && System.currentTimeMillis() - lastBackup < global.backupOverwrite) runCatching {
-                sudo makeFile backupTo at lastBackupId!! syncEditTo global.autoBackup
+                sudo make backupTo at lastBackupId!! syncEditTo global.autoBackup
                 return@backup
             }.onFailure {
                 it.printStackTrace()
             }
-            val message = sudo makeFile backupTo syncTo global.autoBackup
+            val message = sudo make backupTo syncTo global.autoBackup
             database.write {
                 global.schemes.setItem("last_backup", start)
                 global.schemes.setItem("last_backup_message_id", message.id)

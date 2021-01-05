@@ -4,8 +4,6 @@ import cn.hutool.http.HtmlUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkup
-import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.extensions.asByteArray
 import io.nekohasekai.ktlib.td.extensions.asInputOrForward
 import io.nekohasekai.ktlib.td.extensions.text
@@ -112,7 +110,7 @@ class CommandMenu : BotHandler() {
         isEdit: Boolean
     ) {
 
-        val L = localeFor(userId)
+        @Suppress("unused") val L = localeFor(userId)
 
         sudo makeMd L.COMMAND_HELP.input(
             botNameHtml(botUserId, userBot),
@@ -151,6 +149,7 @@ class CommandMenu : BotHandler() {
 
         }
 
+        @Suppress("unused")
         constructor() : this(0, null, null, 0L, false)
 
         var edited = false
@@ -180,6 +179,7 @@ class CommandMenu : BotHandler() {
 
         }
 
+        @Suppress("unused")
         constructor() : this(0, null, 0L, null)
 
         var edited = false
@@ -320,7 +320,7 @@ class CommandMenu : BotHandler() {
 
                         sudo confirmTo queryId
 
-                        editMessageReplyMarkup(chatId, messageId, commandButtons(L, botUserId, userBot, command))
+                        sudo makeInlineButton commandButtons(L, botUserId, userBot, command) at messageId editTo chatId
 
                         return
 
@@ -360,7 +360,7 @@ class CommandMenu : BotHandler() {
 
                 sudo makeAnswer (if (!target) L.DISABLED else L.ENABLED) answerTo queryId
 
-                editMessageReplyMarkup(chatId, messageId, commandButtons(L, botUserId, userBot, command))
+                sudo makeInlineButton commandButtons(L, botUserId, userBot, command) at messageId editTo chatId
 
                 if (userBot != null) launcher.initBot(userBot).updateCommands() else (sudo as TdPmBot).updateCommands()
 
@@ -407,11 +407,11 @@ class CommandMenu : BotHandler() {
 
             val cache = data[0] as RenameCache
 
-            suspend fun removeBack() {
+            fun removeBack() {
 
                 if (!cache.edited) {
 
-                    editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+                    sudo makeInlineButton null at cache.startsAt editTo chatId
 
                     cache.edited = true
 
@@ -511,7 +511,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                launcher.editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+                sudo makeInlineButton null at cache.startsAt editTo chatId
 
                 cache.edited = true
 
@@ -552,7 +552,7 @@ class CommandMenu : BotHandler() {
 
         if (!cache.edited) {
 
-            editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+            sudo makeInlineButton null at cache.startsAt editTo chatId
 
             cache.edited = true
 
@@ -644,7 +644,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+                sudo makeInlineButton null at cache.startsAt editTo chatId
 
                 cache.edited = true
 
@@ -658,7 +658,7 @@ class CommandMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+                sudo makeInlineButton null at cache.startsAt editTo chatId
 
                 cache.edited = true
 

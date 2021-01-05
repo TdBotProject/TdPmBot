@@ -7,10 +7,7 @@ import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.i18n.*
-import io.nekohasekai.ktlib.td.utils.confirmTo
-import io.nekohasekai.ktlib.td.utils.inlineButton
-import io.nekohasekai.ktlib.td.utils.make
-import io.nekohasekai.ktlib.td.utils.makeHtml
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.BotCommand
 import io.nekohasekai.pm.database.BotCommands
@@ -275,8 +272,7 @@ class CommandsMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
-
+                sudo makeInlineButton null at cache.startsAt editTo chatId
                 cache.edited = true
 
             }
@@ -400,7 +396,7 @@ class CommandsMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                editMessageReplyMarkupOrNull(chatId, cache.startsAt, null)
+                sudo makeInlineButton null at cache.startsAt editTo chatId
 
                 cache.edited = true
 
