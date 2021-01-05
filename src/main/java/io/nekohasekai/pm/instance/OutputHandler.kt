@@ -77,7 +77,7 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                 }.also {
 
-                    TdClient.timer.schedule(it, 1000L)
+                    TdClient.timer.schedule(it, 3000L)
 
                 }
 

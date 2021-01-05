@@ -113,7 +113,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 }.also {
 
-                    TdClient.timer.schedule(it, 300L)
+                    TdClient.timer.schedule(it, 3000L)
 
                 }
 
