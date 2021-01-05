@@ -231,10 +231,11 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
                 clientLog.warn("Invalid auto backup chat specified: chatId required, but $autoBackup")
                 exitProcess(100)
             } else errorReport.toLong()
+            val backup = stringConfig("BACKUP_OVERWRITE") ?: "-1"
             runCatching {
-                backupOverwrite = (stringConfig("BACKUP_OVERWRITE") ?: "-1").parseTime(true)
+                backupOverwrite = backup.parseTime(true)
             }.onFailure {
-                clientLog.warn("Invalid backup overwrite specified: time required, but $backupOverwrite")
+                clientLog.warn("Invalid backup overwrite specified: time required, but $backup")
                 exitProcess(100)
             }
         }
