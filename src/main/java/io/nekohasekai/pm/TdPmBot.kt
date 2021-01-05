@@ -2,6 +2,8 @@ package io.nekohasekai.pm
 
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
+import cn.hutool.core.lang.ClassScanner
+import cn.hutool.core.util.ClassUtil
 import cn.hutool.core.util.NumberUtil
 import io.nekohasekai.ktlib.core.getValue
 import io.nekohasekai.ktlib.core.input
@@ -108,6 +110,11 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
     override fun onLoadConfig() {
 
         super.onLoadConfig()
+
+        clientLog.debug("Load classpath")
+
+        // 防止覆盖重启时丢失类路经
+        ClassUtil.scanPackage("io.nekohasekai")
 
         clientLog.debug("Init database")
 
