@@ -8,10 +8,7 @@ import io.nekohasekai.ktlib.compress.writeFile
 import io.nekohasekai.ktlib.compress.xz
 import io.nekohasekai.ktlib.td.core.TdClient
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.utils.UploadingDocument
-import io.nekohasekai.ktlib.td.utils.isChatAdmin
-import io.nekohasekai.ktlib.td.utils.make
-import io.nekohasekai.ktlib.td.utils.makeFile
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.database.PmInstance
 import kotlinx.coroutines.runBlocking
 import td.TdApi
@@ -34,19 +31,11 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
     ) {
         if (chatId != admin && (chatId != integration?.integration || !isChatAdmin(chatId, userId))) rejectFunction()
 
-        sudo make UploadingDocument sendTo chatId
+        val status = sudo make "Backup..." syncTo chatId
 
-        val backupTo = File(
-            global.cacheDir, "td-pm-${
-                global.tag.replace("  ", " ").replace(" ", "-").replace("_", "-")
-            }-backup-${DateUtil.format(Date(), "yyyyMMdd-HHmmss")}.tar.xz"
-        )
+        scheduleBackup()
 
-        createBackup(backupTo)
-
-        sudo makeFile backupTo syncTo chatId
-
-        backupTo.delete()
+        sudo make "Finished" onSuccess deleteDelay(message) editTo status
 
     }
 
@@ -54,8 +43,8 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
         val start = System.currentTimeMillis()
 
-        val lastBackup = global.schemes.getItem<Long>("last_backup")
-        val lastBackupId = global.schemes.getItem<Long>("last_backup_message_id")
+        val lastBackup = database { global.schemes.getItem<Long>("last_backup") }
+        val lastBackupId = database { global.schemes.getItem<Long>("last_backup_message_id") }
 
         val backupTo = File(
             global.cacheDir, "td-pm-${
@@ -71,11 +60,15 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
                 return@backup
             }
             val message = sudo makeFile backupTo syncTo global.autoBackup
-            global.schemes.setItem("last_backup", start)
-            global.schemes.setItem("last_backup_message_id", message.id)
+            database.write {
+                global.schemes.setItem("last_backup", start)
+                global.schemes.setItem("last_backup_message_id", message.id)
+            }
         }.onFailure {
             TdClient.contextErrorHandler(global, it, "auto backup")
         }
+
+        backupTo.delete()
 
     }
 
