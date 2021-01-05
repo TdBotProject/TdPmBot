@@ -4,7 +4,6 @@ import cn.hutool.http.HtmlUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.raw.editMessageReplyMarkupOrNull
 import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.utils.*

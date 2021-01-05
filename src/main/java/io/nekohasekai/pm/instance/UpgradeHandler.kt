@@ -1,6 +1,5 @@
 package io.nekohasekai.pm.instance
 
-import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.extensions.userCalled
 import io.nekohasekai.pm.database.PmInstance

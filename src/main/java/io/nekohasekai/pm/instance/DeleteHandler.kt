@@ -1,7 +1,6 @@
 package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.core.raw.getMessageWith

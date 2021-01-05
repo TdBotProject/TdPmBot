@@ -1,7 +1,6 @@
 package io.nekohasekai.pm.instance
 
 import io.nekohasekai.ktlib.core.input
-import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.raw.getUser
 import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
 import io.nekohasekai.ktlib.td.extensions.htmlCode

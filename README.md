@@ -10,8 +10,8 @@
 apt install -y openssl git zlib1g libc++-dev default-jdk
 ```
 
-注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下.
-如遇到找不到 `LIBC` 库, 请更新系统或编译安装.
+注： 仅支持 `amd64, i386, arm64`, 否则需自行编译 [LibTDJni](https://github.com/TdBotProject/LibTDJni) 放置在 libs 文件夹下. 如遇到找不到 `LIBC`
+库, 请更新系统或编译安装.
 
 ### 依赖 (Windows)
 
@@ -83,7 +83,8 @@ BACKUP_OVERWRITE: 备份覆盖间隔 - 默认持续
 
 运行模式值 `white-list`, 此模式下列表中的用户与您可以创建机器人.
 
-需配置白名单设置项: 
+需配置白名单设置项:
+
 ```yaml
 PM_WHITE_LIST: 
   - id1
@@ -160,7 +161,7 @@ ARGS: 启动参数.
 
 ### 创建新机器人
 
-使用 `/new_bot` 命令进入创建步进程序, 输入完后根据提示发送 [Bot Token](https://core.telegram.org/bots#creating-a-new-bot">) 到机器人即可完成创建, 
+使用 `/new_bot` 命令进入创建步进程序, 输入完后根据提示发送 [Bot Token](https://core.telegram.org/bots#creating-a-new-bot">) 到机器人即可完成创建,
 
 您也可以使用该 Token 作为命令参数传入直接创建 ( `/new_bot <BotToken>` ).
 
@@ -200,12 +201,13 @@ ARGS: 启动参数.
 您可以为机器人添加命令, 并为每个命令设置不同的消息内容, 并接收到对方消息所回复之命令.
 
 也可以通过链接 ( start payload, 链接可以在命令设置中找到 ), 点击效果同打开bot并发送命令.
-     
+
 格式为 `https://t.me/<botUserName>?start=<command>` (参见 https://core.telegram.org/bots#deep-linking ).
 
 `私聊命令`: 仅公开模式主实例选项, 使用该命令后机器人接受私聊消息. ( 您可提示对方使用 /cancel 退出 ).
 `隐藏命令`: 不将命令显示在命令列表中.
 `禁用命令`: 禁用但不删除.
+
 ### PM 操作
 
 #### 提示消息
@@ -222,7 +224,7 @@ ARGS: 启动参数.
 
 对客人的消息的可用操作:
 
-`回复这条消息`: 消息将被直接发送给客人或回复对应消息.  
+`回复这条消息`: 消息将被直接发送给客人或回复对应消息.
 
 回复对方的消息直接发送消息的复制给客人, 如果没有进入对应的会话, 将不会 `回复` 对应消息, 除非您开启了 `保持回复`.
 
