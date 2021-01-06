@@ -84,6 +84,9 @@ fun TdHandler.backupToFile(bot: PmBot): File {
         }
     }
 
+    output.flush()
+    output.close()
+
     return cacheFile
 
 }
