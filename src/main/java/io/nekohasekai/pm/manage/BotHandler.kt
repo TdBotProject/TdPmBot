@@ -63,7 +63,7 @@ abstract class BotHandler : TdHandler() {
 
         } else findUserBot(botId)
 
-        if (userBot != null && userBot.owner != userId || botId != me.id && userBot == null) {
+        if (chatId != launcher.admin && (userBot != null && userBot.owner != userId || botId != me.id && userBot == null)) {
 
             findHandler<MyBots>().rootMenu(userId, chatId, messageId, true)
 

@@ -22,8 +22,8 @@ fun TdHandler.backupToFile(bot: PmBot): File {
 
     val output = FileUtil.touch(cacheFile).outputStream().xz().byteBuffer()
 
-    // version
     output.writeInt(1)
+
     output.writeInt(bot.userBot.botId)
     output.writeString(bot.userBot.username)
     output.writeInt(bot.userBot.owner)
@@ -77,6 +77,7 @@ fun TdHandler.backupToFile(bot: PmBot): File {
         val messageRecords = MessageRecords.select { MessageRecords.botId eq bot.userBot.botId }
         output.writeLong(messageRecords.count())
         for (messageRecord in messageRecords) {
+            output.writeLong(messageRecord[MessageRecords.messageId])
             output.writeInt(messageRecord[MessageRecords.type])
             output.writeLong(messageRecord[MessageRecords.chatId])
             output.writeLong(messageRecord[MessageRecords.targetId] ?: -1)

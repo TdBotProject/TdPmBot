@@ -133,7 +133,7 @@ class MyBots : TdHandler() {
 
         database {
 
-            if (listAll) UserBot.all() else UserBot.find { UserBots.owner eq userId }.forEach {
+            (if (listAll) UserBot.all() else UserBot.find { UserBots.owner eq userId }).forEach {
 
                 bots[it.username] = it.botId
 
