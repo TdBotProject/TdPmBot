@@ -1,14 +1,19 @@
 package io.nekohasekai.pm.manage.menu
 
+import io.nekohasekai.ktlib.core.SQUARE_ENABLE
 import io.nekohasekai.ktlib.core.input
+import io.nekohasekai.ktlib.core.toStatusString
+import io.nekohasekai.ktlib.td.core.raw.getMessage
 import io.nekohasekai.ktlib.td.extensions.asByteArray
 import io.nekohasekai.ktlib.td.i18n.BACK_ARROW
 import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.instance.backupToFile
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
+import td.TdApi
 import java.util.*
 
 class DeleteMenu : BotHandler() {
@@ -22,6 +27,39 @@ class DeleteMenu : BotHandler() {
     override fun onLoad() {
 
         initData(dataId)
+
+    }
+
+    fun deleteButtons(userId: Int, botUserId: Int, again: Boolean, export: Boolean) = inlineButton {
+
+        val L = localeFor(userId)
+
+        val botId = botUserId.asByteArray()
+
+        if (!again) {
+
+            dataLine(L.MENU_BOT_DEL_NO_1, BotMenu.dataId, botId)
+            dataLine(L.MENU_BOT_DEL_NO_2, BotMenu.dataId, botId)
+            dataLine(L.MENU_BOT_DEL_YES_1, dataId, botId, byteArrayOf(1))
+
+        } else {
+
+            dataLine(L.MENU_BOT_DEL_NO_3, BotMenu.dataId, botId)
+            dataLine(L.MENU_BOT_DEL_NO_4, BotMenu.dataId, botId)
+            dataLine(L.MENU_BOT_DEL_YES_2, dataId, botId, byteArrayOf(2))
+
+        }
+
+        Collections.shuffle(this)
+
+        if (again) {
+            newLine(true) {
+                dataButton(L.MENU_BOT_DEL_EXPORT, -1)
+                dataButton(export.toStatusString(), dataId, botId, byteArrayOf(0))
+            }
+        }
+
+        dataLine(L.BACK_ARROW, BotMenu.dataId, botId)
 
     }
 
@@ -42,29 +80,7 @@ class DeleteMenu : BotHandler() {
             botNameHtml(botUserId, userBot),
             botUserName(botUserId, userBot)
 
-        ) withMarkup inlineButton {
-
-            val botId = botUserId.asByteArray()
-
-            if (!again) {
-
-                dataLine(L.MENU_BOT_DEL_NO_1, BotMenu.dataId, botId)
-                dataLine(L.MENU_BOT_DEL_NO_2, BotMenu.dataId, botId)
-                dataLine(L.MENU_BOT_DEL_YES_1, dataId, botId, byteArrayOf(0))
-
-            } else {
-
-                dataLine(L.MENU_BOT_DEL_NO_3, BotMenu.dataId, botId)
-                dataLine(L.MENU_BOT_DEL_NO_4, BotMenu.dataId, botId)
-                dataLine(L.MENU_BOT_DEL_YES_2, dataId, botId, byteArrayOf(1))
-
-            }
-
-            Collections.shuffle(this)
-
-            dataLine(L.BACK_ARROW, BotMenu.dataId, botId)
-
-        } onSuccess {
+        ) withMarkup deleteButtons(userId, botUserId, again, false) onSuccess {
 
             if (!isEdit) findHandler<MyBots>().saveActionMessage(userId, it.id)
 
@@ -90,23 +106,46 @@ class DeleteMenu : BotHandler() {
 
         } else when (data[0][0].toInt()) {
 
-            0 -> botDeleteMenu(botUserId, userBot, userId, chatId, messageId, isEdit = true, again = true)
+            0 -> {
 
-            1 -> {
+                val oldStatus = (getMessage(
+                    chatId,
+                    messageId
+                ).replyMarkup as TdApi.ReplyMarkupInlineKeyboard).rows[0][1].text == SQUARE_ENABLE
+
+                sudo makeInlineButton deleteButtons(userId, botUserId, true, !oldStatus) at messageId editTo chatId
+
+            }
+
+            1 -> botDeleteMenu(botUserId, userBot, userId, chatId, messageId, isEdit = true, again = true)
+
+            2 -> {
 
                 val L = localeFor(userId)
+                val export = (getMessage(
+                    chatId,
+                    messageId
+                ).replyMarkup as TdApi.ReplyMarkupInlineKeyboard).rows[0][1].text == SQUARE_ENABLE
 
                 sudo make Typing sendTo chatId
 
                 val status = sudo make L.STOPPING at messageId syncEditTo chatId
 
                 val bot = launcher.initBot(userBot!!)
-
                 bot.waitForClose()
 
-                sudo make Typing sendTo chatId
+                if (export) {
+                    sudo make L.BACKING_UP editTo status
+                    sudo make Typing sendTo chatId
+
+                    val backupFile = backupToFile(bot)
+
+                    sudo make UploadingDocument sendTo chatId
+                    sudo make backupFile syncTo chatId
+                }
 
                 sudo make L.DELETING editTo status
+                sudo make Typing sendTo chatId
 
                 bot.destroy()
 

@@ -105,9 +105,13 @@ MENU_BOT_DEL_YES_1: |-
   是的, 删除这个机器人
 MENU_BOT_DEL_YES_2: |-
   是的, 我 100% 确定!
+MENU_BOT_DEL_EXPORT: |-
+  导出数据
 
 STOPPING: |-
   停止机器人...
+BACKING_UP: |-
+  备份数据...
 DELETING: |-
   删除数据...
 BOT_DELETED: |-

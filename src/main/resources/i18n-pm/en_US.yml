@@ -106,8 +106,12 @@ MENU_BOT_DEL_YES_1: |-
   Yes, delete the bot
 MENU_BOT_DEL_YES_2: |-
   Yes, I'm 100% sure!
+MENU_BOT_DEL_EXPORT: |-
+  Export data
 STOPPING: |-
   Stopping...
+BACKING_UP: |-
+  Backing up...
 DELETING: |-
   Deleting...
 BOT_DELETED: |-

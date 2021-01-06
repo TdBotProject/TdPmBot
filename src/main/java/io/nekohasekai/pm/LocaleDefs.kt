@@ -1,3 +1,4 @@
+
 package io.nekohasekai.pm
 
 import io.nekohasekai.ktlib.td.i18n.LocaleController
@@ -41,7 +42,9 @@ internal val L.MENU_BOT_DEL_NO_3 by string
 internal val L.MENU_BOT_DEL_NO_4 by string
 internal val L.MENU_BOT_DEL_YES_1 by string
 internal val L.MENU_BOT_DEL_YES_2 by string
+internal val L.MENU_BOT_DEL_EXPORT by string
 internal val L.STOPPING by string
+internal val L.BACKING_UP by string
 internal val L.DELETING by string
 internal val L.BOT_DELETED by string
 internal val L.BOT_AUTH_FAILED by string

@@ -105,9 +105,13 @@ MENU_BOT_DEL_YES_1: |-
   是的, 刪除這個機器人
 MENU_BOT_DEL_YES_2: |-
   是的, 我 100% 確定!
+MENU_BOT_DEL_EXPORT: |-
+  導出數據
 
 STOPPING: |-
   停止機器人...
+BACKING_UP: |-
+  備份數據...
 DELETING: |-
   刪除數據...
 BOT_DELETED: |-
