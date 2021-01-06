@@ -13,6 +13,7 @@ import io.nekohasekai.pm.database.BotCommands
 import io.nekohasekai.pm.database.MessageRecords
 import io.nekohasekai.pm.database.UserBlocks
 import io.nekohasekai.pm.manage.global
+import okhttp3.internal.closeQuietly
 import org.jetbrains.exposed.sql.select
 import java.io.File
 
@@ -62,11 +63,9 @@ fun TdHandler.backupToFile(bot: PmBot): File {
     }
 
     val startMessages = global.startMessages.fetch(bot.userBot.botId).value
-    output.writeInt(startMessages?.size ?: -1)
-    if (!startMessages.isNullOrEmpty()) {
-        for (startMessage in startMessages) {
-            output.writeKryo(startMessage)
-        }
+    output.writeBoolean(startMessages != null)
+    if (startMessages != null) {
+        output.writeKryo(startMessages)
     }
 
     database {
@@ -88,7 +87,7 @@ fun TdHandler.backupToFile(bot: PmBot): File {
     }
 
     output.flush()
-    output.close()
+    output.closeQuietly()
 
     return cacheFile
 

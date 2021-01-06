@@ -56,10 +56,12 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
         runCatching backup@{
             if (lastBackup != null && System.currentTimeMillis() - lastBackup < global.backupOverwrite) runCatching {
-                sudo make backupTo at lastBackupId!! syncEditTo global.autoBackup
+                val message = sudo make backupTo at lastBackupId!! syncEditTo global.autoBackup
+                deleteUploaded(message)
                 return@backup
             }
             val message = sudo make backupTo syncTo global.autoBackup
+            deleteUploaded(message)
             database.write {
                 global.schemes.setItem("last_backup", start)
                 global.schemes.setItem("last_backup_message_id", message.id)

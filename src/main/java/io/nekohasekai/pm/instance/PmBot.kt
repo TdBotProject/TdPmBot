@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
+import io.nekohasekai.ktlib.td.core.raw.close
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
 import io.nekohasekai.ktlib.td.extensions.fromPrivate
@@ -16,6 +17,7 @@ import io.nekohasekai.ktlib.td.utils.removeKeyboard
 import io.nekohasekai.ktlib.td.utils.upsertCommands
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
+import io.nekohasekai.pm.manage.global
 import io.nekohasekai.pm.manage.menu.BotMenu
 import io.nekohasekai.pm.manage.menu.CommandsMenu
 import io.nekohasekai.pm.manage.menu.IntegrationMenu
@@ -118,19 +120,9 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     override suspend fun onLogout() {
 
-        destroy()
+        close()
 
-        val owner = admin
-        val userBot = userBot
-
-        launcher.apply {
-
-            getChatOrNull(owner) ?: return
-
-            sudo make L.BOT_LOGOUT.input(userBot.username) sendTo owner
-
-        }
-
+        launcher.initBot(userBot)
     }
 
     override fun onLoad() {
@@ -152,6 +144,12 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
         initStartPayload("finish_creation")
 
+    }
+
+    override suspend fun onDestroy() {
+        super.onDestroy()
+
+        launcher.instanceMap.remove(botUserId)
     }
 
     override suspend fun userBlocked(userId: Int) = blocks.fetch(userId).value == true

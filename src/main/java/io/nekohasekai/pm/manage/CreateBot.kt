@@ -153,7 +153,6 @@ class CreateBot : TdHandler() {
             userCalled(userId, "created bot but exists: ${botMe.username()} (${botMe.id()})")
 
             sudo make L.failed { ALREADY_EXISTS } syncEditTo status
-
             sudo make CancelChatAction syncTo chatId
 
             return
