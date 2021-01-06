@@ -16,13 +16,15 @@ import io.nekohasekai.pm.manage.global
 import org.jetbrains.exposed.sql.select
 import java.io.File
 
+const val BACKUP_VERSION = 1
+
 fun TdHandler.backupToFile(bot: PmBot): File {
 
     val cacheFile = File(global.cacheDir, bot.userBot.username + ".td_pm")
 
     val output = FileUtil.touch(cacheFile).outputStream().xz().byteBuffer()
 
-    output.writeInt(1)
+    output.writeInt(BACKUP_VERSION)
 
     output.writeInt(bot.userBot.botId)
     output.writeString(bot.userBot.username)

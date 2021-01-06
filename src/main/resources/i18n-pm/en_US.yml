@@ -301,3 +301,25 @@ COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
   Chat Command: accepts PM messages after this command.
 COMMAND_DELETE: |-
   Delete Command
+
+IMPORT_INFO: |-
+  File Info:
+
+  Bot id: {}
+  Bot username: @{}
+IMPORT_TOO_LARGE: |-
+  The file is too large, please refer to [Usage]({}) to deploy me yourself.
+IMPORT_EXEC: |-
+  Start importing
+IMPORT_EXISTS: |-
+  The bot already exists in current instance, so only the settings are overwritten.
+IMPORT_CHANGE_OWMNER: |-
+  Since the original owner of the bot is not you, only the settings are overwritten.
+IMPORTING: |-
+  Importing...
+INVALID_FILE: |-
+  Backup file is corrupt: {}
+IMPORTED: |-
+  Import completed.
+CLIENT_OUTDATE: |-
+  This instance is too old to import the bot file, please refer to [Usage]({}).

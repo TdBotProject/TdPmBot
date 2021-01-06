@@ -15,6 +15,8 @@ import io.nekohasekai.ktlib.db.pair.migrateDatabase
 import io.nekohasekai.ktlib.db.pair.recreateTable
 import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
+import io.nekohasekai.ktlib.td.core.raw.getChatMember
+import io.nekohasekai.ktlib.td.core.raw.getChatMemberOrNull
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
 import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.i18n.*
@@ -62,11 +64,18 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
     var public = false
     lateinit var whiteList: IntArray
 
-    fun userAccessible(userId: Int): Boolean {
+    suspend fun userAccessible(userId: Int): Boolean {
         if (userId == admin.toInt()) return true
-        if (!public) return false
-        if (!::whiteList.isInitialized) return true
-        return whiteList.contains(userId)
+        if (::whiteList.isInitialized && whiteList.contains(userId)) {
+            return true
+        }
+        val integration = integration
+        if (integration?.paused == false) {
+            if (integration.adminOnly && getChatMemberOrNull(integration.integration, userId)?.isAdmin == true ||
+                getChatMemberOrNull(integration.integration, userId)?.isMember == true
+            ) return true
+        }
+        return false
     }
 
     @Suppress("ObjectPropertyName")
@@ -310,6 +319,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         addHandler(CreateBot())
         addHandler(MyBots())
+        addHandler(ImportBot())
 
         addHandler(InputHandler(this))
         addHandler(OutputHandler(this))

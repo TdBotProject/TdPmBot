@@ -59,18 +59,11 @@ class CreateBot : TdHandler() {
 
         }
 
-        if (chatId != launcher.admin) {
+        if (!global.public && !launcher.userAccessible(userId)) {
 
-            if (!launcher.public) rejectFunction()
+            sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(TdPmBot.repoUrl) syncTo chatId
 
-            if (!launcher.userAccessible(userId)) {
-
-                sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(TdPmBot.repoUrl) syncTo chatId
-
-                return
-
-            }
-
+            return
         }
 
         if (param.isTokenInvalid) {

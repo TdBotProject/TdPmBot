@@ -299,3 +299,25 @@ COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
   私聊命令: 公开模式 (当前设置) 下使用该命令后机器人接受私聊消息.
 COMMAND_DELETE: |-
   删除
+
+IMPORT_INFO: |-
+  檔案訊息:
+
+  機器人ID: {}
+  機器人使用者名稱: @{}
+IMPORT_TOO_LARGE: |-
+  該檔案過大, 請參閱 [說明]({}) 自行部署.
+IMPORT_EXEC: |-
+  開始匯入
+IMPORT_EXISTS: |-
+  本地已存在該機器人, 所以僅覆蓋設定.
+IMPORT_CHANGE_OWMNER: |-
+  由於機器人的原所有者並非您, 所以僅覆蓋設定.
+IMPORTING: |-
+  正在匯入...
+INVALID_FILE: |-
+  備份檔案損壞: {}
+IMPORTED: |-
+  匯入完成.
+CLIENT_OUTDATE: |-
+  本例項過舊, 無法匯入該機器人檔案, 請參閱 [說明]({}).

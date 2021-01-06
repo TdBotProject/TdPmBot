@@ -142,6 +142,8 @@ class DeleteMenu : BotHandler() {
 
                     sudo make UploadingDocument sendTo chatId
                     sudo make backupFile syncTo chatId
+
+                    backupFile.delete()
                 }
 
                 sudo make L.DELETING editTo status

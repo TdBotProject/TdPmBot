@@ -113,3 +113,12 @@ internal val L.COMMAND_DISABLE by string
 internal val L.COMMAND_INPUT_WHEN_PUBLIC by string
 internal val L.COMMAND_INPUT_WHEN_PUBLIC_DEF by string
 internal val L.COMMAND_DELETE by string
+internal val L.IMPORT_INFO by string
+internal val L.IMPORT_TOO_LARGE by string
+internal val L.IMPORT_EXEC by string
+internal val L.IMPORT_EXISTS by string
+internal val L.IMPORT_CHANGE_OWMNER by string
+internal val L.IMPORTING by string
+internal val L.INVALID_FILE by string
+internal val L.IMPORTED by string
+internal val L.CLIENT_OUTDATE by string
