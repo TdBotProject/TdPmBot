@@ -40,7 +40,7 @@ abstract class BotHandler : TdHandler() {
 
     fun findUserBot(botId: Int): UserBot? {
 
-        return if (botId == me.id) null else database {
+        return if (botId == global.me.id) null else database {
 
             UserBot.findById(botId)
 
