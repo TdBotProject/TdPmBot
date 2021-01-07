@@ -128,9 +128,10 @@ class ImportBot : TdHandler() {
             val botOwner = input.readInt()
             val botBotToken = input.readString()
 
-            val existsBot = database { UserBot.findById(botId) }
+            val isMain = botId == me.id
+            val existsBot = if (isMain) null else database { UserBot.findById(botId) }
 
-            if (existsBot != null) {
+            if (!isMain && existsBot != null) {
                 if (existsBot.owner != userId) {
                     sudo make L.failed { ALREADY_EXISTS } at messageId editTo messageId
                     sudo make CancelChatAction syncTo chatId
@@ -146,7 +147,7 @@ class ImportBot : TdHandler() {
                 ignoreData = true
             }
 
-            val userBot = existsBot ?: database {
+            val userBot = if (isMain) null else existsBot ?: database {
                 UserBot.new(botId) {
                     username = botUsername
                     owner = userId
@@ -154,9 +155,9 @@ class ImportBot : TdHandler() {
                 }
             }
 
-            global.instanceMap.remove(botId)?.waitForClose()
+            if (!isMain) global.instanceMap.remove(botId)?.waitForClose()
 
-            input.readFile(if (ignoreData) null else File(global.dataDir, "pm/$botId/td.binlog"))
+            input.readFile(if (ignoreData || isMain) null else File(global.dataDir, "pm/$botId/td.binlog"))
 
             global.botCommands.filter { it.id.first == botId }.toList().forEach { global.botCommands.remove(it.id) }
             database.write {
@@ -255,7 +256,7 @@ class ImportBot : TdHandler() {
             sudo make L.IMPORTED sendTo chatId
             deleteFile(document.id)
 
-            if (global.initBot(userBot).waitForAuth()) {
+            if (isMain || global.initBot(userBot!!).waitForAuth()) {
                 findHandler<BotMenu>().botMenu(userId, chatId, 0L, false, botId, userBot)
             }
 
