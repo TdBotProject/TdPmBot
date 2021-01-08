@@ -154,6 +154,7 @@ AUTO_BACKUP: disable
             this.adminOnly = integration.adminOnly
             this.paused = integration.paused
         }
+        flushCache()
     }
 
     val settings = bot.settings
@@ -164,11 +165,13 @@ AUTO_BACKUP: disable
             this.keepReply = settings.keepReply
             this.ignoreDeleteAction = settings.ignoreDeleteAction
         }
+        flushCache()
     }
 
     val starts = global.startMessages.fetch(bot.botUserId).value
     if (starts != null) dbToSave.write {
         startMessages.write(bot.botUserId, starts)
+        flushCache()
     }
 
     database {
@@ -192,13 +195,12 @@ AUTO_BACKUP: disable
                     it[MessageRecords.createAt] = createAt
                     it[botId] = bot.botUserId
                 }
+                flushCache()
             }
         }
-        dbToSave.write {
-            flushCache()
-            close()
-        }
     }
+
+    dbToSave.close()
 
     output.writeFile("data/pm_data.db", databaseCache)
 
