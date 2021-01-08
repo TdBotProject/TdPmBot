@@ -3,7 +3,6 @@ package io.nekohasekai.pm.manage.menu
 import io.nekohasekai.ktlib.core.SQUARE_ENABLE
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.core.toStatusString
-import io.nekohasekai.ktlib.td.core.raw.deleteFile
 import io.nekohasekai.ktlib.td.core.raw.getMessage
 import io.nekohasekai.ktlib.td.extensions.asByteArray
 import io.nekohasekai.ktlib.td.i18n.BACK_ARROW
@@ -11,6 +10,7 @@ import io.nekohasekai.ktlib.td.i18n.localeFor
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.UserBot
+import io.nekohasekai.pm.instance.backupToDir
 import io.nekohasekai.pm.instance.backupToFile
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
@@ -140,12 +140,16 @@ class DeleteMenu : BotHandler() {
                     sudo make Typing sendTo chatId
 
                     val backupFile = backupToFile(bot)
-
                     sudo make UploadingDocument sendTo chatId
-                    val uploaded = sudo make backupFile syncTo chatId
+                    sudo make backupFile syncTo chatId
+                    sudo make Typing sendTo chatId
 
-                    deleteUploaded(uploaded)
+                    val backupDir = backupToDir(bot)
+                    sudo make UploadingDocument sendTo chatId
+                    sudo make backupDir syncTo chatId
+
                     backupFile.delete()
+                    backupDir.delete()
 
                 }
 
