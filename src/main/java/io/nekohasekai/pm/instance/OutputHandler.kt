@@ -71,14 +71,14 @@ class OutputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInsta
 
                         albumMessages.remove(mediaAlbumId)
 
-                        onNewMessage(userId, chatId, message, this@apply)
+                        runCatching {
+                            onNewMessage(userId, chatId, message, this@apply)
+                        }
 
                     }
 
                 }.also {
-
                     TdClient.timer.schedule(it, 3000L)
-
                 }
 
             }
