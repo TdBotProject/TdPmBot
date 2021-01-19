@@ -88,4 +88,4 @@ abstract class BotHandler : TdHandler() {
 
 }
 
-val TdHandler.global get() = (sudo as PmBot?)?.launcher ?: sudo as TdPmBot
+val TdHandler.global get() = (sudo as? PmBot)?.launcher ?: sudo as TdPmBot

@@ -107,7 +107,9 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                         albumMessages.remove(mediaAlbumId)
 
-                        onNewMessage(userId, chatId, message, command, this@apply)
+                        runCatching {
+                            onNewMessage(userId, chatId, message, command, this@apply)
+                        }
 
                     }
 
