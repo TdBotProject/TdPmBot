@@ -2,7 +2,6 @@ package io.nekohasekai.pm
 
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.SystemClock
-import cn.hutool.core.lang.ClassScanner
 import cn.hutool.core.util.ClassUtil
 import cn.hutool.core.util.NumberUtil
 import io.nekohasekai.ktlib.core.getValue
@@ -15,7 +14,6 @@ import io.nekohasekai.ktlib.db.pair.migrateDatabase
 import io.nekohasekai.ktlib.db.pair.recreateTable
 import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
-import io.nekohasekai.ktlib.td.core.raw.getChatMember
 import io.nekohasekai.ktlib.td.core.raw.getChatMemberOrNull
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
 import io.nekohasekai.ktlib.td.extensions.*
@@ -223,7 +221,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         }
 
-        val errorReport = stringConfig("ERROR_REPORT") ?: "disable"
+        val errorReport = (stringConfig("ERROR_REPORT") ?: "disable").trim()
 
         if (errorReport != "disable") registerErrorReport(
             if (errorReport == "owner") {
@@ -236,7 +234,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
             } else errorReport.toLong()
         )
 
-        val autoBackup = stringConfig("AUTO_BACKUP") ?: "disable"
+        val autoBackup = (stringConfig("AUTO_BACKUP") ?: "disable").trim()
 
         if (autoBackup != "disable") {
             this.autoBackup = if (autoBackup == "owner") {

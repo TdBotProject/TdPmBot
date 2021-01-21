@@ -19,7 +19,7 @@ class AdminCommands : TdHandler() {
 
     override fun onLoad() {
 
-        initFunction(COMMAND_GC, REVOKE_ALL)
+        initFunction(COMMAND_GC, REVOKE_ALL, "error")
 
     }
 
@@ -57,7 +57,7 @@ class AdminCommands : TdHandler() {
             }
             for (bot in instances) global.initBot(bot.userBot)
 
-        }
+        } else error("Error!")
 
     }
 
