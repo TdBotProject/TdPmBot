@@ -46,7 +46,7 @@ class StartMessagesMenu : BotHandler() {
         val startMessages = launcher.startMessages.fetch(botUserId).value
 
         sudo make L.START_MESSAGES_STATUS.input(
-            botNameHtml(botUserId, userBot), botUserName(botUserId, userBot), when {
+            botName(botUserId, userBot), botUserName(botUserId, userBot), when {
 
                 startMessages == null -> L.SETTING_UNDEF
                 startMessages.isEmpty() -> L.EMPTY
@@ -92,8 +92,6 @@ class StartMessagesMenu : BotHandler() {
         sudo confirmTo queryId
 
         val L = localeFor(userId)
-
-        clientLog.trace(data.toList().joinToString { it.toList().toString() })
 
         if (data.isEmpty()) {
 

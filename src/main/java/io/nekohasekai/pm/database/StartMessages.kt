@@ -1,8 +1,9 @@
 package io.nekohasekai.pm.database
 
+import com.esotericsoftware.kryo.KryoException
 import io.nekohasekai.ktlib.db.DatabaseCacheMap
 import io.nekohasekai.ktlib.db.DatabaseDispatcher
-import io.nekohasekai.ktlib.db.kryo
+import io.nekohasekai.ktlib.db.kryoAny
 import io.nekohasekai.ktlib.db.upsert
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.deleteWhere
@@ -14,13 +15,19 @@ object StartMessages : Table("pm_start_messages") {
 
     val botId = integer("bot_id").uniqueIndex()
 
-    val messages = kryo<LinkedList<TdApi.InputMessageContent>>("messages")
+    val messages = kryoAny<LinkedList<TdApi.InputMessageContent>>("messages")
 
     class Cache(database: DatabaseDispatcher) : DatabaseCacheMap<Int, LinkedList<TdApi.InputMessageContent>>(database) {
 
         override fun read(id: Int): LinkedList<TdApi.InputMessageContent>? {
 
-            return select { botId eq id }.firstOrNull()?.let { it[messages] }
+            return try {
+                select { botId eq id }.firstOrNull()?.let { it[messages] }
+            } catch (e: KryoException) {
+                delete(id)
+                null
+            }
+
 
         }
 

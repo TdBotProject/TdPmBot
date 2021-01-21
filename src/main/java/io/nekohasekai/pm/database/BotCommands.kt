@@ -1,8 +1,9 @@
 package io.nekohasekai.pm.database
 
+import com.esotericsoftware.kryo.KryoException
 import io.nekohasekai.ktlib.db.DatabaseCacheMap
 import io.nekohasekai.ktlib.db.DatabaseDispatcher
-import io.nekohasekai.ktlib.db.kryo
+import io.nekohasekai.ktlib.db.kryoAny
 import org.jetbrains.exposed.sql.*
 import td.TdApi
 import java.util.*
@@ -15,7 +16,7 @@ object BotCommands : Table("bot_commands") {
     val description = text("description")
     val hide = bool("hide").default(false)
     val disable = bool("disable").default(false)
-    val messages = kryo<LinkedList<TdApi.InputMessageContent>>("messages")
+    val messages = kryoAny<LinkedList<TdApi.InputMessageContent>>("messages")
     val inputWhenPublic = bool("input").default(false)
 
     override val primaryKey = PrimaryKey(botId, command)
@@ -24,8 +25,13 @@ object BotCommands : Table("bot_commands") {
 
         override fun read(id: Pair<Int, String>): BotCommand? {
 
-            return BotCommands.select { botId eq id.first and (command eq id.second) }.firstOrNull()
-                ?.let { BotCommand(it) }
+            return try {
+                BotCommands.select { botId eq id.first and (command eq id.second) }.firstOrNull()
+                    ?.let { BotCommand(it) }
+            } catch (e: KryoException) {
+                delete(id)
+                null
+            }
 
         }
 

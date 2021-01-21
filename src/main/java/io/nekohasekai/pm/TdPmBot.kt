@@ -149,7 +149,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
                 UserBlocks
             )
 
-            migrateDatabase(schemes, 1) { fromVersion ->
+            migrateDatabase(schemes, 2) { fromVersion ->
 
                 if (fromVersion == 0) {
 
@@ -163,6 +163,15 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
                         recreateTable(MessageRecords) { tableName -> MessageRecords(tableName) }
 
+                    }
+
+                } else if (fromVersion == 1) {
+
+                    clientLog.info("Migrate database")
+
+                    database.write {
+                        BotCommands.deleteAll()
+                        StartMessages.deleteAll()
                     }
 
                 }
@@ -338,6 +347,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         val commands = database {
             BotCommands
                 .select { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
+                .adjustSlice { slice(BotCommands.command, BotCommands.description) }
                 .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
                 .toTypedArray()
         }

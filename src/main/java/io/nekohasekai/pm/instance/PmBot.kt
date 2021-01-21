@@ -17,11 +17,11 @@ import io.nekohasekai.ktlib.td.utils.removeKeyboard
 import io.nekohasekai.ktlib.td.utils.upsertCommands
 import io.nekohasekai.pm.*
 import io.nekohasekai.pm.database.*
-import io.nekohasekai.pm.manage.global
 import io.nekohasekai.pm.manage.menu.BotMenu
 import io.nekohasekai.pm.manage.menu.CommandsMenu
 import io.nekohasekai.pm.manage.menu.IntegrationMenu
 import io.nekohasekai.pm.manage.menu.StartMessagesMenu
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
@@ -54,6 +54,7 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
         upsertCommands(* database {
             BotCommands
                 .select { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
+                .adjustSlice { slice(BotCommands.command, BotCommands.description) }
                 .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
                 .toTypedArray()
         })
@@ -62,18 +63,21 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     override suspend fun onLogin() {
 
-        updateCommands()
+        events.launch {
 
-        runCatching {
+            updateCommands()
 
-            getChat(admin)
+            runCatching {
 
-            val integration = integration?.integration
+                getChat(admin)
 
-            if (integration != null) getChat(integration)
+                val integration = integration?.integration
+
+                if (integration != null) getChat(integration)
+
+            }
 
         }
-
     }
 
     override suspend fun gc() {
