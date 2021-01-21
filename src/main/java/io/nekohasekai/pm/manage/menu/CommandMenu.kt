@@ -131,7 +131,6 @@ class CommandMenu : BotHandler() {
 
     class RenameCache(
         var botUserId: Int,
-        var userBot: UserBot?,
         command: BotCommand?,
         var startsAt: Long,
         var description: Boolean
@@ -150,7 +149,7 @@ class CommandMenu : BotHandler() {
         }
 
         @Suppress("unused")
-        constructor() : this(0, null, null, 0L, false)
+        constructor() : this(0, null, 0L, false)
 
         var edited = false
 
@@ -158,7 +157,6 @@ class CommandMenu : BotHandler() {
 
     class EditMessagesCache(
         var botUserId: Int,
-        var userBot: UserBot?,
         var startsAt: Long,
         command: BotCommand?
     ) {
@@ -180,7 +178,7 @@ class CommandMenu : BotHandler() {
         }
 
         @Suppress("unused")
-        constructor() : this(0, null, 0L, null)
+        constructor() : this(0, 0L, null)
 
         var edited = false
     }
@@ -228,7 +226,7 @@ class CommandMenu : BotHandler() {
                     userId,
                     persistId,
                     0,
-                    RenameCache(botUserId, userBot, command, messageId, false),
+                    RenameCache(botUserId, command, messageId, false),
                     allowFunction = true
                 )
 
@@ -250,7 +248,7 @@ class CommandMenu : BotHandler() {
 
             1 -> {
 
-                writePersist(userId, persistId, 0, RenameCache(botUserId, userBot, command, messageId, true))
+                writePersist(userId, persistId, 0, RenameCache(botUserId, command, messageId, true))
 
                 sudo confirmTo queryId
 
@@ -276,7 +274,7 @@ class CommandMenu : BotHandler() {
                     userId,
                     persistId,
                     1,
-                    EditMessagesCache(botUserId, userBot, messageId, command),
+                    EditMessagesCache(botUserId, messageId, command),
                     allowFunction = true
                 )
 
@@ -503,7 +501,7 @@ class CommandMenu : BotHandler() {
 
             sudo make L.SETTING_SAVED sendTo chatId
 
-            commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
+            commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
 
         } else if (subId == 1) {
 
@@ -618,8 +616,8 @@ class CommandMenu : BotHandler() {
             (sudo as? TdPmBot)?.updateCommands()
             (sudo as? PmBot)?.updateCommands()
 
-            (if (cache.userBot != null) launcher.findHandler() else this)
-                .commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
+            (if (cache.botUserId == me.id) launcher.findHandler() else this)
+                .commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
 
 
         } else {
@@ -650,7 +648,7 @@ class CommandMenu : BotHandler() {
 
             }
 
-            commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
+            commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
 
         } else if (subId == 1) {
 
@@ -664,7 +662,7 @@ class CommandMenu : BotHandler() {
 
             }
 
-            commandMenu(cache.botUserId, cache.userBot, cache.command, userId, chatId, 0L, false)
+            commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
 
         }
 

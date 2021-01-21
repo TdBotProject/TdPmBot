@@ -286,7 +286,7 @@ class CommandsMenu : BotHandler() {
 
                 val command = message.text
 
-                if (command == null || !command.contains("[a-z][a-z0-9_]{0,31}".toRegex())) {
+                if (command == null || !command.matches("[a-z][a-z0-9_]{0,31}".toRegex())) {
 
                     removeBack()
 

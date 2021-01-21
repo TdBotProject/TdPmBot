@@ -149,7 +149,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
                 UserBlocks
             )
 
-            migrateDatabase(schemes, 2) { fromVersion ->
+            migrateDatabase(schemes, 3) { fromVersion ->
 
                 if (fromVersion == 0) {
 
@@ -165,7 +165,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
                     }
 
-                } else if (fromVersion == 1) {
+                } else if (fromVersion < 3) {
 
                     clientLog.info("Migrate database")
 
