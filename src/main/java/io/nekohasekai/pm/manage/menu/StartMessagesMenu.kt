@@ -46,7 +46,7 @@ class StartMessagesMenu : BotHandler() {
         val startMessages = launcher.startMessages.fetch(botUserId).value
 
         sudo make L.START_MESSAGES_STATUS.input(
-            botName(botUserId, userBot), botUserName(botUserId, userBot), when {
+            botNameHtml(botUserId, userBot), botUserName(botUserId, userBot), when {
 
                 startMessages == null -> L.SETTING_UNDEF
                 startMessages.isEmpty() -> L.EMPTY
