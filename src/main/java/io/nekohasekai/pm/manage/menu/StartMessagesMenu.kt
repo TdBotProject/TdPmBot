@@ -93,6 +93,8 @@ class StartMessagesMenu : BotHandler() {
 
         val L = localeFor(userId)
 
+        clientLog.trace(data.toList().joinToString { it.toList().toString() })
+
         if (data.isEmpty()) {
 
             startMessagesMenu(userId, chatId, messageId, true, botUserId, userBot)

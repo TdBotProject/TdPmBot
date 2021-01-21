@@ -4,10 +4,8 @@ import io.nekohasekai.ktlib.core.escapeHtmlTags
 import io.nekohasekai.ktlib.core.shift
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
 import io.nekohasekai.ktlib.td.extensions.asInt
 import io.nekohasekai.ktlib.td.extensions.displayName
-import io.nekohasekai.ktlib.td.extensions.displayNameFormatted
 import io.nekohasekai.pm.TdPmBot
 import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.instance.PmBot
@@ -66,19 +64,11 @@ abstract class BotHandler : TdHandler() {
 
         } else findUserBot(botId)
 
-        clientLog.trace("botId: $botId, userBot: ${userBot != null}")
-
         if (chatId != launcher.admin && (userBot != null && userBot.owner != userId || botId != me.id && userBot == null)) {
 
-            if (userBot != null && userBot.owner != userId) {
-
-                val owner = getUserOrNull(userBot.owner)?.displayNameFormatted ?: "${userBot.owner}"
-
-                clientLog.debug("Owner is $owner.")
-
-            }
-
             findHandler<MyBots>().rootMenu(userId, chatId, messageId, true)
+
+            clientLog.trace("Deny")
 
             return
 
