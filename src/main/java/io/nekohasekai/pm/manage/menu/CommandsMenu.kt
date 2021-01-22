@@ -271,7 +271,7 @@ class CommandsMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                sudo makeInlineButton null at cache.startsAt editTo chatId
+                sudo makeInlineButton null at cache.startsAt onFailure null editTo chatId
                 cache.edited = true
 
             }
@@ -395,7 +395,7 @@ class CommandsMenu : BotHandler() {
 
             if (!cache.edited) {
 
-                sudo makeInlineButton null at cache.startsAt editTo chatId
+                sudo makeInlineButton null at cache.startsAt onFailure null editTo chatId
 
                 cache.edited = true
 
