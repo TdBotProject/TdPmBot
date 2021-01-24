@@ -501,7 +501,8 @@ class CommandMenu : BotHandler() {
 
             sudo make L.SETTING_SAVED sendTo chatId
 
-            commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
+            (if (cache.botUserId == me.id) launcher.findHandler() else this)
+                .commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
 
         } else if (subId == 1) {
 
