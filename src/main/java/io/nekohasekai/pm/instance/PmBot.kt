@@ -4,7 +4,6 @@ import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.core.input
 import io.nekohasekai.ktlib.td.cli.TdBot
 import io.nekohasekai.ktlib.td.core.TdException
-import io.nekohasekai.ktlib.td.core.raw.close
 import io.nekohasekai.ktlib.td.core.raw.getChat
 import io.nekohasekai.ktlib.td.core.raw.getChatOrNull
 import io.nekohasekai.ktlib.td.extensions.fromPrivate
@@ -101,8 +100,6 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
         }
 
-        launcher.instanceMap.remove(botUserId)
-
     }
 
     override suspend fun onAuthorizationFailed(ex: TdException) {
@@ -124,7 +121,11 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
 
     override suspend fun onLogout() {
 
-        close()
+        clientLog.debug("Logout")
+
+        waitForClose()
+
+        FileUtil.del(options.databaseDirectory)
 
         launcher.initBot(userBot)
     }
