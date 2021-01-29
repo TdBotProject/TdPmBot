@@ -161,7 +161,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
             } catch (e: TdException) {
 
-                defaultLog.warn(e, "banned by owner")
+                defaultLog.warn(e, "can't send message to owner: request = $message\n\n")
 
                 // TODO: PROCESS BOT BANNED BY OWNER
 
@@ -344,8 +344,7 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
                 } catch (e: TdException) {
 
-                    clientLog.warn(e, "banned by owner")
-
+                    defaultLog.warn(e, "can't send message to owner: request = $message\n\n")
                     // TODO: PROCESS BOT BANNED BY OWNER
 
                     return
