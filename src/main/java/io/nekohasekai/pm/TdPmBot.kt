@@ -16,6 +16,7 @@ import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.persists.store.DatabasePersistStore
 import io.nekohasekai.ktlib.td.core.raw.getChatMemberOrNull
 import io.nekohasekai.ktlib.td.core.raw.getChatWith
+import io.nekohasekai.ktlib.td.core.raw.pingProxyWith
 import io.nekohasekai.ktlib.td.extensions.*
 import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.i18n.store.DatabaseLocaleStore
@@ -40,6 +41,7 @@ import td.TdApi
 import java.io.File
 import java.util.*
 import kotlin.concurrent.schedule
+import kotlin.concurrent.timerTask
 import kotlin.system.exitProcess
 
 open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, name), PmInstance {
@@ -101,11 +103,8 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         return instanceMap[userBot.botId] ?: synchronized(instanceMap) {
 
             PmBot(userBot.botToken, userBot, this).apply {
-
                 instanceMap[botUserId] = this
-
                 start()
-
             }
 
         }
@@ -396,6 +395,12 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
                 findHandler<Backup>().scheduleBackup()
             }
         }
+
+        timer.scheduleAtFixedRate(timerTask {
+            if (stop) cancel() else GlobalScope.launch(eventsContext) {
+                for (client in clients.map { it.value }) client.pingProxyWith(0)
+            }
+        }, Date(), 10 * Minutes)
 
     }
 
