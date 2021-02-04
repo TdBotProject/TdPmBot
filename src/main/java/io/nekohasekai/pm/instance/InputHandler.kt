@@ -31,6 +31,8 @@ class InputHandler(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstan
 
     }
 
+    override suspend fun onSendCanceledMessage(userId: Int, chatId: Long) = Unit
+
     override suspend fun onPersistMessage(
         userId: Int,
         chatId: Long,
