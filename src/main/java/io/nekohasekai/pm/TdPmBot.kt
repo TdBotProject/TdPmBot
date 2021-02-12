@@ -126,11 +126,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         initDatabase("pm_data.db")
 
-        if (LocaleStore.store is InMemoryLocaleStore) {
-
-            LocaleStore.setImplement(DatabaseLocaleStore(database))
-
-        }
+        if (LocaleStore.store is InMemoryLocaleStore) LocaleStore.setImplement(DatabaseLocaleStore(database))
 
         persists.setImplement(DatabasePersistStore(database))
 
@@ -148,7 +144,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
                 UserBlocks
             )
 
-            migrateDatabase(schemes, 3) { fromVersion ->
+            migrateDatabase(schemes, 4) { fromVersion ->
 
                 if (fromVersion == 0) {
 
@@ -166,11 +162,27 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
                 } else if (fromVersion < 3) {
 
-                    clientLog.info("Migrate database")
-
                     database.write {
                         BotCommands.deleteAll()
                         StartMessages.deleteAll()
+                    }
+
+                }
+
+                if (fromVersion < 4) {
+
+                    val store = (persists.store as DatabasePersistStore)
+                    val table = store.table
+                    val deletes = LinkedList<Int>()
+                    for (resultRow in table.selectAll()) {
+                        try {
+                            resultRow[table.data].bytes.readData()
+                        } catch (e: Throwable) {
+                            deletes.add(resultRow[table.userId])
+                        }
+                    }
+                    if (deletes.isNotEmpty()) {
+                        table.deleteWhere { table.userId inList deletes }
                     }
 
                 }
