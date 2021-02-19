@@ -54,9 +54,7 @@ class MyBots : TdHandler() {
         if (function != command && userId != global.admin.toInt()) rejectFunction()
 
         if (!message.fromPrivate) {
-
             sudo makeHtml clientLocale.FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
-
             return
 
         }

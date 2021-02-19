@@ -22,11 +22,8 @@ import io.nekohasekai.ktlib.td.i18n.*
 import io.nekohasekai.ktlib.td.i18n.store.DatabaseLocaleStore
 import io.nekohasekai.ktlib.td.i18n.store.InMemoryLocaleStore
 import io.nekohasekai.ktlib.td.i18n.store.LocaleStore
+import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.ktlib.td.utils.commands.GetIdCommand
-import io.nekohasekai.ktlib.td.utils.delete
-import io.nekohasekai.ktlib.td.utils.make
-import io.nekohasekai.ktlib.td.utils.makeHtml
-import io.nekohasekai.ktlib.td.utils.upsertCommands
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
 import io.nekohasekai.pm.manage.*
@@ -646,7 +643,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         params: Array<String>
     ) {
 
-        sudo make localeFor(chatId, userId).HELP_MSG sendTo chatId
+        sudo make localeFor(chatId, userId).HELP_MSG onSuccess deleteDelayIf(!message.fromPrivate, message) sendTo chatId
 
     }
 

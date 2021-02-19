@@ -52,32 +52,21 @@ class CreateBot : TdHandler() {
     ) {
 
         if (!message.fromPrivate) {
-
             sudo makeHtml localeFor(userId).FN_PRIVATE_ONLY onSuccess deleteDelay(message) replyTo message
-
             return
-
         }
 
         if (!global.public && !launcher.userAccessible(userId)) {
-
             sudo makeMd localeFor(userId).PRIVATE_INSTANCE.input(TdPmBot.repoUrl) syncTo chatId
-
             return
         }
 
         if (param.isTokenInvalid) {
-
             userCalled(userId, "start create with non-valid token param")
-
             startCreate(userId, chatId)
-
         } else {
-
             userCalled(userId, "create with valid token: $param")
-
             createByToken(userId, chatId, param)
-
         }
 
     }
