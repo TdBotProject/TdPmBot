@@ -26,6 +26,7 @@ class BotMenu : BotHandler() {
         sudo addHandler StartMessagesMenu()
         sudo addHandler IntegrationMenu()
         sudo addHandler DeleteMenu()
+        sudo addHandler ExportMenu()
         sudo addHandler PreferencesMenu()
         sudo addHandler CommandsMenu()
 

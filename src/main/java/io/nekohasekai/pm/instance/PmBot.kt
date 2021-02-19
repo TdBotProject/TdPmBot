@@ -49,14 +49,20 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
     }
 
     suspend fun updateCommands() {
-
-        upsertCommands(* database {
-            BotCommands
-                .select { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
-                .adjustSlice { slice(BotCommands.command, BotCommands.description) }
-                .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
-                .toTypedArray()
-        })
+        try {
+            upsertCommands(* database {
+                BotCommands
+                    .select { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
+                    .adjustSlice { slice(BotCommands.command, BotCommands.description) }
+                    .map { TdApi.BotCommand(it[BotCommands.command], it[BotCommands.description]) }
+                    .toTypedArray()
+            })
+        } catch (e: Exception) {
+            database.write {
+                BotCommands.deleteWhere { commandsForCurrentBot and (BotCommands.hide eq false) and (BotCommands.disable eq false) }
+            }
+            upsertCommands()
+        }
 
     }
 
