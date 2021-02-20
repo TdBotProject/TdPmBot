@@ -16,6 +16,7 @@ import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.instance.PmBot
 import io.nekohasekai.pm.manage.BotHandler
 import io.nekohasekai.pm.manage.MyBots
+import io.nekohasekai.pm.manage.global
 import td.TdApi
 import java.util.*
 
@@ -663,7 +664,7 @@ class CommandMenu : BotHandler() {
 
             }
 
-            commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
+            global.findHandler<CommandMenu>().commandMenu(cache.botUserId, findUserBot(cache.botUserId), cache.command, userId, chatId, 0L, false)
 
         }
 
