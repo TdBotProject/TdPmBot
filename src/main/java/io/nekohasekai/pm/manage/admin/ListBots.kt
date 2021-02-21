@@ -1,9 +1,6 @@
 package io.nekohasekai.pm.manage.admin
 
-import io.nekohasekai.ktlib.core.executeBlocking
 import io.nekohasekai.ktlib.core.executeTimed
-import io.nekohasekai.ktlib.core.mkFastPool
-import io.nekohasekai.ktlib.core.mkPool
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
 import io.nekohasekai.ktlib.td.extensions.displayName
@@ -21,7 +18,7 @@ import kotlin.collections.HashSet
 class ListBots : AdminCommand() {
 
     override fun onLoad() {
-        initFunction("list_bots")
+        initFunction("_list_bots")
     }
 
     override suspend fun onFunction(

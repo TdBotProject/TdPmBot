@@ -77,7 +77,6 @@ class PmBot(botToken: String, val userBot: UserBot, val launcher: TdPmBot) : TdB
                 getChat(admin)
 
                 val integration = integration?.integration
-
                 if (integration != null) getChat(integration)
 
             }
