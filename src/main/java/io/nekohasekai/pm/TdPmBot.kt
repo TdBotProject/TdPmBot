@@ -27,6 +27,7 @@ import io.nekohasekai.ktlib.td.utils.commands.GetIdCommand
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
 import io.nekohasekai.pm.manage.*
+import io.nekohasekai.pm.manage.admin.ListBots
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -346,6 +347,7 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
 
         addHandler(GetIdCommand())
         addHandler(AdminCommands())
+        addHandler(ListBots())
         addHandler(Backup(this))
 
     }
@@ -643,7 +645,10 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         params: Array<String>
     ) {
 
-        sudo make localeFor(chatId, userId).HELP_MSG onSuccess deleteDelayIf(!message.fromPrivate, message) sendTo chatId
+        sudo make localeFor(chatId, userId).HELP_MSG onSuccess deleteDelayIf(
+            !message.fromPrivate,
+            message
+        ) sendTo chatId
 
     }
 

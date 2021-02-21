@@ -78,9 +78,9 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
 fun TdHandler.createBackup(backupTo: File) {
 
-    while (true) try {
+    var output = FileUtil.touch(backupTo).outputStream().xz().tar()
 
-        val output = FileUtil.touch(backupTo).outputStream().xz().tar()
+    while (true) try {
 
         output.writeFile("pm.yml", global.configFile)
         output.writeDirectory("data/")
@@ -105,7 +105,9 @@ fun TdHandler.createBackup(backupTo: File) {
 
         break
 
-    } catch (ignored: IOException) {
+    } catch (e: IOException) {
+        output.close()
+        output = FileUtil.touch(backupTo).outputStream().xz().tar()
     }
 
 }
