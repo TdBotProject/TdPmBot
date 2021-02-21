@@ -6,6 +6,7 @@ import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
 import io.nekohasekai.ktlib.td.extensions.displayName
 import io.nekohasekai.ktlib.td.extensions.htmlCode
 import io.nekohasekai.ktlib.td.extensions.htmlDisplayExpanded
+import io.nekohasekai.ktlib.td.utils.make
 import io.nekohasekai.ktlib.td.utils.makeHtml
 import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.manage.global
@@ -45,9 +46,23 @@ class ListBots : AdminCommand() {
 
         val pool = Executors.newSingleThreadExecutor()
 
+        val filterUsers = HashSet<Int>()
+        if (params.isNotEmpty()) {
+            try {
+                filterUsers.addAll(params.map { it.toInt() })
+            } catch (e: Exception) {
+                sudo make "Invalid filters" replyTo message
+                return
+            }
+        }
+
         val allBots = database { UserBot.all().toList() }
+
         val botsMap = HashMap<Int, BotsByUser>()
         for (userBot in allBots) {
+            if (filterUsers.isNotEmpty()) {
+                if (userBot.owner !in filterUsers) continue
+            }
             botsMap.getOrPut(userBot.owner) { BotsByUser(userBot.owner) }.bots.add(userBot)
         }
         val botsList = TreeSet(botsMap.values)
