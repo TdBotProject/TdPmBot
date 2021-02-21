@@ -1,5 +1,9 @@
 package io.nekohasekai.pm.manage.admin
 
+import io.nekohasekai.ktlib.core.executeBlocking
+import io.nekohasekai.ktlib.core.executeTimed
+import io.nekohasekai.ktlib.core.mkFastPool
+import io.nekohasekai.ktlib.core.mkPool
 import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.raw.getUserOrNull
 import io.nekohasekai.ktlib.td.extensions.displayName
@@ -10,6 +14,7 @@ import io.nekohasekai.pm.database.UserBot
 import io.nekohasekai.pm.manage.global
 import td.TdApi
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
@@ -40,6 +45,8 @@ class ListBots : AdminCommand() {
                 return other.userId - userId
             }
         }
+
+        val pool = Executors.newSingleThreadExecutor()
 
         val allBots = database { UserBot.all().toList() }
         val botsMap = HashMap<Int, BotsByUser>()
@@ -77,13 +84,18 @@ class ListBots : AdminCommand() {
 
             count += botsByUser.bots.size
             if (count >= 10) {
-                sudo makeHtml content sendTo chatId
+                val contentFinal = content
+                pool.executeTimed(500L) {
+                    sudo makeHtml contentFinal syncTo chatId
+                }
                 count = 0
                 content = ""
             }
         }
 
-        if (content.isNotBlank()) sudo makeHtml content sendTo chatId
+        if (content.isNotBlank()) pool.execute {
+            sudo makeHtml content sendTo chatId
+        }
 
     }
 
