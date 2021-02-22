@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.30"
-    id("com.github.ben-manes.versions") version "0.36.0"
+    kotlin("jvm") version "1.4.30" apply false
+    id("com.github.ben-manes.versions") version "0.36.0" apply false
 }
 
 group = "io.nekohasekai"
