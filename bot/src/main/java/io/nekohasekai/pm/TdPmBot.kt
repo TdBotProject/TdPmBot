@@ -26,11 +26,11 @@ import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.ktlib.td.utils.commands.GetIdCommand
 import io.nekohasekai.pm.database.*
 import io.nekohasekai.pm.instance.*
-import io.nekohasekai.pm.manage.*
-import io.nekohasekai.pm.manage.admin.Gc
-import io.nekohasekai.pm.manage.admin.ListBots
-import io.nekohasekai.pm.manage.admin.MoveBot
-import io.nekohasekai.pm.manage.admin.RevokeAll
+import io.nekohasekai.pm.manage.CreateBot
+import io.nekohasekai.pm.manage.ImportBot
+import io.nekohasekai.pm.manage.MyBots
+import io.nekohasekai.pm.manage.admin.*
+import io.nekohasekai.pm.manage.admin.Backup.Companion.createBackup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -354,7 +354,8 @@ open class TdPmBot(tag: String = "main", name: String = "TdPmBot") : TdCli(tag, 
         addHandler(MoveBot())
         addHandler(Gc())
         addHandler(RevokeAll())
-        addHandler(Backup(this))
+        addHandler(DeleteBots())
+        addHandler(Backup())
 
     }
 

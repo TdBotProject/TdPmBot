@@ -1,25 +1,27 @@
-package io.nekohasekai.pm.manage
+package io.nekohasekai.pm.manage.admin
 
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.compress.tar
 import io.nekohasekai.ktlib.compress.writeDirectory
 import io.nekohasekai.ktlib.compress.writeFile
 import io.nekohasekai.ktlib.compress.xz
+import io.nekohasekai.ktlib.td.cli.database
 import io.nekohasekai.ktlib.td.core.TdClient
 import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.extensions.Minutes
-import io.nekohasekai.ktlib.td.utils.*
-import io.nekohasekai.pm.database.PmInstance
+import io.nekohasekai.ktlib.td.utils.deleteDelay
+import io.nekohasekai.ktlib.td.utils.deleteUploaded
+import io.nekohasekai.ktlib.td.utils.make
+import io.nekohasekai.pm.manage.global
 import okhttp3.internal.closeQuietly
 import td.TdApi
 import java.io.File
 import java.io.IOException
-import java.util.*
 
-class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
+class Backup : AdminCommand() {
 
     override fun onLoad() {
-        initFunction("backup")
+        initFunction("_backup")
     }
 
     override suspend fun onFunction(
@@ -30,14 +32,13 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
         param: String,
         params: Array<String>
     ) {
-        if (chatId != admin && (chatId != integration?.integration || !isChatAdmin(chatId, userId))) rejectFunction()
+        super.onFunction(userId, chatId, message, function, param, params)
 
         val status = sudo make "Backup..." syncTo chatId
 
         scheduleBackup()
 
         sudo make "Finished" onSuccess deleteDelay(message, timeMs = 1 * Minutes) editTo status
-
     }
 
     suspend fun scheduleBackup() {
@@ -75,52 +76,56 @@ class Backup(pmInstance: PmInstance) : TdHandler(), PmInstance by pmInstance {
 
     }
 
-}
+    companion object {
 
-fun TdHandler.createBackup(backupTo: File) {
+        fun TdHandler.createBackup(backupTo: File) {
 
-    var output = FileUtil.touch(backupTo).outputStream().xz().tar()
+            var output = FileUtil.touch(backupTo).outputStream().xz().tar()
 
-    while (true) try {
+            while (true) try {
 
-        output.writeFile("pm.yml", global.configFile)
-        output.writeDirectory("data/")
-        output.writeFile("data/pm_data.db", File(global.dataDir, "pm_data.db"))
-        output.writeFile("data/td.binlog", File(global.dataDir, "td.binlog"))
+                output.writeFile("pm.yml", global.configFile)
+                output.writeDirectory("data/")
+                output.writeFile("data/pm_data.db", File(global.dataDir, "pm_data.db"))
+                output.writeFile("data/td.binlog", File(global.dataDir, "td.binlog"))
 
-        val pmBots = File(global.dataDir, "pm").listFiles()
+                val pmBots = File(global.dataDir, "pm").listFiles()
 
-        if (!pmBots.isNullOrEmpty()) {
+                if (!pmBots.isNullOrEmpty()) {
 
-            output.writeDirectory("data/pm/")
+                    output.writeDirectory("data/pm/")
 
-            pmBots.forEach {
-                output.writeDirectory("data/pm/${it.name}/")
-                output.writeFile("data/pm/${it.name}/td.binlog", File(it, "td.binlog"))
+                    pmBots.forEach {
+                        output.writeDirectory("data/pm/${it.name}/")
+                        output.writeFile("data/pm/${it.name}/td.binlog", File(it, "td.binlog"))
+                    }
+
+                }
+
+                output.finish()
+                output.close()
+
+                break
+
+            } catch (e: IOException) {
+
+                clientLog.debug("Backup failed: ${e.message}, retry.")
+
+                try {
+                    output.close()
+                } catch (unclosed: IOException) {
+                    try {
+                        output.closeArchiveEntry()
+                        output.closeQuietly()
+                    } catch (ignored: IOException) {
+                    }
+                }
+
+                output = FileUtil.touch(backupTo).outputStream().xz().tar()
             }
 
         }
 
-        output.finish()
-        output.close()
-
-        break
-
-    } catch (e: IOException) {
-
-        clientLog.warn("Backup failed: ${e.message}, retry.")
-
-        try {
-            output.close()
-        } catch (unclosed: IOException) {
-            try {
-                output.closeArchiveEntry()
-                output.closeQuietly()
-            } catch (ignored: IOException) {
-            }
-        }
-
-        output = FileUtil.touch(backupTo).outputStream().xz().tar()
     }
 
 }
