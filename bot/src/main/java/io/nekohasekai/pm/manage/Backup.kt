@@ -10,6 +10,7 @@ import io.nekohasekai.ktlib.td.core.TdHandler
 import io.nekohasekai.ktlib.td.extensions.Minutes
 import io.nekohasekai.ktlib.td.utils.*
 import io.nekohasekai.pm.database.PmInstance
+import okhttp3.internal.closeQuietly
 import td.TdApi
 import java.io.File
 import java.io.IOException
@@ -106,7 +107,19 @@ fun TdHandler.createBackup(backupTo: File) {
         break
 
     } catch (e: IOException) {
-        output.close()
+
+        clientLog.warn("Backup failed: ${e.message}, retry.")
+
+        try {
+            output.close()
+        } catch (unclosed: IOException) {
+            try {
+                output.closeArchiveEntry()
+                output.closeQuietly()
+            } catch (ignored: IOException) {
+            }
+        }
+
         output = FileUtil.touch(backupTo).outputStream().xz().tar()
     }
 
