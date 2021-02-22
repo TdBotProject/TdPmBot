@@ -72,7 +72,7 @@ elif [ "$1" == "run" ]; then
 
   shift
 
-  EXEC="build/install/main/bin/main"
+  EXEC="$MODULE/build/install/main/bin/main"
 
   [ -x "$EXEC" ] || bash $0 rebuild || exit 1
 
@@ -106,7 +106,7 @@ elif [ "$1" == "force-update" ]; then
 elif [ "$1" == "rebuild" ]; then
 
   git submodule update --init --force --recursive
-  ./gradlew :installDist
+  ./gradlew ${MODULE}:installDist || exit 1
 
 elif [ "$1" == "update" ]; then
 
@@ -126,7 +126,7 @@ elif [ "$1" == "update" ]; then
 
   shift
 
-  ./gradlew :clean
+  ./gradlew ${MODULE}:clean
 
   bash $0 rebuild $@
 

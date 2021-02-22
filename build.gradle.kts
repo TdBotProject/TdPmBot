@@ -1,59 +1,27 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    application
-    distribution
     kotlin("jvm") version "1.4.30"
     id("com.github.ben-manes.versions") version "0.36.0"
-}
-
-
-repositories {
-    mavenCentral()
-    jcenter()
-    google()
 }
 
 group = "io.nekohasekai"
 version = "1.0-SNAPSHOT"
 
-application {
-    applicationName = "TdPmBot"
-    mainClass.set("io.nekohasekai.pm.TdPmBot")
-}
-
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = application.mainClass.get()
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        google()
     }
-}
 
-val compileKotlin: KotlinCompile by tasks
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
-compileKotlin.kotlinOptions {
-    jvmTarget = "11"
-}
-
-distributions {
-    main {
-        distributionBaseName.set("main")
-        contents.rename {
-            if (it == project.name ||
-                it.startsWith(project.name) && it.endsWith("bat")
-            ) it.replace(project.name, "main") else it
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "11"
+            useIR = true
         }
     }
-}
-
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-
-    val vKtLib = "1.0-SNAPSHOT"
-    implementation("io.nekohasekai.ktlib:ktlib-td-cli:$vKtLib")
-    implementation("io.nekohasekai.ktlib:ktlib-compress:$vKtLib")
-    implementation("io.nekohasekai.ktlib:ktlib-db:$vKtLib")
-    implementation("io.nekohasekai.ktlib:ktlib-td-http-api:$vKtLib")
-
-    implementation("org.slf4j:slf4j-nop:2.0.0-alpha1")
-
 }

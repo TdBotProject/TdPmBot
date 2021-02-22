@@ -9,3 +9,5 @@ includeBuild("ktlib") {
         include("ktlib-td-http-api")
     }
 }
+
+include(":bot")
