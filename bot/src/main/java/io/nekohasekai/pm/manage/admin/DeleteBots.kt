@@ -43,7 +43,7 @@ class DeleteBots : AdminCommand() {
                 sudo make "Bot botToDelete not found" replyTo message
                 continue
             }
-            val bot = global.initBot(userBot)
+            val bot = global.initBot(userBot).apply { me }
             bot.destroy()
 
             sudo makeHtml  "Bot " + bot.me.htmlDisplayExpanded + " has been deleted" replyTo message
