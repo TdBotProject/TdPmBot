@@ -1,55 +1,55 @@
 HELP_MSG: |-
-  本機器人能幫助您建立和管理 Telegram 私聊機器人.
+  本機器人能幫助您建立和管理 Telegram 私聊機器人。
 
-  您可以控制我通過傳送以下命令：
+  您可以控制我透過傳送以下指令：
 
   /new_bot - 建立新機器人
   /my_bots - 編輯機器人
 
-  如需幫助，請通過 @TdBotProject 的討論群組與我們聯絡.
+  如需幫助，請透過 @TdBotProject 的討論群組與我們聯絡。
 PM_HELP: |-
-  無事可做.
+  無事可做。
 
   目標可為: 對訊息回覆 / 對話ID / @使用者名稱 / 引用
 
-  使用 /join <目標> 以進入會話,
-  使用 /block <目標> 以遮蔽會話,
-  使用 /unblock <目標> 以解除遮蔽,
-  使用 /recall <目標> 清空與目標的全部訊息,
-  使用 /exit 退出會話.
+  使用 /join <目標> 以進入會話，
+  使用 /block <目標> 以封鎖會話，
+  使用 /unblock <目標> 以解除封鎖，
+  使用 /recall <目標> 清空與目標的全部訊息，
+  使用 /exit 退出會話。
 PRIVATE_INSTANCE: |-
-  抱歉, 本例項不公開, 請參閱 [說明]({}).
+  抱歉，本例項不公開，請參閱 [說明]({})。
 
 CREATE_BOT_DEF: 建立新機器人
 INPUT_BOT_TOKEN: |-
-  輸入從 @BotFather 獲取的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
+  輸入從 @BotFather 取得的 <a href="https://core.telegram.org/bots#creating-a-new-bot">Bot Token</a> :
 
-  您也可以使用該 Token 作為命令引數傳入直接建立 ( <code>/new_bot BotToken</code> ),
+  您也可以使用該 Token 作為指令引數傳入直接建立 ( <code>/new_bot BotToken</code> )，
 
-  建立完成後您需要根據提示啟動該機器人並保持不禁用, 否則將無法收到訊息.
+  建立完成後您需要根據提示啟動該機器人並保持不禁用，否則將無法收到訊息。
 INVALID_BOT_TOKEN: |-
-  無效的 Bot Token{}.
+  無效的 Bot Token{}。
 
-  使用 /cancel 取消建立.
+  使用 /cancel 取消建立。
 FETCHING_INFO: |-
   檢索必要的資訊...
 CREATING_BOT: |-
   建立機器人...
 ALREADY_EXISTS: |-
-  錯誤: 該機器人已在本例項中存在.
+  錯誤: 該機器人已在本例項中存在。
 FINISH_CREATION: |-
   點選該連結完成建立: https://t.me/{}?start=finish_creation
 
-  <b>如果您看見 "開始" 按鈕, 請點選它.</b>
+  <b>如果您看見 "開始" 按鈕，請點選它。</b>
 CREATE_FINISHED: |-
   大功告成 !
 
-  現在您可以返回繼續設定您的機器人, 或者到 @BotFather 為它設定簡介, 關於行和頭像.
+  現在您可以返回繼續設定您的機器人，或者到 @BotFather 為它設定簡介，關於和大頭貼。
 
 EDIT_BOTS_DEF: |-
   編輯您的機器人
 BOT_EDITS: |-
-  這裡是您的機器人: {} @{}.
+  這裡是您的機器人: {} @{}。
   現在您想做什麼 ?
 MENU_BACK_TO_BOT_LIST: |-
   🔙  返回列表
@@ -60,24 +60,24 @@ MENU_INTEGRATION: |-
 MENU_BOT_DELETE: |-
   🔳  刪除機器人
 START_MESSAGES_STATUS: |-
-  您正在編輯機器人 {} @{} 的歡迎訊息, 即任何人對機器人傳送 /start 時回覆的訊息.
+  您正在編輯機器人 {} @{} 的歡迎訊息，即任何人對機器人傳送 /start 時回覆的訊息。
 
-  當前歡迎訊息: {}.
+  目前歡迎訊息: {}。
 MENU_OPTIONS: |-
   📅  行為選項
 MENU_COMMANDS: |-
-  📘  命令管理
+  📘  指令管理
 
 OPTIONS_HELP: |-
-  這裡是您的機器人: {} @{}, 以下是機器人的可選行為選項.
+  這裡是您的機器人: {} @{}，以下是機器人的可選行為選項。
 
-  <b>保留提示</b>: 不要自動刪除操作提示訊息.
+  <b>保留提示</b>: 不要自動刪除操作提示訊息。
 
-  <b>雙向同步</b>: 直接複製對方的訊息, 而不是每次都轉發, 並同步對方的編輯, 刪除操作.
+  <b>雙向同步</b>: 直接複製對方的訊息，而不是每次都轉發，並同步對方的編輯，刪除操作。
 
-  <b>保持回覆</b>: 沒有進入 ( <code>/join</code> ) 對應會話的情況下回復訊息時保持對目標訊息的 "回覆".
+  <b>保持回覆</b>: 沒有進入 ( <code>/join</code> ) 對應會話的情況下回覆訊息時保持對目標訊息的 "回覆"。
 
-  <b>忽略刪除</b>: 不要同步本方的訊息刪除, 當同時開啟 "保留提示" 時在提示中增加一個刪除該訊息的按鈕.
+  <b>忽略刪除</b>: 不要同步本方的訊息刪除，當同時開啟 "保留提示" 時在提示中增加一個刪除該訊息的按鈕。
 OPTION_KEEP_ACTION_MESSAGES: |-
   保留提示
 OPTION_TWO_WAY_SYNC: |-
@@ -88,11 +88,11 @@ OPTION_IGNORE_DELETE_ACTION: |-
   忽略刪除
 
 NO_BOTS: |-
-  無事可做, 請首先使用 /new_bot 命令建立新機器人.
+  無事可做，請首先使用 /new_bot 指令建立新機器人。
 MENU_BOT_DELETE_CONFIRM: |-
-  將要刪除機器人<b>{}</b> @{}. 這正確嗎?
+  將要刪除機器人<b>{}</b> @{}。這正確嗎?
 MENU_BOT_DELETE_CONFIRM_AGAIN: |-
-  您 <b>完全確定</b> 您要刪除 <b>{}</b> @{} 嗎?
+  您 <b>完全確定</b> 您要刪除 <b>{}</b> @{} 嗎？
 MENU_BOT_DEL_NO_1: |-
   不
 MENU_BOT_DEL_NO_2: |-
@@ -102,9 +102,9 @@ MENU_BOT_DEL_NO_3: |-
 MENU_BOT_DEL_NO_4: |-
   絕對不行!
 MENU_BOT_DEL_YES_1: |-
-  是的, 刪除這個機器人
+  是的，刪除這個機器人
 MENU_BOT_DEL_YES_2: |-
-  是的, 我 100% 確定!
+  是的，我 100% 確定！
 MENU_BOT_DEL_EXPORT: |-
   匯出資料
 
@@ -115,15 +115,15 @@ BACKING_UP: |-
 DELETING: |-
   刪除資料...
 BOT_DELETED: |-
-  機器人已刪除.
+  機器人已刪除。
 BOT_AUTH_FAILED: |-
-  您的機器人 @{} 無法認證 ( 已重置 Token / 被刪除 ), 已移除.
+  您的機器人 @{} 無法認證 ( 已重設 Token / 被刪除 )，已移除。
 BOT_LOGOUT: |-
-  您的機器人 @{} 被登出, ( 已重置 Token / 被刪除 ), 已移除.
+  您的機器人 @{} 被登出，( 已重設 Token / 被刪除 )，已移除。
 
 
 SELECT_TO_SET: |-
-  選擇要設定的機器人.
+  選擇要設定的機器人。
 JUMP_TO_SET: |-
   現在到轉到您的機器人繼續設定: @{}
 SETTING_UNDEF: |-
@@ -140,30 +140,30 @@ INPUT_MESSAGES: |-
   使用 /submit 提交空訊息
   使用 /cancel 退出
 MESSAGE_ADDED: |-
-  已新增.
+  已新增。
 
   使用 /preview 預覽
   使用 /submit 提交
   使用 /cancel 退出
 MESSAGE_ADDED_FWD: |-
-  已新增 (轉發).
+  已新增 (轉發)。
 
   使用 /preview 預覽
   使用 /submit 提交
   使用 /cancel 退出
 MESSAGES_RESET: |-
-  已重置.
+  已重設。
 ERROR_IN_PREVIEW: |-
-  出錯: {}, 請重新設定: 注意設定完成後不要刪除其中包含檔案的訊息 (包括 貼紙, 影片等媒體).
+  出錯: {}，請重新設定: 注意設定完成後不要刪除其中包含檔案的訊息 (包括 貼紙，影片等媒體)。
 
 SET_INTEGRATION: |-
-  您可以將 PM 機器人 {} @{} 接入到群組, 所有訊息將被髮往目標群組而不是您的私聊.
+  您可以將 PM 機器人 {} @{} 接入到群組，所有訊息將被發往目標群組而不是您的私聊。
 
   接入狀態: {}
 INTEGRATION_CONFIRM: |-
-  由於您為此群的匿名管理員, 請點選下方按鈕再次確認.
+  由於您為此群的匿名管理員，請點選下方按鈕再次確認。
 INTEGRATION_HAS_SET: |-
-  成功, 所有訊息將被髮往本群.
+  成功，所有訊息將被發往本群。
 INTEGRATION_STATUS: |-
   僅群組管理員可操作機器人: {}
 INTEGRATION_UNDEF: |-
@@ -173,13 +173,13 @@ INTEGRATION_OK: |-
 INTEGRATION_PAUSED: |-
   已暫停
 INTEGRATION_PAUSED_NOTICE: |-
-  機器人 {} @{} 無法訪問接入的群組, 故接入被暫停, 請檢查並執行恢復.
+  機器人 {} @{} 無法訪問接入的群組，故接入被暫停，請檢查並執行復原。
 INTEGRATION_SET: |-
   接入群組
 INTEGRATION_PAUSE: |-
   暫停接入
 INTEGRATION_RESUME: |-
-  恢復接入
+  復原接入
 INTEGRATION_DEL: |-
   取消接入
 INTEGRATION_ENABLE_ADMIN_ONLY: |-
@@ -190,9 +190,9 @@ INTEGRATION_DISABLE_ADMIN_ONLY: |-
 DEFAULT_WELCOME: |-
   您好!
 
-  您可以在此留言聯絡我(們).
+  您可以在此留言聯絡我(們)。
 POWERED_BY: |-
-  本機器人使用 @{} 建立, {}
+  本機器人使用 @{} 建立，{}
 
 INPUT_NOTICE: |-
   來自: <code>{}</code>
@@ -200,87 +200,87 @@ INPUT_NOTICE: |-
 INPUT_FN_NOTICE: |-
   來自: <code>{}</code>
   名稱: {}
-  命令: <code>/{}</code>
+  指令: <code>/{}</code>
 USER_NOT_FOUND: |-
-  找不到使用者.
+  找不到使用者。
 JOINED_NOTICE: |-
   已進入會話: {}
   名稱: {}
 EXITED: |-
-  已退出.
+  已退出。
 NOTHING_TO_EXIT: |-
-  無事可做.
+  無事可做。
 SENT: |-
-  已傳送.
+  已傳送。
 REPLIED: |-
-  已回覆.
+  已回覆。
 EDITED: |-
-  已編輯.
+  已編輯。
 MESSAGE_DELETED_BY_ME: |-
-  已刪除.
+  已刪除。
 MESSAGE_RECALLED_BY_ME: |-
-  已批量刪除.
+  已批次刪除。
 MESSAGE_DELETED_BY: |-
-  已刪除.
+  已刪除。
 
   操作者: {}
 MESSAGE_RECALLED_BY: |-
-  已批量刪除.
+  已批次刪除。
 
   目標會話: {}
   名稱: {}
   操作者: {}
 RECORD_NF: |-
-  找不到對應記錄.
+  找不到對應記錄。
 REPLIED_NF: |-
-  要回復的訊息已被對方刪除.
+  要回覆的訊息已被對方刪除。
 MESSAGE_DELETED: |-
-  這條訊息被對方刪除了.
+  這條訊息被對方刪除了。
 MESSAGE_EDITED: |-
-  這條訊息被對方更改了.
+  這條訊息被對方更改了。
 
 BLOCKED: |-
-  已遮蔽 {}.
+  已封鎖 {}。
 BLOCK_EXISTS: |-
-  曾經遮蔽過 {}.
+  曾經封鎖過 {}。
 BLOCK_NOT_EXISTS: |-
-  未遮蔽過 {}.
+  未封鎖過 {}。
 UNBLOCKED: |-
-  已取消遮蔽.
+  已取消封鎖。
 CANNOT_BLOCK_SELF: |-
-  不能遮蔽自己.
+  不能封鎖自己。
 
 COMMANDS_HELP: |-
-  這裡是您的機器人: {} @{}, 請在下方列表中選擇您要編輯的命令.
+  這裡是您的機器人: {} @{}，請在下方列表中選擇您要編輯的指令。
 
   已新增命令列表:
 
   {}
 
-  您可以為每個命令設定不同的訊息內容, 並接收到對方訊息所回覆之命令.
+  您可以為每個指令設定不同的訊息內容，並接收到對方訊息所回覆之指令。
 COMMAND_NEW: |-
-  新建命令
+  建立指令
 COMMAND_INPUT_NAME: |-
-  現在向我傳送命令名稱, 1 - 32 個小寫英文字元, 數字或下劃線:
+  現在向我傳送指令名稱，1 - 32 個小寫英文字元，數字或下劃線：
 COMMAND_NAME_INVALID: |-
-  命令名稱無效, 僅支援 1 - 32 個小寫英文字元, 數字或下劃線.
+  指令名稱無效，僅支援 1 - 32 個小寫英文字元，數字或下劃線。
 
   {}
 COMMAND_INPUT_DESCRIPTION: |-
-  輸入命令說明, 3 - 256 個字元:
+  輸入指令說明，3 - 256 個字元：
 COMMAND_DESCRIPTION_INVALID: |-
-  命令說明無效, 僅支援 3 - 256 個字元:
+  指令說明無效，僅支援 3 - 256 個字元：
 
   {}
 COMMAND_START: |-
-  <code>/start</code> 命令由開始訊息保留, 請使用另一個.
+  <code>/start</code> 指令由開始訊息保留，請使用另一個。
 COMMAND_HELP: |-
-  您正在編輯機器人 `{}` @{} 的命令 `/{}`.
+  您正在編輯機器人 `{}` @{} 的指令 `/{}`。
 
   簡介: `{}`
   訊息: {}
 
-  您也可從該 **[連結](https://t.me/{}?start={})** 訪問本命令.
+  您也可從該 **[連結](https://t.me/{}?start={})** 存取本指令。
 
   {}
 COMMAND_RENAME: |-
@@ -290,21 +290,21 @@ COMMAND_EDIT_DESCRIPTION: |-
 COMMAND_EDIT_MESSAGES: |-
   重新設定訊息
 COMMAND_HIDE: |-
-  隱藏命令
+  隱藏指令
 COMMAND_DISABLE: |-
-  禁用命令
+  禁用指令
 COMMAND_INPUT_WHEN_PUBLIC: |-
-  私聊命令
+  私聊指令
 COMMAND_INPUT_WHEN_PUBLIC_DEF: |-
-  私聊命令: 公開模式 (當前設定) 下使用該命令後機器人接受私聊訊息.
+  私聊指令: 公開模式 (目前設定) 下使用該指令後機器人接受私聊訊息。
 COMMAND_DELETE: |-
   刪除
 
 PRIVATE_IMPORT: |-
-  抱歉, 只有例項所有者才能匯入資料, 請參閱 [說明]({}).
+  抱歉，只有例項所有者才能匯入資料，請參閱 [說明]({})。
 IMPORTING: |-
   正在匯入...
 INVALID_FILE: |-
   備份檔案損壞: {}
 CLIENT_OUTDATE: |-
-  本例項過舊, 無法匯入該機器人檔案, 請參閱 [說明]({}).
+  本例項過舊，無法匯入該機器人檔案，請參閱 [說明]({})。
